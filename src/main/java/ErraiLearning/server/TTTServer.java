@@ -17,4 +17,8 @@ public class TTTServer {
 	
 	private int curId = 1;
 	
+	public TTTServer() {
+		System.out.println("TTTServer object is constructed.");
+	}
+	
 }

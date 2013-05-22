@@ -5,35 +5,56 @@ import org.jboss.errai.common.client.api.annotations.Portable;
 @Portable
 public class Move {
 	
-	private final int GAME;
+	private int game;
 	
-	private final int PLAYER;
+	private int player;
 	
-	private final int ROW;
+	private int row;
 	
-	private final int COL;
+	private int col;
 	
 	private boolean validated = false;
+	
+	public Move() {}
 
 	public Move(int game, int player, int row, int col) {
 
-		GAME = game;
-		PLAYER = player;
-		ROW = row;
-		COL = col;
-
+		this.setGame(game);
+		this.setPlayer(player);
+		this.setRow(row);
+		this.setCol(col);
 	}
 
-	public int getCOL() {
-		return COL;
+	public int getGame() {
+		return game;
 	}
 
-	public int getROW() {
-		return ROW;
+	public void setGame(int game) {
+		this.game = game;
 	}
 
-	public int getPLAYER() {
-		return PLAYER;
+	public int getPlayer() {
+		return player;
+	}
+
+	public void setPlayer(int player) {
+		this.player = player;
+	}
+
+	public int getRow() {
+		return row;
+	}
+
+	public void setRow(int row) {
+		this.row = row;
+	}
+
+	public int getCol() {
+		return col;
+	}
+
+	public void setCol(int col) {
+		this.col = col;
 	}
 
 	public boolean isValidated() {

@@ -8,7 +8,9 @@ import org.jboss.errai.common.client.api.annotations.Portable;
 @Portable
 public class LobbyUpdate {
 
-	private final Map<Integer,Player> lobby;
+	private Map<Integer,Player> lobby;
+	
+	public LobbyUpdate() {}
 	
 	public LobbyUpdate(Map<Integer,Player> lobbyMap) {
 		lobby = lobbyMap;

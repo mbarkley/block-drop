@@ -5,9 +5,11 @@ import org.jboss.errai.common.client.api.annotations.Portable;
 @Portable
 public class Player {
 
-	private final int id;
+	private int id;
 	private String nick;
 	private boolean playing = false;
+	
+	public Player() {}
 	
 	public Player(String nick) {
 		id = 0; // Constructor for client. Id must be assigned by server.
@@ -36,6 +38,10 @@ public class Player {
 	
 	public int getId() {
 		return id;
+	}
+	
+	public void setId(int id) {
+		this.id = id;
 	}
 	
 	
