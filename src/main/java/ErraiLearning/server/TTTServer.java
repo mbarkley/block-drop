@@ -4,7 +4,9 @@ import java.util.HashMap;
 import java.util.Map;
 
 import javax.enterprise.context.ApplicationScoped;
+import javax.enterprise.event.Observes;
 
+import ErraiLearning.client.shared.LobbyRequest;
 import ErraiLearning.client.shared.Player;
 import ErraiLearning.client.shared.TTTGame;
 
@@ -19,6 +21,11 @@ public class TTTServer {
 	
 	public TTTServer() {
 		System.out.println("TTTServer object is constructed.");
+	}
+	
+	public void registerUser(@Observes LobbyRequest request) {
+		
+		System.out.println("Registering user...");
 	}
 	
 }

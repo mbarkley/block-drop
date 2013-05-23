@@ -12,10 +12,10 @@ import javax.enterprise.context.Dependent;
 @Dependent
 public class TTTGame {
 
-	public final int PLAYER1;
-	public final int PLAYER2;
+	public int PLAYER1;
+	public int PLAYER2;
 	
-	public final int GAME_ID;
+	public int GAME_ID;
 	
 	private List<Move> moveList = new ArrayList<Move>();
 	
@@ -24,6 +24,10 @@ public class TTTGame {
 	
 	/* The id of the player who should be next to move. */
 	private int currentTurn;
+	
+	public TTTGame() {
+		
+	}
 	
 	public TTTGame(int gameId, int player1Id, int player2Id) {
 		
@@ -49,10 +53,11 @@ public class TTTGame {
 
 		boolean res = true;
 		
-		for (int j = 1; j < 3; j++)
+		for (int j = 1; j < 3; j++) {
 			// j is the offset to the right from the given move.
 			// Taking mod 3 of lastMove.getCOL()+j causes wraps around the edge of the tic-tac-toe board.
-			res = res && board[lastMove.getROW()][(lastMove.getCOL()+j)%3] == lastMove.getPLAYER();
+			res = res && board[lastMove.getRow()][(lastMove.getCol()+j)%3] == lastMove.getPlayer();
+		}
 		
 		return res;
 	}
@@ -62,7 +67,7 @@ public class TTTGame {
 		boolean res = true;
 		
 		for (int i = 1; i < 3; i++)
-			res = res && board[(lastMove.getROW()+i)%3][(lastMove.getCOL()+i)%3] == lastMove.getPLAYER();
+			res = res && board[(lastMove.getRow()+i)%3][(lastMove.getCol()+i)%3] == lastMove.getPlayer();
 		
 		return res;
 	}
@@ -72,7 +77,7 @@ public class TTTGame {
 		boolean res = true;
 		
 		for (int i = 1; i < 3; i++)
-			res = res && board[(lastMove.getROW()+i)%3][lastMove.getCOL()] == lastMove.getPLAYER();
+			res = res && board[(lastMove.getRow()+i)%3][lastMove.getCol()] == lastMove.getPlayer();
 		
 		return res;
 	}
