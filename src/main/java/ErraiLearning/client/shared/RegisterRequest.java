@@ -3,13 +3,13 @@ package ErraiLearning.client.shared;
 import org.jboss.errai.common.client.api.annotations.Portable;
 
 @Portable
-public class LobbyRequest {
+public class RegisterRequest {
 
 	private String nickname = "";
 	
-	public LobbyRequest() {}
+	public RegisterRequest() {}
 	
-	public LobbyRequest(String nickname) {
+	public RegisterRequest(String nickname) {
 		this.setNickname(nickname);
 	}
 

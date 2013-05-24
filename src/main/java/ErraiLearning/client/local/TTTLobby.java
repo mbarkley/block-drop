@@ -1,6 +1,8 @@
 package ErraiLearning.client.local;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
@@ -10,11 +12,14 @@ import javax.enterprise.event.Event;
 import javax.enterprise.event.Observes;
 import javax.inject.Inject;
 
+import org.jboss.errai.ioc.client.api.EntryPoint;
 import org.jboss.errai.ui.nav.client.local.DefaultPage;
 import org.jboss.errai.ui.nav.client.local.Navigation;
 import org.jboss.errai.ui.nav.client.local.Page;
+import org.jboss.errai.ui.nav.client.local.TransitionTo;
 
-import ErraiLearning.client.shared.LobbyRequest;
+import ErraiLearning.client.shared.LobbyUpdateRequest;
+import ErraiLearning.client.shared.RegisterRequest;
 import ErraiLearning.client.shared.LobbyUpdate;
 import ErraiLearning.client.shared.Player;
 
@@ -31,34 +36,43 @@ import com.google.gwt.user.client.ui.RootPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 
 @Page(role=DefaultPage.class)
-@ApplicationScoped
+@EntryPoint
 public class TTTLobby extends Composite {
 	
 	private VerticalPanel vPanel = new VerticalPanel();
 	private HorizontalPanel buttonPanel = new HorizontalPanel();
-	private Button joinButton = new Button("Join Lobby");
+	private VerticalPanel lobbyPanel = new VerticalPanel();
+	private Button lobbyButton = new Button("Join Lobby");
+	private Button gameButton = new Button("Join Game");
 	
-	private Map<Integer, Player> localLobby = new HashMap<Integer, Player>();
 	private String nickname;
 	private Player player;
+	/* Shadows lobbyPanel. */
+	private List<Player> lobbyList = new ArrayList<Player>();
 	
-	@Inject
-	private Event<LobbyRequest> lobbyRequest;
-	@Inject
-	private Navigation nav;
+	@Inject	private Event<RegisterRequest> registerRequest;
+	@Inject	private Event<LobbyUpdateRequest> lobbyUpdateRequest;
+	@Inject	private Navigation nav;
+	@Inject private TransitionTo<Board> boardTransition;
 	
+	/* For debugging only. */
+	private static int curDebugId = 1;
+	private int debugId;
+	private static synchronized int nextDebugId() { return curDebugId++; }
 	
 	public TTTLobby() {
 		
-		System.out.println("TTTLobby constructor called.");
+		debugId = nextDebugId();
+		System.out.println(nickname+": TTTLobby constructor called.");
 		
 		initWidget(vPanel);
 		
-		buttonPanel.add(joinButton);
+		buttonPanel.add(lobbyButton);
+		buttonPanel.add(gameButton);
+		gameButton.setVisible(false);
 		vPanel.add(buttonPanel);
+		vPanel.add(lobbyPanel);
 		
-		System.out.println("Is the composite object attached: " + this.isAttached());
-
 		String initialValue = "Foobar";
 		String msg = "Please select a username.";
 		nickname = Window.prompt(msg, initialValue);
@@ -66,21 +80,13 @@ public class TTTLobby extends Composite {
 		if (nickname == null)
 			nickname = "default";
 
-		System.out.println("User selected " + nickname + " as their nickname.");
+		System.out.println(nickname+": User selected " + nickname + " as their nickname.");
 	}
 	
 	@PostConstruct
 	public void postSetup() {
 		
-		System.out.println("Debug method starting.");
-		System.out.println("Is the composite object visible: " + this.isVisible());
-		System.out.println("Is the composite object attached: " + this.isAttached());
-		System.out.println("Has it ever been attached: " + this.isOrWasAttached());
-		System.out.println("Is the RootPanel attached: " + RootPanel.get().isAttached());
-		System.out.println("Is the RootPanel visible: " + RootPanel.get().isVisible());
-		System.out.println("The parent object of this composite object: " + this.getParent());
-		
-		joinButton.addClickHandler(new ClickHandler() {
+		lobbyButton.addClickHandler(new ClickHandler() {
 			@Override
 			public void onClick(ClickEvent event) {
 				joinLobby();
@@ -90,34 +96,48 @@ public class TTTLobby extends Composite {
 		RootPanel.get().add(nav.getContentPanel());
 	}
 	
-	@Override
-	protected void onAttach() {
-		super.onAttach();
-		System.out.println("TTTLobby object attached into browser.");
-	}
-	
-	@Override
-	protected void onLoad() {
-		super.onLoad();
-		System.out.println("TTTLobby object loaded into browser.");
-	}
-	
 	public void updateLobby(@Observes LobbyUpdate update) {
-		localLobby = update.getLobby();
 		
-		for (Entry<Integer, Player> entry : localLobby.entrySet()) {
-			vPanel.add(new Label(entry.getValue().getNick()));
+		lobbyList.clear();
+		lobbyPanel.clear();
+	
+		for (Player p : update.getPlayers().values()) {
+			lobbyList.add(p);
+			
+			Button playerButton = new Button(p.getNick());
+			lobbyPanel.add(playerButton);
+			
+			if (p.equals(player))
+				playerButton.setVisible(false);
+			else
+				playerButton.addClickHandler(new ClickHandler() {
+					@Override
+					public void onClick(ClickEvent event) {
+						
+					}
+				});
 		}
 	}
 	
 	public void loadPlayer(@Observes Player player) {
 		this.player = player;
-		System.out.println("Client: Player object received.");
+		System.out.println(nickname+": Player object received.");
+		
+		// Hide join lobby button and display join game button.
+		lobbyButton.setVisible(false);
+		gameButton.setVisible(true);
+		
+		requestLobbyUpdate();
 	}
-	
+
+	public void requestLobbyUpdate() {
+		lobbyUpdateRequest.fire(new LobbyUpdateRequest());
+		System.out.println(nickname+": LobbyUpdateRequest fired.");
+	}
+
 	public void joinLobby() {
-		LobbyRequest request = new LobbyRequest(nickname);
-		lobbyRequest.fire(request);
-		System.out.println("LobbyRequest fired.");
+		RegisterRequest request = new RegisterRequest(nickname);
+		registerRequest.fire(request);
+		System.out.println(nickname+": LobbyRequest fired.");
 	}
 }
