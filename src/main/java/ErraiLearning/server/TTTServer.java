@@ -25,10 +25,9 @@ public class TTTServer {
 	private int curPlayerId = 1;
 	private int curGameId = 1;
 	
-	@Inject
-	private Event<Player> playerRegistration;
-	@Inject
-	private Event<LobbyUpdate> lobbyUpdate;
+	@Inject	private Event<Player> playerRegistration;
+	@Inject	private Event<LobbyUpdate> lobbyUpdate;
+	@Inject private Event<Invitation> relayInvitation;
 	
 	/* For debugging only. */
 	private int debugId;
