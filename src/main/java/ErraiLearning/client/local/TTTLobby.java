@@ -18,6 +18,7 @@ import org.jboss.errai.ui.nav.client.local.Navigation;
 import org.jboss.errai.ui.nav.client.local.Page;
 import org.jboss.errai.ui.nav.client.local.TransitionTo;
 
+import ErraiLearning.client.shared.Invitation;
 import ErraiLearning.client.shared.LobbyUpdateRequest;
 import ErraiLearning.client.shared.RegisterRequest;
 import ErraiLearning.client.shared.LobbyUpdate;
@@ -34,6 +35,7 @@ import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.RootPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
+import com.google.gwt.user.client.ui.Widget;
 
 @Page(role=DefaultPage.class)
 @EntryPoint
@@ -52,6 +54,7 @@ public class TTTLobby extends Composite {
 	
 	@Inject	private Event<RegisterRequest> registerRequest;
 	@Inject	private Event<LobbyUpdateRequest> lobbyUpdateRequest;
+	@Inject private Event<Invitation> gameInvitation;
 	@Inject	private Navigation nav;
 	@Inject private TransitionTo<Board> boardTransition;
 	
@@ -113,7 +116,9 @@ public class TTTLobby extends Composite {
 				playerButton.addClickHandler(new ClickHandler() {
 					@Override
 					public void onClick(ClickEvent event) {
-						
+						Player inviter = getPlayer();
+						Player invitee = lobbyList.get(lobbyPanel.getWidgetIndex((Widget) event.getSource()));
+						gameInvitation.fire(new Invitation(inviter, invitee));
 					}
 				});
 		}
@@ -139,5 +144,9 @@ public class TTTLobby extends Composite {
 		RegisterRequest request = new RegisterRequest(nickname);
 		registerRequest.fire(request);
 		System.out.println(nickname+": LobbyRequest fired.");
+	}
+	
+	public Player getPlayer() {
+		return player;
 	}
 }

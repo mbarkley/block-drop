@@ -10,6 +10,7 @@ import javax.inject.Inject;
 
 import com.google.inject.Singleton;
 
+import ErraiLearning.client.shared.Invitation;
 import ErraiLearning.client.shared.LobbyUpdate;
 import ErraiLearning.client.shared.LobbyUpdateRequest;
 import ErraiLearning.client.shared.RegisterRequest;
@@ -59,6 +60,13 @@ public class TTTServer {
 	
 	public void handleLobbyUpdateRequest(@Observes LobbyUpdateRequest lobbyUpdateRequest) {
 		sendLobbyList();
+	}
+	
+	public void handleInvitation(@Observes Invitation invitation) {
+		System.out.println("Server"+debugId+": Invitation received from " 
+				+ invitation.getInviter().getNick() 
+				+" to " + invitation.getInvitee().getNick()
+		);
 	}
 
 	public void sendLobbyList() {
