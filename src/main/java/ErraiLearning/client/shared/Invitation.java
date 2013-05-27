@@ -7,6 +7,7 @@ public class Invitation {
 	
 	private Player inviter = null;
 	private Player invitee = null;
+	private boolean accepted = false;
 	
 	public Invitation() {}
 	
@@ -29,6 +30,14 @@ public class Invitation {
 
 	public void setInvitee(Player invitee) {
 		this.invitee = invitee;
+	}
+
+	public boolean isAccepted() {
+		return accepted;
+	}
+
+	public void setAccepted(boolean accepted) {
+		this.accepted = accepted;
 	}
 
 }

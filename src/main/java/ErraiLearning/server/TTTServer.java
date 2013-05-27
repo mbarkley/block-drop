@@ -8,6 +8,16 @@ import javax.enterprise.event.Event;
 import javax.enterprise.event.Observes;
 import javax.inject.Inject;
 
+import org.jboss.errai.bus.client.ErraiBus;
+import org.jboss.errai.bus.client.api.base.MessageBuilder;
+import org.jboss.errai.bus.client.api.messaging.Message;
+import org.jboss.errai.bus.client.api.messaging.MessageBus;
+import org.jboss.errai.bus.client.api.messaging.MessageCallback;
+import org.jboss.errai.bus.client.api.messaging.RequestDispatcher;
+import org.jboss.errai.bus.server.annotations.Command;
+import org.jboss.errai.bus.server.annotations.Service;
+import org.jboss.errai.common.client.protocols.MessageParts;
+
 import com.google.inject.Singleton;
 
 import ErraiLearning.client.shared.Invitation;
@@ -18,16 +28,18 @@ import ErraiLearning.client.shared.Player;
 import ErraiLearning.client.shared.TTTGame;
 
 @ApplicationScoped
-public class TTTServer {
+@Service("Relay")
+public class TTTServer implements MessageCallback {
 
 	private Map<Integer,TTTGame> games = new HashMap<Integer,TTTGame>();
 	private Map<Integer,Player> players = new HashMap<Integer,Player>();
 	private int curPlayerId = 1;
 	private int curGameId = 1;
 	
+	@Inject private MessageBus messageBus;
+	@Inject private RequestDispatcher dispatcher;
 	@Inject	private Event<Player> playerRegistration;
 	@Inject	private Event<LobbyUpdate> lobbyUpdate;
-	@Inject private Event<Invitation> relayInvitation;
 	
 	/* For debugging only. */
 	private int debugId;
@@ -61,15 +73,47 @@ public class TTTServer {
 		sendLobbyList();
 	}
 	
+	/*
+	 * This event is triggered by an invitation initiation.
+	 */
 	public void handleInvitation(@Observes Invitation invitation) {
 		System.out.println("Server"+debugId+": Invitation received from " 
 				+ invitation.getInviter().getNick() 
 				+" to " + invitation.getInvitee().getNick()
 		);
+		System.out.println("Server"+debugId+": Attempting to relay invitation to "
+				+"Client"+Integer.toString(invitation.getInvitee().getId()));
+		
+		MessageBuilder.createMessage()
+		.toSubject("Client"+Integer.toString(invitation.getInvitee().getId()))
+		.command("invitation")
+		.withValue(invitation)
+		.noErrorHandling()
+		.sendNowWith(dispatcher);
 	}
 
 	public void sendLobbyList() {
 		lobbyUpdate.fire(new LobbyUpdate(players, games));
 		System.out.println("Server"+debugId+": Lobby list sent.");
+	}
+
+	@Override
+	@Command("invitation-response")
+	public void callback(Message message) {
+		Invitation invitation = message.get(Invitation.class, MessageParts.Value);
+	
+		System.out.println("Server"+debugId+": Relaying invitation response from "+invitation.getInvitee().getNick());
+		
+		if (invitation.isAccepted()) {
+			//TODO: Handle starting game.
+		}
+		
+		String target = "Client" + Integer.toString(invitation.getInviter().getId());
+		
+		MessageBuilder.createMessage(target)
+		.command("invitation-response")
+		.withValue(invitation)
+		.noErrorHandling()
+		.sendNowWith(dispatcher);
 	}
 }

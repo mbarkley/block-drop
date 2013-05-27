@@ -12,10 +12,10 @@ import javax.enterprise.context.Dependent;
 @Dependent
 public class TTTGame {
 
-	public int PLAYER1;
-	public int PLAYER2;
+	public int player1;
+	public int player2;
 	
-	public int GAME_ID;
+	public int gameId;
 	
 	private List<Move> moveList = new ArrayList<Move>();
 	
@@ -31,9 +31,9 @@ public class TTTGame {
 	
 	public TTTGame(int gameId, int player1Id, int player2Id) {
 		
-		GAME_ID = gameId;
-		PLAYER1 = player1Id;
-		PLAYER2 = player2Id;
+		this.gameId = gameId;
+		player1 = player1Id;
+		player2 = player2Id;
 	}
 	
 	/*
@@ -96,7 +96,7 @@ public class TTTGame {
 		
 		board[row][col] = player;
 		
-		Move newMove = new Move(GAME_ID, player, row, col);
+		Move newMove = new Move(gameId, player, row, col);
 		moveList.add(newMove);
 		
 		return newMove;

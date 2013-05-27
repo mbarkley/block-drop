@@ -12,6 +12,15 @@ import javax.enterprise.event.Event;
 import javax.enterprise.event.Observes;
 import javax.inject.Inject;
 
+import org.jboss.errai.bus.client.ErraiBus;
+import org.jboss.errai.bus.client.api.base.MessageBuilder;
+import org.jboss.errai.bus.client.api.messaging.Message;
+import org.jboss.errai.bus.client.api.messaging.MessageBus;
+import org.jboss.errai.bus.client.api.messaging.MessageCallback;
+import org.jboss.errai.bus.client.api.messaging.RequestDispatcher;
+import org.jboss.errai.bus.server.annotations.Command;
+import org.jboss.errai.common.client.api.ErrorCallback;
+import org.jboss.errai.common.client.protocols.MessageParts;
 import org.jboss.errai.ioc.client.api.EntryPoint;
 import org.jboss.errai.ui.nav.client.local.DefaultPage;
 import org.jboss.errai.ui.nav.client.local.Navigation;
@@ -39,19 +48,20 @@ import com.google.gwt.user.client.ui.Widget;
 
 @Page(role=DefaultPage.class)
 @EntryPoint
-public class TTTLobby extends Composite {
+public class TTTLobby extends Composite implements MessageCallback {
 	
 	private VerticalPanel vPanel = new VerticalPanel();
 	private HorizontalPanel buttonPanel = new HorizontalPanel();
 	private VerticalPanel lobbyPanel = new VerticalPanel();
 	private Button lobbyButton = new Button("Join Lobby");
-	private Button gameButton = new Button("Join Game");
 	
 	private String nickname;
 	private Player player;
 	/* Shadows lobbyPanel. */
 	private List<Player> lobbyList = new ArrayList<Player>();
 	
+	private MessageBus messageBus = ErraiBus.get();
+	private RequestDispatcher dispatcher = ErraiBus.getDispatcher();
 	@Inject	private Event<RegisterRequest> registerRequest;
 	@Inject	private Event<LobbyUpdateRequest> lobbyUpdateRequest;
 	@Inject private Event<Invitation> gameInvitation;
@@ -71,8 +81,6 @@ public class TTTLobby extends Composite {
 		initWidget(vPanel);
 		
 		buttonPanel.add(lobbyButton);
-		buttonPanel.add(gameButton);
-		gameButton.setVisible(false);
 		vPanel.add(buttonPanel);
 		vPanel.add(lobbyPanel);
 		
@@ -119,6 +127,7 @@ public class TTTLobby extends Composite {
 						Player inviter = getPlayer();
 						Player invitee = lobbyList.get(lobbyPanel.getWidgetIndex((Widget) event.getSource()));
 						gameInvitation.fire(new Invitation(inviter, invitee));
+						System.out.println(nickname+": Fired invitation request.");
 					}
 				});
 		}
@@ -130,7 +139,10 @@ public class TTTLobby extends Composite {
 		
 		// Hide join lobby button and display join game button.
 		lobbyButton.setVisible(false);
-		gameButton.setVisible(true);
+		
+		System.out.println(nickname+": Subscribing to subject Client"+Integer.toString(player.getId()));
+		// Subscribe to server relay
+		messageBus.subscribe("Client"+player.getId(), this);
 		
 		requestLobbyUpdate();
 	}
@@ -148,5 +160,27 @@ public class TTTLobby extends Composite {
 	
 	public Player getPlayer() {
 		return player;
+	}
+
+	@Override
+	public void callback(Message message) {
+		System.out.println(nickname+": Invitation relay received.");
+		if (message.getCommandType().equals("invitation")) {
+			Invitation invitation = message.get(Invitation.class, MessageParts.Value);
+			
+			invitation.setAccepted(
+				Window.confirm("You have been invited to play a game by "
+						+ invitation.getInviter().getNick()
+						+ ". Would you like to accept?"
+				)
+			);
+			
+			MessageBuilder.createMessage()
+			.toSubject("Relay")
+			.command("invitation-response")
+			.withValue(invitation)
+			.noErrorHandling()
+			.sendNowWith(dispatcher);
+		}		
 	}
 }
