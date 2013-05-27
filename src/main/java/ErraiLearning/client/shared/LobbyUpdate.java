@@ -8,11 +8,11 @@ import org.jboss.errai.common.client.api.annotations.Portable;
 public class LobbyUpdate {
 
 	private Map<Integer,Player> players = null;
-	private Map<Integer,TTTGame> games = null;
+	private Map<Integer,Game> games = null;
 	
 	public LobbyUpdate() {}
 	
-	public LobbyUpdate(Map<Integer, Player> players, Map<Integer, TTTGame> games) {
+	public LobbyUpdate(Map<Integer, Player> players, Map<Integer, Game> games) {
 		this.players = players;
 		this.games = games;
 	}
@@ -25,11 +25,11 @@ public class LobbyUpdate {
 		this.players = players;
 	}
 	
-	public void setGames(Map<Integer,TTTGame> games) {
+	public void setGames(Map<Integer,Game> games) {
 		this.games = games;
 	}
 	
-	public Map<Integer,TTTGame> getGames() {
+	public Map<Integer,Game> getGames() {
 		return games;
 	}
 }

@@ -25,13 +25,13 @@ import ErraiLearning.client.shared.LobbyUpdate;
 import ErraiLearning.client.shared.LobbyUpdateRequest;
 import ErraiLearning.client.shared.RegisterRequest;
 import ErraiLearning.client.shared.Player;
-import ErraiLearning.client.shared.TTTGame;
+import ErraiLearning.client.shared.Game;
 
 @ApplicationScoped
 @Service("Relay")
 public class TTTServer implements MessageCallback {
 
-	private Map<Integer,TTTGame> games = new HashMap<Integer,TTTGame>();
+	private Map<Integer,Game> games = new HashMap<Integer,Game>();
 	private Map<Integer,Player> players = new HashMap<Integer,Player>();
 	private int curPlayerId = 1;
 	private int curGameId = 1;
@@ -82,10 +82,10 @@ public class TTTServer implements MessageCallback {
 				+" to " + invitation.getInvitee().getNick()
 		);
 		System.out.println("Server"+debugId+": Attempting to relay invitation to "
-				+"Client"+Integer.toString(invitation.getInvitee().getId()));
+				+"Client"+invitation.getInvitee().getId());
 		
 		MessageBuilder.createMessage()
-		.toSubject("Client"+Integer.toString(invitation.getInvitee().getId()))
+		.toSubject("Client"+invitation.getInvitee().getId())
 		.command("invitation")
 		.withValue(invitation)
 		.noErrorHandling()
@@ -105,15 +105,41 @@ public class TTTServer implements MessageCallback {
 		System.out.println("Server"+debugId+": Relaying invitation response from "+invitation.getInvitee().getNick());
 		
 		if (invitation.isAccepted()) {
-			//TODO: Handle starting game.
+			startGame(invitation);
 		}
+	}
+
+	public void startGame(Invitation invitation) {
+		System.out.println("Server"+debugId+": Begin initiating game.");
+		Game game = new Game(nextGameId(), invitation.getInviter(), invitation.getInvitee());
 		
-		String target = "Client" + Integer.toString(invitation.getInviter().getId());
+		// Add game to server game list
+		games.put(game.getGameId(), game);
 		
-		MessageBuilder.createMessage(target)
-		.command("invitation-response")
-		.withValue(invitation)
+		// Remove players from lobby
+		players.remove(game.getFirstPlayer().getId());
+		players.remove(game.getSecondPlayer().getId());
+		
+		lobbyUpdate.fire(new LobbyUpdate(players, games));
+		
+		// Message players to start game.
+		MessageBuilder.createMessage()
+		.toSubject("Client"+game.getFirstPlayer().getId())
+		.command("start-game")
+		.withValue(game)
 		.noErrorHandling()
 		.sendNowWith(dispatcher);
+		
+		MessageBuilder.createMessage()
+		.toSubject("Client"+game.getSecondPlayer().getId())
+		.command("start-game")
+		.withValue(game)
+		.noErrorHandling()
+		.sendNowWith(dispatcher);
+		
+		// Subscribe to service that clients of this game will use
+		messageBus.subscribe("Game"+game.getGameId(), this);
+		
+		System.out.println("Server"+debugId+": Game initiated.");
 	}
 }

@@ -5,17 +5,20 @@ import java.util.List;
 
 import javax.enterprise.context.Dependent;
 
+import org.jboss.errai.common.client.api.annotations.Portable;
+
 /*
  * A container for a tic-tac-toe board and related logic.
  */
 
 @Dependent
-public class TTTGame {
-
-	public int player1;
-	public int player2;
+@Portable
+public class Game {
 	
-	public int gameId;
+	private Player player1 = null;
+	private Player player2 = null;
+	
+	private int gameId = 0;
 	
 	private List<Move> moveList = new ArrayList<Move>();
 	
@@ -25,15 +28,12 @@ public class TTTGame {
 	/* The id of the player who should be next to move. */
 	private int currentTurn;
 	
-	public TTTGame() {
-		
-	}
+	public Game() {}
 	
-	public TTTGame(int gameId, int player1Id, int player2Id) {
-		
+	public Game(int gameId, Player player1, Player player2) {
 		this.gameId = gameId;
-		player1 = player1Id;
-		player2 = player2Id;
+		this.player1 = player1;
+		this.player2 = player2;
 	}
 	
 	/*
@@ -89,14 +89,14 @@ public class TTTGame {
 	 * @param row The row of the move position (0-indexed).
 	 * @param col The col of the move position (0-indexed).
 	 */
-	public Move makeMove(int player, int row, int col) throws InvalidMoveException {
+	public Move makeMove(int playerId, int row, int col) throws InvalidMoveException {
 
-		if (!validateMove(player, row, col))
+		if (!validateMove(playerId, row, col))
 			throw new InvalidMoveException();
 		
-		board[row][col] = player;
+		board[row][col] = playerId;
 		
-		Move newMove = new Move(gameId, player, row, col);
+		Move newMove = new Move(gameId, playerId, row, col);
 		moveList.add(newMove);
 		
 		return newMove;
@@ -122,8 +122,20 @@ public class TTTGame {
 	 * 
 	 * @return True iff a move can be made to the spot at (row,col).
 	 */
-	public boolean validateMove(int player, int row, int col) {
-		return checkBounds(row, col) && board[row][col] == 0 && player == currentTurn;
+	public boolean validateMove(int playerId, int row, int col) {
+		return checkBounds(row, col) && board[row][col] == 0 && playerId == currentTurn;
+	}
+
+	public int getGameId() {
+		return gameId;
+	}
+
+	public Player getFirstPlayer() {
+		return player1;
+	}
+
+	public Player getSecondPlayer() {
+		return player2;
 	}
 	
 }
