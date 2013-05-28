@@ -7,11 +7,17 @@ import org.jboss.errai.enterprise.client.cdi.api.Conversational;
 @Conversational
 public class Player {
 
-	private int id = 0;
-	private String nick = "user";
-	private int gameId = 0;
+	private int id;
+	private String nick;
+	private int gameId;
 	
-	public Player() {}
+	public Player() {
+		this(0, "user", 0);
+	}
+	
+	public Player(String nick) {
+		this(0, nick, 0);
+	}
 	
 	public Player(int id, String nick) {
 		this(id, nick, 0);
@@ -21,6 +27,10 @@ public class Player {
 		this.id = id;
 		this.nick = nick;
 		this.gameId = gameId;
+	}
+	
+	public boolean hasRegistered() {
+		return id != 0;
 	}
 	
 	public boolean isPlaying() {

@@ -1,24 +1,25 @@
 package ErraiLearning.client.local;
 
 import javax.annotation.PostConstruct;
-import javax.enterprise.event.Event;
+import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 
 import org.jboss.errai.ioc.client.api.EntryPoint;
 import org.jboss.errai.ui.nav.client.local.Navigation;
 
-import ErraiLearning.client.shared.Invitation;
-import ErraiLearning.client.shared.LobbyUpdateRequest;
+import ErraiLearning.client.shared.Game;
 import ErraiLearning.client.shared.Player;
 
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.RootPanel;
 
 @EntryPoint
+@ApplicationScoped
 public class TTTClient {
 	
-	private String nickname;
-	private Player player;
+	private String nickname = null;
+	private Player player = null;
+	private Game game = null;
 	
 	@Inject	private Navigation nav;
 	
@@ -34,10 +35,14 @@ public class TTTClient {
 	}
 	
 	public TTTClient() {
-		
 		debugId = nextDebugId();
-		System.out.println(nickname+": TTTClient constructor called.");
+		System.out.println("Client"+debugId+": TTTClient constructor called.");
 		
+		instance = this;
+	}
+	
+	@PostConstruct
+	public void postSetup() {
 		String initialValue = "Foobar";
 		String msg = "Please select a username.";
 		nickname = Window.prompt(msg, initialValue);
@@ -47,12 +52,11 @@ public class TTTClient {
 
 		System.out.println(nickname+": User selected " + nickname + " as their nickname.");
 		
-		instance = this;
+		RootPanel.get().add(nav.getContentPanel());
 	}
 	
-	@PostConstruct
-	public void postSetup() {
-		RootPanel.get().add(nav.getContentPanel());
+	public boolean hasRegisteredPlayer() {
+		return player != null;
 	}
 	
 	public Player getPlayer() {
@@ -65,5 +69,13 @@ public class TTTClient {
 	
 	public String getNickname() {
 		return nickname;
+	}
+
+	public Game getGame() {
+		return game;
+	}
+
+	public void setGame(Game game) {
+		this.game = game;
 	}
 }

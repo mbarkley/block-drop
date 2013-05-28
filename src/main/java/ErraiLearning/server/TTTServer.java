@@ -60,10 +60,16 @@ public class TTTServer implements MessageCallback {
 	}
 	
 	public void registerPlayer(@Observes RegisterRequest request) {
-		int id = nextPlayerId();
-		Player player = new Player(id, request.getNickname(), 0);
+		Player player;
+		if (!request.hasRegistered()) {
+			player = request.getPlayer();
+			player.setId(nextPlayerId());
+		} else {
+			player = request.getPlayer();
+			player.setGameId(0);
+		}
 		
-		players.put(id, player);
+		players.put(player.getId(), player);
 		System.out.println("Server" + debugId + ": Player registered.");
 		
 		playerRegistration.fire(player);

@@ -5,19 +5,23 @@ import org.jboss.errai.common.client.api.annotations.Portable;
 @Portable
 public class RegisterRequest {
 
-	private String nickname = "";
+	private Player player = null;
 	
 	public RegisterRequest() {}
 	
-	public RegisterRequest(String nickname) {
-		this.setNickname(nickname);
+	public RegisterRequest(Player player) {
+		this.player = player;
 	}
 
 	public String getNickname() {
-		return nickname;
+		return player.getNick();
+	}
+	
+	public boolean hasRegistered() {
+		return player != null && player.hasRegistered();
 	}
 
-	public void setNickname(String nickname) {
-		this.nickname = nickname;
+	public Player getPlayer() {
+		return player;
 	}
 }

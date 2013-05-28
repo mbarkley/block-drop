@@ -19,6 +19,7 @@ import org.jboss.errai.ui.nav.client.local.DefaultPage;
 import org.jboss.errai.ui.nav.client.local.Page;
 import org.jboss.errai.ui.nav.client.local.TransitionTo;
 
+import ErraiLearning.client.shared.Game;
 import ErraiLearning.client.shared.Invitation;
 import ErraiLearning.client.shared.LobbyUpdate;
 import ErraiLearning.client.shared.LobbyUpdateRequest;
@@ -35,7 +36,6 @@ import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 
 @Page(role=DefaultPage.class)
-@ApplicationScoped
 public class Lobby extends Composite {
 	
 	private final class LobbyMessageCallback implements MessageCallback {
@@ -48,7 +48,10 @@ public class Lobby extends Composite {
 		}
 		
 		private void startGameCallback(Message message) {
+			TTTClient.getInstance().setGame(message.get(Game.class, MessageParts.Value));
+			System.out.println(TTTClient.getInstance().getNickname()+": Before board transition.");
 			boardTransition.go();
+			System.out.println(TTTClient.getInstance().getNickname()+": After board transition.");
 		}
 
 		private void invitationCallback(Message message) {
@@ -131,22 +134,27 @@ public class Lobby extends Composite {
 	}
 	
 	public void joinLobby() {
-		RegisterRequest request = new RegisterRequest(TTTClient.getInstance().getNickname());
+		Player player = TTTClient.getInstance().getPlayer() != null 
+				? TTTClient.getInstance().getPlayer(): new Player(TTTClient.getInstance().getNickname());
+		RegisterRequest request = new RegisterRequest(player);
 		registerRequest.fire(request);
 		System.out.println(TTTClient.getInstance().getNickname()+": LobbyRequest fired.");
 	}
 	
 	public void loadPlayer(@Observes Player player) {
-		TTTClient.getInstance().setPlayer(player);
 		System.out.println(TTTClient.getInstance().getNickname()+": Player object received.");
 		
-		// Hide join lobby button and display join game button.
+		// Hide join lobby button.
 		lobbyButton.setVisible(false);
 		
-		System.out.println(TTTClient.getInstance().getNickname()+": Subscribing to subject Client"+player.getId());
-		// Subscribe to server relay
-		messageBus.subscribe("Client"+player.getId(), new LobbyMessageCallback());
+		if (!TTTClient.getInstance().hasRegisteredPlayer()) {
+			System.out.println(TTTClient.getInstance().getNickname()+": Subscribing to subject Client"+player.getId());
+			// Subscribe to server relay
+			messageBus.subscribe("Client"+player.getId(), new LobbyMessageCallback());
+		}
 		
+		TTTClient.getInstance().setPlayer(player);
+
 		requestLobbyUpdate();
 	}
 }
