@@ -2,6 +2,9 @@ package ErraiLearning.client.shared;
 
 import org.jboss.errai.common.client.api.annotations.Portable;
 
+/*
+ * Moves indices are 0-indexed.
+ */
 @Portable
 public class Move {
 	

@@ -26,7 +26,7 @@ public class Game {
 	private int[][] board = new int[3][3];
 	
 	/* The id of the player who should be next to move. */
-	private int currentTurn;
+	private int currentTurn = 0;
 	
 	public Game() {}
 	
@@ -34,6 +34,7 @@ public class Game {
 		this.gameId = gameId;
 		this.player1 = player1;
 		this.player2 = player2;
+		this.currentTurn = player1.getId();
 	}
 	
 	/*
@@ -63,6 +64,10 @@ public class Game {
 	}
 
 	private boolean winningDiagonal(Move lastMove) {
+		// If the last move was not a corner or centre tile, then a winning diagonal is not possible.
+		// The sum the row and col indices of a move is even iff it is a corner or centre tile.
+		if ((lastMove.getRow() + lastMove.getCol()) % 2 == 0)
+			return false;
 
 		boolean res = true;
 		
@@ -99,6 +104,8 @@ public class Game {
 		Move newMove = new Move(gameId, playerId, row, col);
 		moveList.add(newMove);
 		
+		currentTurn = getFirstPlayer().getId() == playerId ? getSecondPlayer().getId() : getFirstPlayer().getId();
+		
 		return newMove;
 	}
 	
@@ -124,6 +131,10 @@ public class Game {
 	 */
 	public boolean validateMove(int playerId, int row, int col) {
 		return checkBounds(row, col) && board[row][col] == 0 && playerId == currentTurn;
+	}
+	
+	public boolean isPlayersTurn(Player player) {
+		return player != null && player.getId() == currentTurn;
 	}
 
 	public int getGameId() {
