@@ -20,9 +20,11 @@ import org.jboss.errai.common.client.protocols.MessageParts;
 
 import com.google.inject.Singleton;
 
+import ErraiLearning.client.shared.InvalidMoveException;
 import ErraiLearning.client.shared.Invitation;
 import ErraiLearning.client.shared.LobbyUpdate;
 import ErraiLearning.client.shared.LobbyUpdateRequest;
+import ErraiLearning.client.shared.Move;
 import ErraiLearning.client.shared.RegisterRequest;
 import ErraiLearning.client.shared.Player;
 import ErraiLearning.client.shared.Game;
@@ -103,9 +105,17 @@ public class TTTServer implements MessageCallback {
 		System.out.println("Server"+debugId+": Lobby list sent.");
 	}
 
+	/*
+	 * This method only exists so that TTTClient implements the MessageCallback interface.
+	 * All callbacks should be handled by an another annotated method.
+	 * (non-Javadoc)
+	 * @see org.jboss.errai.bus.client.api.messaging.MessageCallback#callback(org.jboss.errai.bus.client.api.messaging.Message)
+	 */
 	@Override
+	public void callback(Message message) {}
+
 	@Command("invitation-response")
-	public void callback(Message message) {
+	public void invitationRelayCallback(Message message) {
 		Invitation invitation = message.get(Invitation.class, MessageParts.Value);
 	
 		System.out.println("Server"+debugId+": Relaying invitation response from "+invitation.getInvitee().getNick());
@@ -113,6 +123,51 @@ public class TTTServer implements MessageCallback {
 		if (invitation.isAccepted()) {
 			startGame(invitation);
 		}
+	}
+	
+	@Command("publish-move")
+	public void publishMoveCallback(Message message) {
+		Move move = message.get(Move.class, MessageParts.Value);
+		
+		System.out.println("Server"+debugId+": Relaying move from Client"+move.getPlayerId()
+				+" to Game"+move.getGameId());
+	
+		/*
+		 * Attempt to publish move. If this is successful, the move will be validated so that move.isValidated()
+		 * will return true.
+		 * Either way, the move is sent back to both players.
+		 */
+		publishMove(move);
+		
+		MessageBuilder.createMessage()
+		.toSubject("Game"+move.getGameId())
+		.command("validate-move")
+		.withValue(move)
+		.noErrorHandling()
+		.sendNowWith(dispatcher);
+		
+	}
+
+	/*
+	 * Returns true iff move is successfully made in game.
+	 */
+	private boolean publishMove(Move move) {
+		Game game = games.get(move.getGameId());
+		
+		try {
+			if (game == null)
+				throw new NoExistingGameException();
+			
+			game.makeMove(move.getPlayerId(), move.getRow(), move.getCol());
+			
+		} catch (InvalidMoveException e) {
+			//TODO: Handle error where move is somehow invalid.
+		} catch (NoExistingGameException e) {
+			//TODO: Handle error where no game exists.
+		}
+		
+		move.setValidated(true);
+		return true;
 	}
 
 	public void startGame(Invitation invitation) {
@@ -123,21 +178,21 @@ public class TTTServer implements MessageCallback {
 		games.put(game.getGameId(), game);
 		
 		// Remove players from lobby
-		players.remove(game.getFirstPlayer().getId());
-		players.remove(game.getSecondPlayer().getId());
+		players.remove(game.getPlayerX().getId());
+		players.remove(game.getPlayerO().getId());
 		
 		lobbyUpdate.fire(new LobbyUpdate(players, games));
 		
 		// Message players to start game.
 		MessageBuilder.createMessage()
-		.toSubject("Client"+game.getFirstPlayer().getId())
+		.toSubject("Client"+game.getPlayerX().getId())
 		.command("start-game")
 		.withValue(game)
 		.noErrorHandling()
 		.sendNowWith(dispatcher);
 		
 		MessageBuilder.createMessage()
-		.toSubject("Client"+game.getSecondPlayer().getId())
+		.toSubject("Client"+game.getPlayerO().getId())
 		.command("start-game")
 		.withValue(game)
 		.noErrorHandling()
@@ -148,4 +203,5 @@ public class TTTServer implements MessageCallback {
 		
 		System.out.println("Server"+debugId+": Game initiated.");
 	}
+
 }

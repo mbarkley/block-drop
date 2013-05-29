@@ -57,7 +57,7 @@ public class Game {
 		for (int j = 1; j < 3; j++) {
 			// j is the offset to the right from the given move.
 			// Taking mod 3 of lastMove.getCOL()+j causes wraps around the edge of the tic-tac-toe board.
-			res = res && board[lastMove.getRow()][(lastMove.getCol()+j)%3] == lastMove.getPlayer();
+			res = res && board[lastMove.getRow()][(lastMove.getCol()+j)%3] == lastMove.getPlayerId();
 		}
 		
 		return res;
@@ -72,7 +72,7 @@ public class Game {
 		boolean res = true;
 		
 		for (int i = 1; i < 3; i++)
-			res = res && board[(lastMove.getRow()+i)%3][(lastMove.getCol()+i)%3] == lastMove.getPlayer();
+			res = res && board[(lastMove.getRow()+i)%3][(lastMove.getCol()+i)%3] == lastMove.getPlayerId();
 		
 		return res;
 	}
@@ -82,7 +82,7 @@ public class Game {
 		boolean res = true;
 		
 		for (int i = 1; i < 3; i++)
-			res = res && board[(lastMove.getRow()+i)%3][lastMove.getCol()] == lastMove.getPlayer();
+			res = res && board[(lastMove.getRow()+i)%3][lastMove.getCol()] == lastMove.getPlayerId();
 		
 		return res;
 	}
@@ -94,9 +94,9 @@ public class Game {
 	 * @param row The row of the move position (0-indexed).
 	 * @param col The col of the move position (0-indexed).
 	 */
-	public Move makeMove(int playerId, int row, int col) throws InvalidMoveException {
+	public void makeMove(int playerId, int row, int col) throws InvalidMoveException {
 
-		if (!validateMove(playerId, row, col))
+		if (!validMove(playerId, row, col))
 			throw new InvalidMoveException();
 		
 		board[row][col] = playerId;
@@ -104,9 +104,7 @@ public class Game {
 		Move newMove = new Move(gameId, playerId, row, col);
 		moveList.add(newMove);
 		
-		currentTurn = getFirstPlayer().getId() == playerId ? getSecondPlayer().getId() : getFirstPlayer().getId();
-		
-		return newMove;
+		currentTurn = getPlayerX().getId() == playerId ? getPlayerO().getId() : getPlayerX().getId();
 	}
 	
 	/*
@@ -129,8 +127,22 @@ public class Game {
 	 * 
 	 * @return True iff a move can be made to the spot at (row,col).
 	 */
-	public boolean validateMove(int playerId, int row, int col) {
-		return checkBounds(row, col) && board[row][col] == 0 && playerId == currentTurn;
+	public boolean validMove(int playerId, int row, int col) {
+		return  playerId == currentTurn && (getLastMove() == null || getLastMove().isValidated()) 
+				&& checkBounds(row, col) && board[row][col] == 0;
+	}
+	
+	public boolean validateLastMove(Move move) {
+		Move localMove = getLastMove();
+		
+		if (localMove.getGameId() == move.getGameId() && localMove.getRow() == move.getRow()
+				&& localMove.getCol() == move.getCol()) {
+			localMove.setValidated(true);
+			return true;
+		} else {
+			//TODO: Figure out what happened and do something about it.
+			return false;
+		}
 	}
 	
 	public boolean isPlayersTurn(Player player) {
@@ -141,12 +153,16 @@ public class Game {
 		return gameId;
 	}
 
-	public Player getFirstPlayer() {
+	public Player getPlayerX() {
 		return player1;
 	}
 
-	public Player getSecondPlayer() {
+	public Player getPlayerO() {
 		return player2;
+	}
+
+	public Move getLastMove() {
+		return moveList.isEmpty() ? null : moveList.get(moveList.size()-1);
 	}
 	
 }

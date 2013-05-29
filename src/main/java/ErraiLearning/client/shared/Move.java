@@ -8,9 +8,9 @@ import org.jboss.errai.common.client.api.annotations.Portable;
 @Portable
 public class Move {
 	
-	private int game;
+	private int gameId;
 	
-	private int player;
+	private int playerId;
 	
 	private int row;
 	
@@ -22,26 +22,26 @@ public class Move {
 
 	public Move(int game, int player, int row, int col) {
 
-		this.setGame(game);
-		this.setPlayer(player);
+		this.setGameId(game);
+		this.setPlayerId(player);
 		this.setRow(row);
 		this.setCol(col);
 	}
 
-	public int getGame() {
-		return game;
+	public int getGameId() {
+		return gameId;
 	}
 
-	public void setGame(int game) {
-		this.game = game;
+	public void setGameId(int game) {
+		this.gameId = game;
 	}
 
-	public int getPlayer() {
-		return player;
+	public int getPlayerId() {
+		return playerId;
 	}
 
-	public void setPlayer(int player) {
-		this.player = player;
+	public void setPlayerId(int player) {
+		this.playerId = player;
 	}
 
 	public int getRow() {
