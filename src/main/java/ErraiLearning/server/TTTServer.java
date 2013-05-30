@@ -8,7 +8,6 @@ import javax.enterprise.event.Event;
 import javax.enterprise.event.Observes;
 import javax.inject.Inject;
 
-import org.jboss.errai.bus.client.ErraiBus;
 import org.jboss.errai.bus.client.api.base.MessageBuilder;
 import org.jboss.errai.bus.client.api.messaging.Message;
 import org.jboss.errai.bus.client.api.messaging.MessageBus;
@@ -18,16 +17,14 @@ import org.jboss.errai.bus.server.annotations.Command;
 import org.jboss.errai.bus.server.annotations.Service;
 import org.jboss.errai.common.client.protocols.MessageParts;
 
-import com.google.inject.Singleton;
-
+import ErraiLearning.client.shared.Game;
 import ErraiLearning.client.shared.InvalidMoveException;
 import ErraiLearning.client.shared.Invitation;
 import ErraiLearning.client.shared.LobbyUpdate;
 import ErraiLearning.client.shared.LobbyUpdateRequest;
 import ErraiLearning.client.shared.Move;
-import ErraiLearning.client.shared.RegisterRequest;
 import ErraiLearning.client.shared.Player;
-import ErraiLearning.client.shared.Game;
+import ErraiLearning.client.shared.RegisterRequest;
 
 @ApplicationScoped
 @Service("Relay")
@@ -137,11 +134,18 @@ public class TTTServer implements MessageCallback {
 		 * will return true.
 		 * Either way, the move is sent back to both players.
 		 */
-		publishMove(move);
+		recordMove(move);
+		
+		String command;
+		// Check if game is over
+		if (move.isValidated() && games.get(move.getGameId()).isOver())
+			command = "game-over";
+		else
+			command = "validate-move";
 		
 		MessageBuilder.createMessage()
 		.toSubject("Game"+move.getGameId())
-		.command("validate-move")
+		.command(command)
 		.withValue(move)
 		.noErrorHandling()
 		.sendNowWith(dispatcher);
@@ -151,7 +155,7 @@ public class TTTServer implements MessageCallback {
 	/*
 	 * Returns true iff move is successfully made in game.
 	 */
-	private boolean publishMove(Move move) {
+	private void recordMove(Move move) {
 		Game game = games.get(move.getGameId());
 		
 		try {
@@ -167,7 +171,7 @@ public class TTTServer implements MessageCallback {
 		}
 		
 		move.setValidated(true);
-		return true;
+		game.validateLastMove(move);
 	}
 
 	public void startGame(Invitation invitation) {

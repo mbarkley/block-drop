@@ -18,6 +18,7 @@ import ErraiLearning.client.shared.Player;
 
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.SimplePanel;
@@ -32,6 +33,13 @@ public class Board extends Composite {
 		public void callback(Message message) {
 			if ("validate-move".equals(message.getCommandType())) {
 				validateMoveCallback(message);
+			} else if ("game-over".equals(message.getCommandType())) {
+				validateMoveCallback(message);
+				if (game.isOver())
+					endGame();
+				else {
+					//TODO: Error handling. State difference between client and server.
+				}
 			}
 		}
 
@@ -132,6 +140,18 @@ public class Board extends Composite {
 		initWidget(boardPanel);
 	}
 	
+	public void endGame() {
+		String message;
+		if (game.isDraw())
+			message = "Game Over: Draw.";
+		else if (game.getWinnerId() == TTTClient.getInstance().getPlayer().getId())
+			message = "Game Over: You win!";
+		else
+			message = "Game Over: You lose.";
+		
+		Window.alert(message);
+	}
+
 	@PostConstruct
 	public void setupBoard() {
 		// Subscribe to game channel, which will be used by server and clients to communicate moves.

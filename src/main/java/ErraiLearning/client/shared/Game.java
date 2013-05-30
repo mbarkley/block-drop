@@ -66,7 +66,7 @@ public class Game {
 	private boolean winningDiagonal(Move lastMove) {
 		// If the last move was not a corner or centre tile, then a winning diagonal is not possible.
 		// The sum the row and col indices of a move is even iff it is a corner or centre tile.
-		if ((lastMove.getRow() + lastMove.getCol()) % 2 == 0)
+		if ((lastMove.getRow() + lastMove.getCol()) % 2 != 0)
 			return false;
 
 		boolean res = true;
@@ -164,5 +164,19 @@ public class Game {
 	public Move getLastMove() {
 		return moveList.isEmpty() ? null : moveList.get(moveList.size()-1);
 	}
+
+	public boolean isOver() {
+		return moveList.size() == 9 || winningMove(getLastMove());
+	}
 	
+	public boolean isDraw() {
+		return moveList.size() == 9 && !winningMove(getLastMove());
+	}
+	
+	/*
+	 * Returns 0 if no winner.
+	 */
+	public int getWinnerId() {
+		return winningMove(getLastMove()) ? getLastMove().getPlayerId() : 0;
+	}
 }
