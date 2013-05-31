@@ -1,7 +1,7 @@
 package ErraiLearning.client.shared;
 
-public class InvalidMoveException extends Exception {
-	
-	public InvalidMoveException() { super(); }
-
-}
+/*
+ * An exception used by the Game class when a move that a player makes is invalid
+ * based on the rules or internal state of the game.
+ */
+public class InvalidMoveException extends Exception {}
