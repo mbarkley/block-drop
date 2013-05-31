@@ -1,0 +1,28 @@
+body {
+    background-color: #ffffff;
+    color: black;
+    font-family: Arial, sans-serif;
+    font-size: small;
+    margin: 8px;
+}
+
+.tile {
+	width: 200px;
+	height: 200px;
+	border: 1px solid white;
+}
+
+.unused-tile {
+	background-color: black;
+	color: black;
+}
+
+.x-tile {
+	background-color: red;
+	color: red;
+}
+
+.o-tile {
+	background-color: blue;
+	color: blue;
+}
