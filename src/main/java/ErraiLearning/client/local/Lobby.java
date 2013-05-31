@@ -3,6 +3,7 @@ package ErraiLearning.client.local;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.annotation.PostConstruct;
 import javax.enterprise.event.Event;
 import javax.enterprise.event.Observes;
 import javax.inject.Inject;
@@ -89,17 +90,24 @@ public class Lobby extends Composite {
 	
 	public Lobby() {
 		initWidget(vPanel);
-		
-		buttonPanel.add(lobbyButton);
-		vPanel.add(buttonPanel);
+	}
+	
+	@PostConstruct
+	public void postConstruct() {
 		vPanel.add(lobbyPanel);
 		
-		lobbyButton.addClickHandler(new ClickHandler() {
-			@Override
-			public void onClick(ClickEvent event) {
-				joinLobby();
-			}
-		});
+		if (TTTClient.getInstance().getPlayer() == null) {
+			buttonPanel.add(lobbyButton);
+			vPanel.add(buttonPanel);
+			lobbyButton.addClickHandler(new ClickHandler() {
+				@Override
+				public void onClick(ClickEvent event) {
+					joinLobby();
+				}
+			});
+		} else {
+			joinLobby();
+		}
 	}
 	
 	public void requestLobbyUpdate() {
