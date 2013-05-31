@@ -1,5 +1,6 @@
 package ErraiLearning.server;
 
-public class NoExistingGameException extends Exception {
-
-}
+/*
+ * An exception thrown if a move is sent to the server with an unrecognized game id.
+ */
+public class NoExistingGameException extends Exception {}
