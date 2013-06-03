@@ -96,7 +96,7 @@ public class Board extends Composite {
 	}
 
 	/*
-	 * A tic-tac-toe tile.
+	 * A tic-tac-toe tile click event handler.
 	 */
 	public class TileClickEvent implements ClickHandler {
 
