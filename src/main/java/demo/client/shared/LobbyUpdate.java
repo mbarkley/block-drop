@@ -4,7 +4,7 @@ import java.util.Map;
 
 import org.jboss.errai.common.client.api.annotations.Portable;
 
-import ErraiLearning.client.shared.Player;
+import demo.client.shared.Player;
 
 /*
  * A portable JavaBean for transmitting lists of players in lobby and games in progress.

@@ -3,8 +3,6 @@ package demo.client.shared;
 import org.jboss.errai.common.client.api.annotations.Portable;
 import org.jboss.errai.enterprise.client.cdi.api.Conversational;
 
-import ErraiLearning.client.shared.Player;
-
 /*
  * A portable JavaBean class for storing and transmitting information identifying
  * players of a Game.
