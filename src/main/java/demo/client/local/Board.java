@@ -1,4 +1,4 @@
-package ErraiLearning.client.local;
+package demo.client.local;
 
 import org.jboss.errai.ui.nav.client.local.DefaultPage;
 import org.jboss.errai.ui.nav.client.local.Page;

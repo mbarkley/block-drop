@@ -1,4 +1,4 @@
-package ErraiLearning.server;
+package demo.server;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -17,12 +17,13 @@ import org.jboss.errai.bus.server.annotations.Command;
 import org.jboss.errai.bus.server.annotations.Service;
 import org.jboss.errai.common.client.protocols.MessageParts;
 
-import ErraiLearning.client.shared.GameRoom;
-import ErraiLearning.client.shared.Invitation;
-import ErraiLearning.client.shared.LobbyUpdate;
-import ErraiLearning.client.shared.LobbyUpdateRequest;
-import ErraiLearning.client.shared.Player;
-import ErraiLearning.client.shared.RegisterRequest;
+import demo.client.shared.GameRoom;
+import demo.client.shared.Invitation;
+import demo.client.shared.LobbyUpdate;
+import demo.client.shared.LobbyUpdateRequest;
+import demo.client.shared.Player;
+import demo.client.shared.RegisterRequest;
+
 
 /*
  * A class for facilitating games between clients over a network.

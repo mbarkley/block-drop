@@ -1,4 +1,4 @@
-package ErraiLearning.client.local;
+package demo.client.local;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -19,12 +19,7 @@ import org.jboss.errai.ui.nav.client.local.DefaultPage;
 import org.jboss.errai.ui.nav.client.local.Page;
 import org.jboss.errai.ui.nav.client.local.TransitionTo;
 
-import ErraiLearning.client.shared.GameRoom;
-import ErraiLearning.client.shared.Invitation;
-import ErraiLearning.client.shared.LobbyUpdate;
-import ErraiLearning.client.shared.LobbyUpdateRequest;
-import ErraiLearning.client.shared.Player;
-import ErraiLearning.client.shared.RegisterRequest;
+import ErraiLearning.client.local.Board;
 
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
@@ -34,6 +29,13 @@ import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
+
+import demo.client.shared.GameRoom;
+import demo.client.shared.Invitation;
+import demo.client.shared.LobbyUpdate;
+import demo.client.shared.LobbyUpdateRequest;
+import demo.client.shared.Player;
+import demo.client.shared.RegisterRequest;
 
 /*
  * A class for the UI for a tic-tac-toe Lobby.

@@ -1,6 +1,8 @@
-package ErraiLearning.client.shared;
+package demo.client.shared;
 
 import org.jboss.errai.common.client.api.annotations.Portable;
+
+import ErraiLearning.client.shared.Player;
 
 /*
  * A portable JavaBean for transmitting invitations to games between clients.

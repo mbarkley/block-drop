@@ -1,4 +1,4 @@
-package ErraiLearning.client.local;
+package demo.client.local;
 
 import javax.annotation.PostConstruct;
 import javax.enterprise.context.ApplicationScoped;
@@ -7,11 +7,12 @@ import javax.inject.Inject;
 import org.jboss.errai.ioc.client.api.EntryPoint;
 import org.jboss.errai.ui.nav.client.local.Navigation;
 
-import ErraiLearning.client.shared.GameRoom;
-import ErraiLearning.client.shared.Player;
 
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.RootPanel;
+
+import demo.client.shared.GameRoom;
+import demo.client.shared.Player;
 
 /*
  * A container class for a game client.
@@ -74,6 +75,7 @@ public class Client {
 		// For debugging.
 		System.out.println(nickname+": User selected " + nickname + " as their nickname.");
 		
+		// Add nav to root panel.
 		RootPanel.get().add(nav.getContentPanel());
 	}
 	
