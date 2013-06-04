@@ -17,17 +17,15 @@ import org.jboss.errai.bus.server.annotations.Command;
 import org.jboss.errai.bus.server.annotations.Service;
 import org.jboss.errai.common.client.protocols.MessageParts;
 
-import ErraiLearning.client.shared.Game;
-import ErraiLearning.client.shared.InvalidMoveException;
+import ErraiLearning.client.shared.GameRoom;
 import ErraiLearning.client.shared.Invitation;
 import ErraiLearning.client.shared.LobbyUpdate;
 import ErraiLearning.client.shared.LobbyUpdateRequest;
-import ErraiLearning.client.shared.Move;
 import ErraiLearning.client.shared.Player;
 import ErraiLearning.client.shared.RegisterRequest;
 
 /*
- * A class for facilitating tic-tac-toe games between clients over a network.
+ * A class for facilitating games between clients over a network.
  * 
  * This class responds to fires events to and catches events from clients, maintains
  * the list of games and players in the lobby, and also uses a message bus to act as
@@ -35,10 +33,10 @@ import ErraiLearning.client.shared.RegisterRequest;
  */
 @ApplicationScoped
 @Service("Relay")
-public class TTTServer implements MessageCallback {
+public class Server implements MessageCallback {
 
 	/* A map of game ids to games that are currently in progress. */
-	private Map<Integer,Game> games = new HashMap<Integer,Game>();
+	private Map<Integer,GameRoom> games = new HashMap<Integer,GameRoom>();
 	/* A map of player ids to players that are currently in the lobby. */
 	private Map<Integer,Player> players = new HashMap<Integer,Player>();
 	/* This value is incremented to assign unique player ids. */
@@ -63,10 +61,10 @@ public class TTTServer implements MessageCallback {
 	private static synchronized int nextDebugId() { return curDebugId++; }
 	
 	/*
-	 * Create a TTTServer for hosting the lobby and tic-tac-toe games. This object
+	 * Create a Server for hosting the lobby and tic-tac-toe games. This object
 	 * is meant to be used as a singleton.
 	 */
-	public TTTServer() {
+	public Server() {
 		debugId = nextDebugId();
 		System.out.println("Server" + debugId + ": TTTServer object is constructed.");
 	}
@@ -177,110 +175,7 @@ public class TTTServer implements MessageCallback {
 		System.out.println("Server"+debugId+": Relaying invitation response from "+invitation.getInvitee().getNick());
 		
 		if (invitation.isAccepted()) {
-			startGame(invitation);
+			// Start game
 		}
-	}
-	
-	/*
-	 * Validate a move submitted from a user. If the move is valid, publish it and transmit the validated
-	 * move to both the clients. If the move is invalid, transmit the unvalidated move back to the clients.
-	 * 
-	 * This method should only be invoked by the Errai Framework.
-	 */
-	@Command("publish-move")
-	public void publishMoveCallback(Message message) {
-		Move move = message.get(Move.class, MessageParts.Value);
-		
-		// For debugging.
-		System.out.println("Server"+debugId+": Relaying move from Client"+move.getPlayerId()
-				+" to Game"+move.getGameId());
-	
-		// Postcondition: move.isValidated() == true iff the server accepts the move.
-		recordMove(move);
-		
-		String command;
-		// Check if game is over
-		if (move.isValidated() && games.get(move.getGameId()).isOver())
-			command = "game-over";
-		else
-			command = "validate-move";
-		
-		// Send the message back to both players.
-		MessageBuilder.createMessage()
-		.toSubject("Game"+move.getGameId())
-		.command(command)
-		.withValue(move)
-		.noErrorHandling()
-		.sendNowWith(dispatcher);
-	}
-
-	/*
-	 * Attempt to make move in Game object. If this is successful, the move will be validated so that
-	 * move.isValidated() will return true and the game to which the move belongs will reflect the
-	 * completion of this move.
-	 */
-	private void recordMove(Move move) {
-		Game game = games.get(move.getGameId());
-		
-		try {
-			if (game == null)
-				throw new NoExistingGameException();
-			
-			game.makeMove(move.getPlayerId(), move.getRow(), move.getCol());
-			
-		} catch (InvalidMoveException e) {
-			//TODO: Handle error where move is somehow invalid.
-			return;
-		} catch (NoExistingGameException e) {
-			//TODO: Handle error where no game exists.
-			return;
-		}
-		
-		// Since there were no errors, finish validating the move.
-		move.setValidated(true);
-		game.validateLastMove(move);
-	}
-
-	/*
-	 * Start a game of tic-tac-toe between two players referenced in invitation.
-	 * 
-	 * @param invitation An accepted invitation between two players in this server's lobby.
-	 */
-	public void startGame(Invitation invitation) {
-		// For debugging.
-		System.out.println("Server"+debugId+": Begin initiating game.");
-		
-		Game game = new Game(nextGameId(), invitation.getInviter(), invitation.getInvitee());
-		
-		// Add game to server game list
-		games.put(game.getGameId(), game);
-		
-		// Remove players from lobby
-		players.remove(game.getPlayerX().getId());
-		players.remove(game.getPlayerO().getId());
-		
-		// Update lobby for other players.
-		lobbyUpdate.fire(new LobbyUpdate(players, games));
-		
-		// Message players to start game.
-		MessageBuilder.createMessage()
-		.toSubject("Client"+game.getPlayerX().getId())
-		.command("start-game")
-		.withValue(game)
-		.noErrorHandling()
-		.sendNowWith(dispatcher);
-		
-		MessageBuilder.createMessage()
-		.toSubject("Client"+game.getPlayerO().getId())
-		.command("start-game")
-		.withValue(game)
-		.noErrorHandling()
-		.sendNowWith(dispatcher);
-		
-		// Subscribe to service that clients of this game will use to broadcast moves.
-		messageBus.subscribe("Game"+game.getGameId(), this);
-		
-		// For debugging.
-		System.out.println("Server"+debugId+": Game initiated.");
 	}
 }

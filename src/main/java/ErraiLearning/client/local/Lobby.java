@@ -19,7 +19,7 @@ import org.jboss.errai.ui.nav.client.local.DefaultPage;
 import org.jboss.errai.ui.nav.client.local.Page;
 import org.jboss.errai.ui.nav.client.local.TransitionTo;
 
-import ErraiLearning.client.shared.Game;
+import ErraiLearning.client.shared.GameRoom;
 import ErraiLearning.client.shared.Invitation;
 import ErraiLearning.client.shared.LobbyUpdate;
 import ErraiLearning.client.shared.LobbyUpdateRequest;
@@ -38,7 +38,8 @@ import com.google.gwt.user.client.ui.Widget;
 /*
  * A class for the UI for a tic-tac-toe Lobby.
  */
-@Page(role=DefaultPage.class)
+//@Page(role=DefaultPage.class)
+@Page
 public class Lobby extends Composite {
 	
 	/*
@@ -61,12 +62,12 @@ public class Lobby extends Composite {
 		 * Start a game with another player after a successfully accepted invitation.
 		 */
 		private void startGameCallback(Message message) {
-			TTTClient.getInstance().setGame(message.get(Game.class, MessageParts.Value));
+			Client.getInstance().setGame(message.get(GameRoom.class, MessageParts.Value));
 			// For debugging.
-			System.out.println(TTTClient.getInstance().getNickname()+": Before board transition.");
+			System.out.println(Client.getInstance().getNickname()+": Before board transition.");
 			boardTransition.go();
 			// For debugging.
-			System.out.println(TTTClient.getInstance().getNickname()+": After board transition.");
+			System.out.println(Client.getInstance().getNickname()+": After board transition.");
 		}
 
 		/*
@@ -132,7 +133,7 @@ public class Lobby extends Composite {
 		vPanel.add(lobbyPanel);
 		
 		// If this user has not been to the lobby previously, display a button to join the lobby.
-		if (TTTClient.getInstance().getPlayer() == null) {
+		if (Client.getInstance().getPlayer() == null) {
 			buttonPanel.add(lobbyButton);
 			vPanel.add(buttonPanel);
 			lobbyButton.addClickHandler(new ClickHandler() {
@@ -151,7 +152,7 @@ public class Lobby extends Composite {
 	 */
 	public void requestLobbyUpdate() {
 		lobbyUpdateRequest.fire(new LobbyUpdateRequest());
-		System.out.println(TTTClient.getInstance().getNickname()+": LobbyUpdateRequest fired.");
+		System.out.println(Client.getInstance().getNickname()+": LobbyUpdateRequest fired.");
 	}
 	
 	/*
@@ -172,13 +173,13 @@ public class Lobby extends Composite {
 			lobbyPanel.add(playerButton);
 			
 			// Don't display this user in the list.
-			if (p.equals(TTTClient.getInstance().getPlayer()))
+			if (p.equals(Client.getInstance().getPlayer()))
 				playerButton.setVisible(false);
 			else
 				playerButton.addClickHandler(new ClickHandler() {
 					@Override
 					public void onClick(ClickEvent event) {
-						Player inviter = TTTClient.getInstance().getPlayer();
+						Player inviter = Client.getInstance().getPlayer();
 						Player invitee = lobbyList.get(lobbyPanel.getWidgetIndex((Widget) event.getSource()));
 						gameInvitation.fire(new Invitation(inviter, invitee));
 					}
@@ -191,12 +192,12 @@ public class Lobby extends Composite {
 	 */
 	public void joinLobby() {
 		// If the user is joinging for the first time, make a new player object.
-		Player player = TTTClient.getInstance().getPlayer() != null 
-				? TTTClient.getInstance().getPlayer(): new Player(TTTClient.getInstance().getNickname());
+		Player player = Client.getInstance().getPlayer() != null 
+				? Client.getInstance().getPlayer(): new Player(Client.getInstance().getNickname());
 		RegisterRequest request = new RegisterRequest(player);
 		registerRequest.fire(request);
 		// For debugging.
-		System.out.println(TTTClient.getInstance().getNickname()+": LobbyRequest fired.");
+		System.out.println(Client.getInstance().getNickname()+": LobbyRequest fired.");
 	}
 	
 	/*
@@ -204,20 +205,20 @@ public class Lobby extends Composite {
 	 */
 	public void loadPlayer(@Observes Player player) {
 		// For debugging.
-		System.out.println(TTTClient.getInstance().getNickname()+": Player object received.");
+		System.out.println(Client.getInstance().getNickname()+": Player object received.");
 		
 		// Hide join lobby button.
 		lobbyButton.setVisible(false);
 		
 		// If this user has not yet been registered, subscribe to server relay
-		if (!TTTClient.getInstance().hasRegisteredPlayer()) {
+		if (!Client.getInstance().hasRegisteredPlayer()) {
 			// For debugging.
-			System.out.println(TTTClient.getInstance().getNickname()+": Subscribing to subject Client"+player.getId());
+			System.out.println(Client.getInstance().getNickname()+": Subscribing to subject Client"+player.getId());
 
 			messageBus.subscribe("Client"+player.getId(), new LobbyMessageCallback());
 		}
 		
-		TTTClient.getInstance().setPlayer(player);
+		Client.getInstance().setPlayer(player);
 
 		requestLobbyUpdate();
 	}

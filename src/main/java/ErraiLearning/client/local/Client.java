@@ -7,25 +7,25 @@ import javax.inject.Inject;
 import org.jboss.errai.ioc.client.api.EntryPoint;
 import org.jboss.errai.ui.nav.client.local.Navigation;
 
-import ErraiLearning.client.shared.Game;
+import ErraiLearning.client.shared.GameRoom;
 import ErraiLearning.client.shared.Player;
 
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.RootPanel;
 
 /*
- * A container class for a tic-tac-toe client.
+ * A container class for a game client.
  */
 @EntryPoint
 @ApplicationScoped
-public class TTTClient {
+public class Client {
 	
 	/* The user's chosen nickname. */
 	private String nickname = null;
 	/* The player object associated with this user. */
 	private Player player = null;
 	/* The game this user is currently in (or null if not in a game). */
-	private Game game = null;
+	private GameRoom game = null;
 	
 	/* For the Errai NavigationUI. */
 	@Inject	private Navigation nav;
@@ -38,20 +38,20 @@ public class TTTClient {
 	private static synchronized int nextDebugId() { return curDebugId++; }
 	
 	/* For accessing the singleton instance of this object. */
-	private static TTTClient instance = null;
+	private static Client instance = null;
 	
 	/*
 	 * Get the singleton instance of this client.
 	 */
-	public static TTTClient getInstance() {
+	public static Client getInstance() {
 		return instance;
 	}
 	
 	/*
-	 * Create a TTTClient object. TTTClient should be a singleton, but this is not enforced.
+	 * Create a Client object. Client should be a singleton, but this is not enforced.
 	 * This constructor should only be called once.
 	 */
-	public TTTClient() {
+	public Client() {
 		// For debugging.
 		debugId = nextDebugId();
 		System.out.println("Client"+debugId+": TTTClient constructor called.");
@@ -118,7 +118,7 @@ public class TTTClient {
 	 * 
 	 * @return The game object representing the game this client is currently in.
 	 */
-	public Game getGame() {
+	public GameRoom getGame() {
 		return game;
 	}
 
@@ -127,7 +127,7 @@ public class TTTClient {
 	 * 
 	 * @param game The game object representing the game this client is currently in.
 	 */
-	public void setGame(Game game) {
+	public void setGame(GameRoom game) {
 		this.game = game;
 	}
 }

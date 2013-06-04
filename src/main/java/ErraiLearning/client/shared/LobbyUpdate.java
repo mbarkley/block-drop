@@ -13,7 +13,7 @@ public class LobbyUpdate {
 	/* A map player ids to Player objects (of players in lobby). */
 	private Map<Integer,Player> players = null;
 	/* A map of game ids to Game objects (of games in progress). */
-	private Map<Integer,Game> games = null;
+	private Map<Integer,GameRoom> games = null;
 	
 	/*
 	 * A default no-arg constructor for automated bean construction. Users should prefer
@@ -28,7 +28,7 @@ public class LobbyUpdate {
 	 * @param players A map of player ids to players, for all the players in the lobby.
 	 * @param games A map of game ids to games, for all the currently in progress games.
 	 */
-	public LobbyUpdate(Map<Integer, Player> players, Map<Integer, Game> games) {
+	public LobbyUpdate(Map<Integer, Player> players, Map<Integer, GameRoom> games) {
 		this.players = players;
 		this.games = games;
 	}
@@ -56,7 +56,7 @@ public class LobbyUpdate {
 	 * 
 	 * @param games A map of game ids to games of the games currently in progress.
 	 */
-	public void setGames(Map<Integer,Game> games) {
+	public void setGames(Map<Integer,GameRoom> games) {
 		this.games = games;
 	}
 
@@ -65,7 +65,7 @@ public class LobbyUpdate {
 	 * 
 	 * @return Return a map of game ids to games of the games currently in progress.
 	 */
-	public Map<Integer,Game> getGames() {
+	public Map<Integer,GameRoom> getGames() {
 		return games;
 	}
 }
