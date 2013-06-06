@@ -19,7 +19,7 @@ import org.jboss.errai.ui.nav.client.local.DefaultPage;
 import org.jboss.errai.ui.nav.client.local.Page;
 import org.jboss.errai.ui.nav.client.local.TransitionTo;
 
-import demo.client.local.Board;
+import demo.client.local.BoardPage;
 
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
@@ -96,7 +96,7 @@ public class Lobby extends Composite {
 	}
 	
 	/* For the Errai NavigationUI. */
-	@Inject private TransitionTo<Board> boardTransition;
+	@Inject private TransitionTo<BoardPage> boardTransition;
 	/* For requesting lobby updates from the server. */
 	@Inject	private Event<LobbyUpdateRequest> lobbyUpdateRequest;
 	/* For registering this client with the server. */

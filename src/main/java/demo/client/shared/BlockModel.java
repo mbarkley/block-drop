@@ -58,6 +58,8 @@ public class BlockModel implements Iterable<Integer[]> {
 	}
 	
 	public static final int BASIC_CODE = 1;
+	
+	private static int idGen = 1;
 
 	/* 
 	 * An array of pairs. Represents the offset positions of each tile in this block
@@ -66,6 +68,8 @@ public class BlockModel implements Iterable<Integer[]> {
 	private int[][] offsets;
 	/* The main index of this piece on the Block Drop board. */
 	private int[] mainPosition;
+	/* A unique id for identifying this block. */
+	private int id;
 	
 	/*
 	 * Create a basic BlockModel consisting of one square.
@@ -73,14 +77,28 @@ public class BlockModel implements Iterable<Integer[]> {
 	 * @param rowNum The number of rows in the board (used to determine starting position).
 	 * @param colNum The number of columns in the board (used to determine starting position).
 	 */
-	public BlockModel(int rowNum, int colNum) {
+	public BlockModel() {
 		// Creates array {{0,0}}, so single square with no offset.
 		offsets = new int[1][2];
 		
-		// Start piece above board.
-		mainPosition = new int[] {rowNum+1, colNum/2};
+		// Start piece above board
+		mainPosition = new int[] {-1, BoardModel.COL_NUM/2};
+		
+		id = generateId();
 	}
 	
+	public boolean equals(Object other) {
+		return other.getClass() == BlockModel.class && this.getId() == ((BlockModel) other).getId();
+	}
+	
+	public int getId() {
+		return id;
+	}
+
+	private static int generateId() {
+		return idGen++;
+	}
+
 	/*
 	 * Get the integer representing this type of block on the board.
 	 * 
@@ -111,7 +129,7 @@ public class BlockModel implements Iterable<Integer[]> {
 	 * Lower position of block by 1 square.
 	 */
 	public void lowerPosition() {
-		setMainPosition(mainPosition[0]-1, mainPosition[1]);
+		setMainPosition(mainPosition[0]+1, mainPosition[1]);
 	}
 	
 	/*

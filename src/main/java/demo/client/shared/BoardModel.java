@@ -36,10 +36,7 @@ public class BoardModel {
 		 * 
 		 * @throws Exception If the index is out of range.
 		 */
-		public int getSquare(int index) throws Exception {
-			// Make sure index is valid.
-			checkIndex(index);
-			
+		public int getSquare(int index) {
 			return squares[index];
 		}
 		
@@ -51,10 +48,7 @@ public class BoardModel {
 		 * 
 		 * @throws Exception If the index is out of range.
 		 */
-		public void setSquare(int index, int value) throws Exception {
-			// Make sure index is valid.
-			checkIndex(index);
-			
+		public void setSquare(int index, int value) {
 			squares[index] = value;
 		}
 		
@@ -83,9 +77,9 @@ public class BoardModel {
 	public static final int TILE = 1;
 	
 	/* The number of rows in this board. */
-	public final int ROW_NUM;
+	public final static int ROW_NUM = 15;
 	/* The number of columns in this board. */
-	public final int COL_NUM;
+	public final static int COL_NUM = 10;
 	
 	/* The rows of the board. Lower indices represent lower rows. */
 	private Row[] board;
@@ -103,10 +97,7 @@ public class BoardModel {
 	 * @param width The number of squares in the width of the board.
 	 * @param height The number of squares in the height of the board.
 	 */
-	public BoardModel(int width, int height) {
-		ROW_NUM = height;
-		COL_NUM = width;
-		
+	public BoardModel() {
 		board = new Row[ROW_NUM];
 		initBoard();
 	}
@@ -126,7 +117,7 @@ public class BoardModel {
 	
 	private BlockModel generateNextBlock() {
 		//TODO: Add some sort of random generator for different kinds of blocks.
-		return new BlockModel(ROW_NUM, COL_NUM);
+		return new BlockModel();
 	}
 
 	/*
@@ -134,11 +125,11 @@ public class BoardModel {
 	 * the active blocks position to drop, and handling when an active block settles at
 	 * the bottom of the screen.
 	 */
-	public void incrementBoard() throws Exception {
+	public void incrementBoard() throws BlockOverflow {
 		// Check if we can move active block down.
 		boolean isMovable = true;
 		for (Integer[] squarePos : activeBlock) {
-			if (getSquare(squarePos) != 0) {
+			if (squarePos[0] == ROW_NUM-1 || getSquareBelow(squarePos) != 0) {
 				isMovable = false;
 				break;
 			}
@@ -156,25 +147,25 @@ public class BoardModel {
 				nextBlock = generateNextBlock();
 			} catch (BlockOverflow e) {
 				//TODO: Handle end of game? Or possibly restart.
+				throw e;
 			}
 		}
+	}
+
+	private int getSquareBelow(Integer[] squarePos) {
+		return board[squarePos[0]+1].getSquare(squarePos[1]);
 	}
 
 	/*
 	 * Write the current active block to the board in its current position.
 	 */
-	private void writeActiveBlock() throws Exception {
+	private void writeActiveBlock() throws BlockOverflow {
 		for (Integer[] squarePos : activeBlock) {
-			try {
+			// If the index was out of bounds above the board, this player has lost.
+			if (squarePos[0] < 0) {
+				throw new BlockOverflow();
+			} else {
 				setSquare(squarePos, activeBlock.getCode());
-			} catch (Exception e) {
-				// If the index was out of bounds above the board, this player has lost.
-				if (squarePos[0] >= ROW_NUM) {
-					throw new BlockOverflow();
-				// Otherwise just throw the original exception.
-				} else {
-					throw e;
-				}
 			}
 		}
 	}
@@ -185,29 +176,20 @@ public class BoardModel {
 	 * @param squarePos A length two array of form {rowIndex, colIndex} of the square to set.
 	 * @param value The value to be assigned to the square.
 	 */
-	private void setSquare(Integer[] squarePos, int value) throws Exception {
-		checkIndices(squarePos);
+	private void setSquare(Integer[] squarePos, int value) {
 		board[squarePos[0]].setSquare(squarePos[1], value);
 	}
 
 	/*
-	 * Get the value of a square on the board.
+	 * Get the value of a square on the board (or 0 if the position is above the board).
 	 * 
 	 * @param squarePos An array of the format {rowIndex, columnIndex}, giving the position of a square.
 	 */
-	private int getSquare(Integer[] squarePos) throws Exception {
-		checkIndices(squarePos);
-		
-		return board[squarePos[0]].getSquare(squarePos[1]);
+	private int getSquare(Integer[] squarePos) {
+		return squarePos[0] >= 0 ? board[squarePos[0]].getSquare(squarePos[1]) : 0;
 	}
-	
-	/*
-	 * Check if indices are valid and throw Exception if not.
-	 */
-	private void checkIndices(Integer[] squarePos) throws Exception {
-		if (squarePos.length != 2)
-			throw new Exception("ERROR: Given position array was of length "+squarePos.length);
-		if (squarePos[0] < 0 || squarePos[0] > ROW_NUM || squarePos[1] < 0 || squarePos[1] > COL_NUM)
-			throw new Exception("ERROR: ("+squarePos[0]+","+squarePos[1]+") is not a valid index.");
+
+	public BlockModel getActiveBlock() {
+		return activeBlock;
 	}
 }
