@@ -8,13 +8,20 @@ body {
 .inline-block {
 	display: inline-block;
 }
+.no-margin {
+	margin: 0px;
+}
+.no-padding {
+	padding: 0px;
+}
+.no-border {
+	border: none;
+}
 /* GENERIC STYLES END */
 
 /* BOARD.HTML STYLES BEGIN */
 .display-wrapper {
-	padding: 0px;
-	margin: 0px;
-	border: none;
+	min-width: 1210px;
 }
 .panel {
 	height: 900px;

@@ -5,7 +5,7 @@ import java.util.Iterator;
 /*
  * The base class for a falling block in a Block Drop BoardModel.
  */
-public class BlockModel implements Iterable<Integer[]> {
+public class BlockModel {
 	
 	/*
 	 * For iterating through the positions of squares in a single block.
@@ -15,13 +15,18 @@ public class BlockModel implements Iterable<Integer[]> {
 		/* Index of next position to return. */
 		private int next;
 		
+		private int row;
+		private int col;
+		
 		/*
 		 * Create a SquareIterator.
 		 * 
 		 * @param offsets The offsets of each square to iterate through.
 		 */
-		public SquareIterator() {
+		public SquareIterator(int row, int col) {
 			super();
+			this.row = row;
+			this.col = col;
 			next = 0;
 		}
 		
@@ -41,8 +46,8 @@ public class BlockModel implements Iterable<Integer[]> {
 		@Override
 		public Integer[] next() {
 			Integer[] res = new Integer[] {
-					new Integer(offsets[next][0] + mainPosition[0]),
-					new Integer(offsets[next][1] + mainPosition[1])};
+					new Integer(offsets[next][0] + row),
+					new Integer(offsets[next][1] + col)};
 			next++;
 			return res;
 		}
@@ -66,8 +71,6 @@ public class BlockModel implements Iterable<Integer[]> {
 	 * from the central position.
 	 */
 	private int[][] offsets;
-	/* The main index of this piece on the Block Drop board. */
-	private int[] mainPosition;
 	/* A unique id for identifying this block. */
 	private int id;
 	
@@ -80,9 +83,6 @@ public class BlockModel implements Iterable<Integer[]> {
 	public BlockModel() {
 		// Creates array {{0,0}}, so single square with no offset.
 		offsets = new int[1][2];
-		
-		// Start piece above board
-		mainPosition = new int[] {-1, BoardModel.COL_NUM/2};
 		
 		id = generateId();
 	}
@@ -107,14 +107,14 @@ public class BlockModel implements Iterable<Integer[]> {
 	public int getCode() {
 		return BASIC_CODE;
 	}
-
-	/*
-	 * (non-Javadoc)
-	 * @see java.lang.Iterable#iterator()
-	 */
-	@Override
-	public Iterator<Integer[]> iterator() {
-		return new SquareIterator();
+	
+	public Iterable<Integer[]> getIterator(final int row, final int col) {
+		return new Iterable<Integer[]>() {
+			@Override
+			public Iterator<Integer[]> iterator() {
+				return new SquareIterator(row, col);
+			}
+		};
 	}
 	
 	public void rotateClockwise() {
@@ -123,20 +123,5 @@ public class BlockModel implements Iterable<Integer[]> {
 	
 	public void rotateCounterclockwise() {
 		//TODO: Implement counter-clockwise rotation.
-	}
-	
-	/*
-	 * Lower position of block by 1 square.
-	 */
-	public void lowerPosition() {
-		setMainPosition(mainPosition[0]+1, mainPosition[1]);
-	}
-	
-	/*
-	 * Set the position of this block.
-	 */
-	private void setMainPosition(int row, int col) {
-		mainPosition[0] = row;
-		mainPosition[1] = col;
 	}
 }

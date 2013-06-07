@@ -64,11 +64,6 @@ public class BoardModel {
 			
 			return true;
 		}
-		
-		private void checkIndex(int index) throws Exception {
-			if (index < 0 || index >= WIDTH)
-				throw new Exception("ERROR: "+index+" is an invalid index.");
-		}
 	}
 
 	/* The value representing a vacant spot on the board. */
@@ -90,6 +85,8 @@ public class BoardModel {
 	private BlockModel activeBlock = null;
 	/* The next block to become active. */
 	private BlockModel nextBlock = null;
+	private int activeBlockRow;
+	private int activeBlockColumn;
 	
 	/*
 	 * Create a BoardModel.
@@ -113,6 +110,14 @@ public class BoardModel {
 		// Remove any blocks from the previous game.
 		activeBlock = generateNextBlock();
 		nextBlock = generateNextBlock();
+		
+		initActiveBlockPosition();
+	}
+	
+	private void initActiveBlockPosition() {
+		// Start active block above board.
+		activeBlockRow = -1;
+		activeBlockColumn = COL_NUM/2;
 	}
 	
 	private BlockModel generateNextBlock() {
@@ -124,11 +129,13 @@ public class BoardModel {
 	 * The method should be called at a regular interval to update the board by causing
 	 * the active blocks position to drop, and handling when an active block settles at
 	 * the bottom of the screen.
+	 * 
+	 * @return True iff a piece moved.
 	 */
-	public void incrementBoard() throws BlockOverflow {
+	public boolean lowerActiveBlock() throws BlockOverflow {
 		// Check if we can move active block down.
 		boolean isMovable = true;
-		for (Integer[] squarePos : activeBlock) {
+		for (Integer[] squarePos : activeBlock.getIterator(activeBlockRow, activeBlockColumn)) {
 			if (squarePos[0] == ROW_NUM-1 || getSquareBelow(squarePos) != 0) {
 				isMovable = false;
 				break;
@@ -137,19 +144,26 @@ public class BoardModel {
 		
 		// If movable, move the active block.
 		if (isMovable) {
-			activeBlock.lowerPosition();
+			// Higher index is lower on board.
+			activeBlockRow += 1;
+			return true;
 		// Otherwise write active block to board and start new active block.
 		} else {
 			try {
 				writeActiveBlock();
-				// Now that we're done with it, let activeBlock be garbage-collected
-				activeBlock = nextBlock;
-				nextBlock = generateNextBlock();
+				// Switch to new active block.
+				return false;
 			} catch (BlockOverflow e) {
 				//TODO: Handle end of game? Or possibly restart.
 				throw e;
 			}
 		}
+	}
+
+	public void initNextBlock() {
+		activeBlock = nextBlock;
+		nextBlock = generateNextBlock();
+		initActiveBlockPosition();
 	}
 
 	private int getSquareBelow(Integer[] squarePos) {
@@ -160,7 +174,7 @@ public class BoardModel {
 	 * Write the current active block to the board in its current position.
 	 */
 	private void writeActiveBlock() throws BlockOverflow {
-		for (Integer[] squarePos : activeBlock) {
+		for (Integer[] squarePos : activeBlock.getIterator(activeBlockRow, activeBlockColumn)) {
 			// If the index was out of bounds above the board, this player has lost.
 			if (squarePos[0] < 0) {
 				throw new BlockOverflow();
@@ -180,16 +194,15 @@ public class BoardModel {
 		board[squarePos[0]].setSquare(squarePos[1], value);
 	}
 
-	/*
-	 * Get the value of a square on the board (or 0 if the position is above the board).
-	 * 
-	 * @param squarePos An array of the format {rowIndex, columnIndex}, giving the position of a square.
-	 */
-	private int getSquare(Integer[] squarePos) {
-		return squarePos[0] >= 0 ? board[squarePos[0]].getSquare(squarePos[1]) : 0;
-	}
-
 	public BlockModel getActiveBlock() {
 		return activeBlock;
+	}
+
+	public int getActiveBlockRow() {
+		return activeBlockRow;
+	}
+
+	public int getActiveBlockCol() {
+		return activeBlockColumn;
 	}
 }

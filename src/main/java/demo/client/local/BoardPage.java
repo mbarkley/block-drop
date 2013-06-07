@@ -36,6 +36,10 @@ public class BoardPage extends Composite {
 	
 	public static final String BOARD_COLOR = "rgb(255,255,255)";
 	
+	private static int indexToCoordinate(Integer index) {
+		return index * Block.SIZE;
+	}
+	
 	private BoardModel model;
 	private Block activeBlock;
 	private int timeIncrement = 500;
@@ -55,15 +59,22 @@ public class BoardPage extends Composite {
 	
 	@PostConstruct
 	private void constructUI() {
+		// Check that canvas was supported.
 		if (canvas != null) {
 			System.out.println("Canvas successfully created.");
+			
+			// Create a timer to run the game loop.
 			timer = new Timer() {
 				@Override
 				public void run() {
 					update();
 				}
 			};
+			
+			// Start game loop.
 			timer.scheduleRepeating(timeIncrement);
+		} else {
+			// TODO: Display message to user that HTML5 Canvas is required.
 		}
 	}
 
@@ -74,18 +85,38 @@ public class BoardPage extends Composite {
 			if (!activeBlock.isModel(model.getActiveBlock())) {
 				activeBlock = Block.getBlockInstance(model.getActiveBlock());
 			} else {
-				activeBlock.undraw(canvas.getContext2d());
-				System.out.println("undraw called.");
+				canvas.getContext2d().beginPath();
+				activeBlock.getPath(
+					indexToCoordinate(model.getActiveBlockRow()),
+					indexToCoordinate(model.getActiveBlockCol()),
+					canvas.getContext2d()
+				);
+				canvas.getContext2d().closePath();
+				drawBackground();
 			}
-				
-				model.incrementBoard();
-				System.out.println("incrementBoard called.");
-				
-				activeBlock.draw(canvas.getContext2d());
-				System.out.println("draw called.");
+			boolean moved = model.lowerActiveBlock();
+			
+			// Redraw block in (possibly) new position)			
+			activeBlock.draw(
+				indexToCoordinate(model.getActiveBlockRow()),
+				indexToCoordinate(model.getActiveBlockCol()),
+				canvas.getContext2d()
+			);
+			System.out.println("draw called.");
+			
+			// If nothing was moved, start a new active block.
+			if (!moved) {
+				model.initNextBlock();
+			}
 		} catch (BlockOverflow e) {
 			System.out.println("Game is over.");
 			timer.cancel();
 		}
+	}
+	
+	/* For now, give the background a solid colour. Path must already be set. */
+	private void drawBackground() {
+		canvas.getContext2d().setFillStyle(BOARD_COLOR);
+		canvas.getContext2d().fill();
 	}
 }
