@@ -8,6 +8,9 @@ import org.jboss.errai.ui.shared.api.annotations.DataField;
 import org.jboss.errai.ui.shared.api.annotations.Templated;
 
 import com.google.gwt.canvas.client.Canvas;
+import com.google.gwt.event.dom.client.DomEvent.Type;
+import com.google.gwt.event.dom.client.KeyPressHandler;
+import com.google.gwt.event.logical.shared.AttachEvent.Handler;
 import com.google.gwt.user.client.ui.Composite;
 
 /*
@@ -77,5 +80,9 @@ public class BoardPage extends Composite {
 
 	public void drawBlock(int x, int y, Block activeBlock) {
 		activeBlock.draw(x, y, canvas.getContext2d());
+	}
+
+	public void addHandlerToCanvas(KeyPressHandler handler) {
+		canvas.addKeyPressHandler(handler);
 	}
 }

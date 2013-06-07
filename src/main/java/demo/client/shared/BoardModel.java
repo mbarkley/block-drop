@@ -36,7 +36,7 @@ public class BoardModel {
 		 * 
 		 * @throws Exception If the index is out of range.
 		 */
-		public int getSquare(int index) {
+		public int getSquareValue(int index) {
 			return squares[index];
 		}
 		
@@ -134,21 +134,10 @@ public class BoardModel {
 	 */
 	public boolean lowerActiveBlock() throws BlockOverflow {
 		// Check if we can move active block down.
-		boolean isMovable = true;
-		for (Integer[] squarePos : activeBlock.getIterator(activeBlockRow, activeBlockColumn)) {
-			if (squarePos[0] == ROW_NUM-1 || getSquareBelow(squarePos) != 0) {
-				isMovable = false;
-				break;
-			}
-		}
+		boolean moved = moveActiveBlock(1, 0);
 		
-		// If movable, move the active block.
-		if (isMovable) {
-			// Higher index is lower on board.
-			activeBlockRow += 1;
-			return true;
-		// Otherwise write active block to board and start new active block.
-		} else {
+		// If it didn't move, write it to the board.
+		if (!moved) {
 			try {
 				writeActiveBlock();
 				// Switch to new active block.
@@ -158,16 +147,37 @@ public class BoardModel {
 				throw e;
 			}
 		}
+		
+		return moved;
 	}
 
-	public void initNextBlock() {
+	public void initNextBlock() throws BlockOverflow {
+		if (activeBlock != null)
+			writeActiveBlock();
 		activeBlock = nextBlock;
 		nextBlock = generateNextBlock();
 		initActiveBlockPosition();
 	}
-
-	private int getSquareBelow(Integer[] squarePos) {
-		return board[squarePos[0]+1].getSquare(squarePos[1]);
+	
+	/*
+	 * Get value in square adjacent to squarePos.
+	 * 
+	 * @param squarePos The position coordinate (row,column) of the current square.
+	 * @param rowDir Either +1, 0, or -1.
+	 * @param colDir Either +1, 0, or -1.
+	 * 
+	 * @return The value of the adjacent square, or 1 (occupied) if this adjacent spot would be off board.
+	 */
+	private int getSquareAdjacent(Integer[] squarePos, int rowDir, int colDir) {
+		int x = squarePos[1] + colDir;
+		int y = squarePos[0] + rowDir;
+		
+		// If adjacent spot is off-board, return occupied.
+		if (x < 0 || x >= COL_NUM || y < 0 || y >= ROW_NUM) {
+			return TILE;
+		} else {
+			return board[y].getSquareValue(x);
+		}
 	}
 
 	/*
@@ -204,5 +214,38 @@ public class BoardModel {
 
 	public int getActiveBlockCol() {
 		return activeBlockColumn;
+	}
+	
+	/*
+	 * Move the active block.
+	 * 
+	 * @param rowMove The number of rows to move the active block (positive is down).
+	 * @param colMove The number of columns to move the active block (positive is right).
+	 * 
+	 * @return True iff the block was successfully moved.
+	 */
+	public boolean moveActiveBlock(int rowMove, int colMove) throws BlockOverflow {
+		// Check if we can move active block.
+		boolean isMovable = true;
+		for (Integer[] squarePos : activeBlock.getIterator(activeBlockRow, activeBlockColumn)) {
+			if (getSquareAdjacent(squarePos, rowMove, colMove) != 0) {
+				isMovable = false;
+				break;
+			}
+		}
+		
+		// If movable, move the active block.
+		if (isMovable) {
+			// Higher index is lower on board.
+			activeBlockRow += rowMove;
+			activeBlockColumn += colMove;
+			// Return true only if there was actual movement.
+			return rowMove != 0 || colMove != 0;
+		} else {
+			// If this block couldn't move down from above the board, the board is overflowing.
+			if (rowMove == 1 && activeBlockRow < 0)
+				throw new BlockOverflow();
+			return false;
+		}
 	}
 }
