@@ -110,16 +110,26 @@ public class BoardController implements KeyPressHandler {
 			);
 			
 			// If the block could not drop, start a new block.
-			if (!moved && rowMove == 1)
+			if (!moved && rowMove > 0)
 				model.initNextBlock();
 			
 			// Reset for next loop.
+			drop = false;
+			rotate = false;
 			this.colMove = 0;
 			this.rowMove = 0;
 			loopCounter = loopCounter == dropIncrement ? 0 : loopCounter + loopIncrement;
 		} catch (BlockOverflow e) {
 			// TODO: Handle game ending.
 			System.out.println("Game Over.");
+			
+			// Redraw last block.
+			boardPage.drawBlock(
+					Block.indexToCoord(model.getActiveBlockCol()),
+					Block.indexToCoord(model.getActiveBlockRow()),
+					activeBlock
+			);
+			
 			timer.cancel();
 		}
 	}
