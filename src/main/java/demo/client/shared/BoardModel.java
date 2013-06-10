@@ -130,7 +130,7 @@ public class BoardModel {
 	 */
 	private BlockModel generateNextBlock() {
 		//TODO: Add some sort of random generator for different kinds of blocks.
-		return new BlockModel();
+		return new LBlockModel();
 	}
 
 	/*
@@ -175,23 +175,24 @@ public class BoardModel {
 	}
 	
 	/*
-	 * Get value in square adjacent to squarePos.
+	 * Get value of the square at (row,col).
 	 * 
-	 * @param squarePos The position coordinate (row,column) of the current square.
-	 * @param rowDir Either +1, 0, or -1.
-	 * @param colDir Either +1, 0, or -1.
+	 * @param row The row position of a square.
+	 * @param col The column position of a square.
 	 * 
-	 * @return The value of the adjacent square, or 1 (occupied) if this adjacent spot would be off board.
+	 * @return The value of the square, 0 if the square is above the board, and 1 if
+	 * the square is beside or below the board.
 	 */
-	private int getSquareAdjacent(Integer[] squarePos, int rowDir, int colDir) {
-		int x = squarePos[1] + colDir;
-		int y = squarePos[0] + rowDir;
+	private int getSquare(int row, int col) {
 		
-		// If adjacent spot is off-board, return occupied.
-		if (x < 0 || x >= COL_NUM || y < 0 || y >= ROW_NUM) {
+		// If adjacent spot is beside or below the board, return occupied.
+		if (col < 0 || col >= COL_NUM || row >= ROW_NUM) {
 			return TILE;
+		// If above the board return unoccupied.
+		} else if (row < 0) {
+			return 0;
 		} else {
-			return board[y].getSquareValue(x);
+			return board[row].getSquareValue(col);
 		}
 	}
 
@@ -199,12 +200,12 @@ public class BoardModel {
 	 * Write the current active block to the board in its current position.
 	 */
 	private void writeActiveBlock() throws BlockOverflow {
-		for (Integer[] squarePos : activeBlock.getIterator(activeBlockRow, activeBlockColumn)) {
+		for (Integer[] squarePos : activeBlock.getIterator()) {
 			// If the index was out of bounds above the board, this player has lost.
-			if (squarePos[0] < 0) {
+			if (activeBlockRow + squarePos[0] < 0) {
 				throw new BlockOverflow();
 			} else {
-				setSquare(squarePos, activeBlock.getCode());
+				setSquare(activeBlockRow+squarePos[0], activeBlockColumn+squarePos[1], activeBlock.getCode());
 			}
 		}
 	}
@@ -212,11 +213,12 @@ public class BoardModel {
 	/*
 	 * Set a square on the board.
 	 * 
-	 * @param squarePos A length two array of form {rowIndex, colIndex} of the square to set.
+	 * @param row The row index of the square.
+	 * @param col The column index of the square.
 	 * @param value The value to be assigned to the square.
 	 */
-	private void setSquare(Integer[] squarePos, int value) {
-		board[squarePos[0]].setSquare(squarePos[1], value);
+	private void setSquare(int row, int col, int value) {
+		board[row].setSquare(col, value);
 	}
 
 	/*
@@ -247,6 +249,21 @@ public class BoardModel {
 	}
 	
 	/*
+	 * Check if the active block is in a valid position.
+	 */
+	private boolean isValidPosition(int row, int col) {
+		boolean isMovable = true;
+		for (Integer[] squarePos : activeBlock.getIterator()) {
+			if (getSquare(row+squarePos[0], col+squarePos[1]) != 0) {
+				isMovable = false;
+				break;
+			}
+		}
+		
+		return isMovable;
+	}
+	
+	/*
 	 * Move the active block.
 	 * 
 	 * @param rowMove The number of rows to move the active block (positive is down).
@@ -256,13 +273,7 @@ public class BoardModel {
 	 */
 	public boolean moveActiveBlock(int rowMove, int colMove) throws BlockOverflow {
 		// Check if we can move active block.
-		boolean isMovable = true;
-		for (Integer[] squarePos : activeBlock.getIterator(activeBlockRow, activeBlockColumn)) {
-			if (getSquareAdjacent(squarePos, rowMove, colMove) != 0) {
-				isMovable = false;
-				break;
-			}
-		}
+		boolean isMovable = isValidPosition(activeBlockRow+rowMove, activeBlockColumn+colMove);
 		
 		// If movable, move the active block.
 		if (isMovable) {
@@ -276,6 +287,22 @@ public class BoardModel {
 			if (rowMove == 1 && activeBlockRow < 0)
 				throw new BlockOverflow();
 			return false;
+		}
+	}
+
+	/*
+	 * Rotate the current active block if this is possible.
+	 */
+	public void rotateActiveBlock() {
+		// Try rotating block.
+		activeBlock.rotateClockwise();
+		
+		// If this position is invalid, undo it.
+		if (!isValidPosition(activeBlockRow, activeBlockColumn)) {
+			// TODO: Do this less lazily.
+			for (int i = 0; i < 3; i++)
+				activeBlock.rotateClockwise();
+			System.out.println("Rotation failed.");
 		}
 	}
 }

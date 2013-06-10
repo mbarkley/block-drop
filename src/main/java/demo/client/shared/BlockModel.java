@@ -15,18 +15,13 @@ public class BlockModel {
 		/* Index of next position to return. */
 		private int next;
 		
-		private int row;
-		private int col;
-		
 		/*
 		 * Create a SquareIterator.
 		 * 
 		 * @param offsets The offsets of each square to iterate through.
 		 */
-		public SquareIterator(int row, int col) {
+		public SquareIterator() {
 			super();
-			this.row = row;
-			this.col = col;
 			next = 0;
 		}
 		
@@ -46,8 +41,8 @@ public class BlockModel {
 		@Override
 		public Integer[] next() {
 			Integer[] res = new Integer[] {
-					new Integer(offsets[next][0] + row),
-					new Integer(offsets[next][1] + col)};
+					new Integer(offsets[next][0]),
+					new Integer(offsets[next][1])};
 			next++;
 			return res;
 		}
@@ -78,10 +73,29 @@ public class BlockModel {
 	 * Create a basic BlockModel consisting of one square.
 	 */
 	public BlockModel() {
+		this(generateId());
+
 		// Creates array {{0,0}}, so single square with no offset.
 		offsets = new int[1][2];
-		
-		id = generateId();
+	}
+	
+	/*
+	 * Initializes BlockModel id. All subclasses should invoke this constructor
+	 * using the return value of generateId() as the argument.
+	 */
+	protected BlockModel(int id) {
+		this.id = id;
+	}
+	
+	/*
+	 * Set the offsets of the squares in this block from the blocks main position.
+	 * The position of a single square on the board is calculated as main position + offset.
+	 * 
+	 * @param offsets An array of integer pairs, representing row and column offsets
+	 * from this blocks main position.
+	 */
+	protected void setOffsets(int[][] offsets) {
+		this.offsets = offsets;
 	}
 	
 	/*
@@ -101,7 +115,7 @@ public class BlockModel {
 		return id;
 	}
 
-	private static int generateId() {
+	protected static int generateId() {
 		return idGen++;
 	}
 
@@ -114,20 +128,28 @@ public class BlockModel {
 		return BASIC_CODE;
 	}
 	
-	public Iterable<Integer[]> getIterator(final int row, final int col) {
+	public Iterable<Integer[]> getIterator() {
 		return new Iterable<Integer[]>() {
 			@Override
 			public Iterator<Integer[]> iterator() {
-				return new SquareIterator(row, col);
+				return new SquareIterator();
 			}
 		};
 	}
 	
+	/*
+	 * Rotate the offsets of the squares in this block by 90 degrees clockwise.
+	 * Blocks that do not rotate around a central square should override this method.
+	 */
 	public void rotateClockwise() {
-		//TODO: Implement clockwise rotation.
-	}
-	
-	public void rotateCounterclockwise() {
-		//TODO: Implement counter-clockwise rotation.
+		for (int[] offset : offsets) {
+			// Calculate new offsets (calculation derived from rotation matrix)
+			int newRowOffset = -1 * offset[1];
+			int newColOffset = offset[0];
+			
+			// Assign new offsets.
+			offset[0] = newRowOffset;
+			offset[1] = newColOffset;
+		}
 	}
 }

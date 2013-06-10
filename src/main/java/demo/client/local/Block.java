@@ -3,6 +3,7 @@ package demo.client.local;
 import com.google.gwt.canvas.dom.client.Context2d;
 
 import demo.client.shared.BlockModel;
+import demo.client.shared.LBlockModel;
 
 /* A class for drawing Block Drop blocks on an HTML5 canvas. */
 public class Block {
@@ -18,8 +19,14 @@ public class Block {
 	 * @return An instance of Block or a subclass thereof.
 	 */
 	public static Block getBlockInstance(BlockModel activeBlock) {
-		// TODO: Detect which kind of block activeBlock is and return an appropriate instance.
-		return new Block(activeBlock);
+		Block retVal;
+		if (activeBlock.getClass().equals(LBlockModel.class)) {
+			retVal = new LBlock((LBlockModel) activeBlock);
+		} else {
+			retVal = new Block(activeBlock);
+		}
+		
+		return retVal;
 	}
 	
 	/* The BlockModel associated with this instance. */
@@ -42,8 +49,8 @@ public class Block {
 	public void draw(int x, int y, Context2d context2d) {
 		Square square = new Square();
 		// Get an iterator of square coordinates based around the given coordinate (x,y).
-		for (Integer[] squarePos : model.getIterator(x, y)) {
-			square.draw(squarePos[1], squarePos[0], context2d);
+		for (Integer[] squarePos : model.getIterator()) {
+			square.draw(x+indexToCoord(squarePos[1]), y+indexToCoord(squarePos[0]), context2d);
 		}
 	}
 	
@@ -67,8 +74,24 @@ public class Block {
 	 */
 	public void getPath(int x, int y, Context2d context2d) {
 		Square square = new Square();
-		for (Integer[] squarePos : model.getIterator(x, y)) {
-			square.addSquareToCanvasPath(squarePos[1], squarePos[0], context2d);
+		for (Integer[] squarePos : model.getIterator()) {
+			square.addSquareToCanvasPath(x+indexToCoord(squarePos[1]), y+indexToCoord(squarePos[0]), context2d);
 		}
+	}
+
+	public void rotateClockwise() {
+		model.rotateClockwise();
+	}
+
+	/*
+	 * Convert an index (used to locate BlockModelss on the BoardModel) to a coordinate
+	 * (used to draw Blocks on the BoardPage canvas).
+	 * 
+	 * @param index The index of a BlockModel on a BoardModel to be converted to a coordinate.
+	 * 
+	 * @return The coordinate to pass to the Block.draw method for drawing a block in the correct position.
+	 */
+	public static int indexToCoord(Integer index) {
+		return index * SIZE;
 	}
 }

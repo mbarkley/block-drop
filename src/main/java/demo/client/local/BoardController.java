@@ -37,6 +37,8 @@ public class BoardController implements KeyPressHandler {
 	 * should move this loop iteration.
 	 */
 	private int colMove = 0;
+	/* True if the active block should rotate this loop iteration. */
+	private boolean rotate;
 	
 	/* The BoardPage on which this Block Drop game is displayed. */
 	private BoardPage boardPage;
@@ -82,32 +84,34 @@ public class BoardController implements KeyPressHandler {
 				activeBlock = Block.getBlockInstance(model.getActiveBlock());
 			} 
 			
-			// Check if the block is moving this cycle, and then move it.
-			if (rowMove != 0 || colMove != 0) {
-				boardPage.undrawBlock(
-					BoardController.indexToCoordinate(model.getActiveBlockRow()),
-					BoardController.indexToCoordinate(model.getActiveBlockCol()),
-					activeBlock
-				);
-				
-				// Attempt to move model.
-				boolean moved = model.moveActiveBlock(rowMove, colMove);
-				// If that didn't work, ignore the colMove (so that the block may still drop).
-				if (!moved)
-					moved = model.moveActiveBlock(rowMove, 0);
-				
-				// Redraw block in (possibly) new position.	
-				boardPage.drawBlock(
-					BoardController.indexToCoordinate(model.getActiveBlockRow()),
-					BoardController.indexToCoordinate(model.getActiveBlockCol()),
-					activeBlock
-				);
-				System.out.println("draw called.");
-				
-				// If the block could not drop, start a new block.
-				if (!moved && rowMove == 1)
-					model.initNextBlock();
+			boardPage.undrawBlock(
+				Block.indexToCoord(model.getActiveBlockCol()),
+				Block.indexToCoord(model.getActiveBlockRow()),
+				activeBlock
+			);
+			
+			// Rotate the block model if the user hit rotate.
+			if (rotate) {
+				model.rotateActiveBlock();
+				rotate = false;
 			}
+			
+			// Attempt to move model.
+			boolean moved = model.moveActiveBlock(rowMove, colMove);
+			// If that didn't work, ignore the colMove (so that the block may still drop).
+			if (!moved)
+				moved = model.moveActiveBlock(rowMove, 0);
+			
+			// Redraw block in (possibly) new position.	
+			boardPage.drawBlock(
+				Block.indexToCoord(model.getActiveBlockCol()),
+				Block.indexToCoord(model.getActiveBlockRow()),
+				activeBlock
+			);
+			
+			// If the block could not drop, start a new block.
+			if (!moved && rowMove == 1)
+				model.initNextBlock();
 			
 			// Reset for next loop.
 			this.colMove = 0;
@@ -147,6 +151,12 @@ public class BoardController implements KeyPressHandler {
 			System.out.println("Right key pressed.");
 			colMove = 1;
 			break;
+		case KeyCodes.KEY_UP:
+			System.out.println("Up key pressed.");
+			rotate = true;
+			break;
+		default:
+			break;
 		}
 		/*
 		 *  If the user pressed a key used by this game, stop the event from
@@ -163,17 +173,5 @@ public class BoardController implements KeyPressHandler {
 			default:
 				break;
 		}
-	}
-
-	/*
-	 * Convert an index (used to locate BlockModelss on the BoardModel) to a coordinate
-	 * (used to draw Blocks on the BoardPage canvas).
-	 * 
-	 * @param index The index of a BlockModel on a BoardModel to be converted to a coordinate.
-	 * 
-	 * @return The coordinate to pass to the Block.draw method for drawing a block in the correct position.
-	 */
-	public static int indexToCoordinate(Integer index) {
-		return index * Block.SIZE;
 	}
 }
