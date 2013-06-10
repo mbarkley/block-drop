@@ -14,7 +14,7 @@ import com.google.gwt.event.logical.shared.AttachEvent.Handler;
 import com.google.gwt.user.client.ui.Composite;
 
 /*
- * An Errai Navigation Page providing the UI for a tic-tac-toe game.
+ * An Errai Navigation Page providing the UI for a Block Drop game.
  */
 @Page(role=DefaultPage.class)
 @Templated("Board.html")
@@ -32,12 +32,18 @@ public class BoardPage extends Composite {
 	public static final int COORD_WIDTH = 600;
 	/* The dimension of each square in pixels. */
 	public static final int SIZE = 60;
+	/* The background colour of the Block Drop board. */
+	public static final String BOARD_COLOUR = "rgb(255,255,255)";
 	
+	/* A canvas for drawing a Block Drop game. */
 	@DataField
 	private Canvas canvas = Canvas.createIfSupported();;
-	
+	/* A controller for this view. */
 	private BoardController controller;
 	
+	/*
+	 * Create a BoardPage for displaying a Block Drop game.
+	 */
 	public BoardPage() {
 		System.out.println("Initiating BoardModel");
 		canvas.setCoordinateSpaceHeight(COORD_HEIGHT);
@@ -45,6 +51,9 @@ public class BoardPage extends Composite {
 		controller = new BoardController();
 	}
 	
+	/*
+	 * Perform additional setup for the Board UI after this object has been constructed.
+	 */
 	@PostConstruct
 	private void constructUI() {
 		// Check that canvas was supported.
@@ -53,18 +62,27 @@ public class BoardPage extends Composite {
 			controller.attachPage(this);
 			
 			controller.startGame();
-
 		} else {
 			// TODO: Display message to user that HTML5 Canvas is required.
 		}
 	}
 
-	/* For now, give the background a solid colour. Path must already be set. */
+	/*
+	 * Fill the current path on this page's canvas with the board background colour.
+	 */
 	private void drawBackground() {
 		canvas.getContext2d().setFillStyle(BOARD_COLOUR);
 		canvas.getContext2d().fill();
 	}
 
+	/*
+	 * Undraw the given block from this page's canvas.
+	 * Note: Any path on the canvas will be lost after invoking this method.
+	 * 
+	 * @param x The x coordinate of the position of the block.
+	 * @param y The y coordinate of the position of the block.
+	 * @param activeBlock The block to undraw.
+	 */
 	public void undrawBlock(int x, int y, Block activeBlock) {
 		canvas.getContext2d().beginPath();
 		activeBlock.getPath(x, y, canvas.getContext2d());
@@ -72,10 +90,22 @@ public class BoardPage extends Composite {
 		drawBackground();		
 	}
 
+	/*
+	 * Draw a block on this page's canvas.
+	 * 
+	 * @param x The x coordinate of the position of the block.
+	 * @param y The y coordinate of the position of the block.
+	 * @param activeBlock The block to draw.
+	 */
 	public void drawBlock(int x, int y, Block activeBlock) {
 		activeBlock.draw(x, y, canvas.getContext2d());
 	}
 
+	/*
+	 * Add a key press handler to this page's canvas.
+	 * 
+	 * @param handler A key press handler for the canvas.
+	 */
 	public void addHandlerToCanvas(KeyPressHandler handler) {
 		canvas.addKeyPressHandler(handler);
 	}
