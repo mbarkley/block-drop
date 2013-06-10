@@ -76,9 +76,6 @@ public class BlockModel {
 	
 	/*
 	 * Create a basic BlockModel consisting of one square.
-	 * 
-	 * @param rowNum The number of rows in the board (used to determine starting position).
-	 * @param colNum The number of columns in the board (used to determine starting position).
 	 */
 	public BlockModel() {
 		// Creates array {{0,0}}, so single square with no offset.
