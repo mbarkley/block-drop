@@ -1,5 +1,7 @@
 package demo.client.shared;
 
+import com.google.gwt.user.client.Random;
+
 /*
  * A model of the Block Drop board.
  */
@@ -129,8 +131,16 @@ public class BoardModel {
 	 * Generate the next BlockModel to be used as the active block on this board.
 	 */
 	private BlockModel generateNextBlock() {
-		//TODO: Add some sort of random generator for different kinds of blocks.
-		return new LBlockModel();
+		int decider = Random.nextInt(2);
+		
+		switch(decider) {
+			case 0:
+				return new LBlockModel();
+			case 1:
+				return new ReverseLBlockModel();
+			default:
+				return null;
+		}
 	}
 
 	/*
