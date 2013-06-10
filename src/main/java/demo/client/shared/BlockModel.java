@@ -87,10 +87,19 @@ public class BlockModel {
 		id = generateId();
 	}
 	
+	/*
+	 * (non-Javadoc)
+	 * @see java.lang.Object#equals(java.lang.Object)
+	 */
 	public boolean equals(Object other) {
 		return other.getClass() == BlockModel.class && this.getId() == ((BlockModel) other).getId();
 	}
 	
+	/*
+	 * Get the id of this BlockModel.
+	 * 
+	 * @return The id of this BlockModel.
+	 */
 	public int getId() {
 		return id;
 	}
