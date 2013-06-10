@@ -85,7 +85,9 @@ public class BoardModel {
 	private BlockModel activeBlock = null;
 	/* The next block to become active. */
 	private BlockModel nextBlock = null;
+	/* The row position of the active block on this board. */
 	private int activeBlockRow;
+	/* The column position of the active block on this board. */
 	private int activeBlockColumn;
 	
 	/*
@@ -114,12 +116,18 @@ public class BoardModel {
 		initActiveBlockPosition();
 	}
 	
+	/*
+	 * Initialize position of the active BlockModel.
+	 */
 	private void initActiveBlockPosition() {
 		// Start active block above board.
 		activeBlockRow = -1;
 		activeBlockColumn = COL_NUM/2;
 	}
 	
+	/*
+	 * Generate the next BlockModel to be used as the active block on this board.
+	 */
 	private BlockModel generateNextBlock() {
 		//TODO: Add some sort of random generator for different kinds of blocks.
 		return new BlockModel();
@@ -151,6 +159,13 @@ public class BoardModel {
 		return moved;
 	}
 
+	/*
+	 * Initialize the next BlockModel to be the active block. This should be called
+	 * whenever the current active block has settled at the bottom of the board.
+	 * 
+	 * @throws If the BlockModel that is active (before invoking this method) is partially off
+	 * the screen (i.e. the board is overflowing).
+	 */
 	public void initNextBlock() throws BlockOverflow {
 		if (activeBlock != null)
 			writeActiveBlock();
@@ -204,14 +219,29 @@ public class BoardModel {
 		board[squarePos[0]].setSquare(squarePos[1], value);
 	}
 
+	/*
+	 * Get the active block.
+	 * 
+	 * @return The active BlockModel on this board.
+	 */
 	public BlockModel getActiveBlock() {
 		return activeBlock;
 	}
 
+	/*
+	 * Get the row position of the active block.
+	 * 
+	 * @return The row index of the active block.
+	 */
 	public int getActiveBlockRow() {
 		return activeBlockRow;
 	}
 
+	/*
+	 * Get the column index of the active block.
+	 * 
+	 * @return The column index of the active block.
+	 */
 	public int getActiveBlockCol() {
 		return activeBlockColumn;
 	}
