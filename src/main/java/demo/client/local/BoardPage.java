@@ -33,12 +33,6 @@ public class BoardPage extends Composite {
 	/* The dimension of each square in pixels. */
 	public static final int SIZE = 60;
 	
-	public static final String BOARD_COLOR = "rgb(255,255,255)";
-	
-	public static int indexToCoordinate(Integer index) {
-		return index * Block.SIZE;
-	}
-	
 	@DataField
 	private Canvas canvas = Canvas.createIfSupported();;
 	
@@ -67,7 +61,7 @@ public class BoardPage extends Composite {
 
 	/* For now, give the background a solid colour. Path must already be set. */
 	private void drawBackground() {
-		canvas.getContext2d().setFillStyle(BOARD_COLOR);
+		canvas.getContext2d().setFillStyle(BOARD_COLOUR);
 		canvas.getContext2d().fill();
 	}
 

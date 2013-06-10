@@ -55,8 +55,8 @@ public class BoardController implements KeyPressHandler {
 			// Check if the block is moving this cycle, and then move it.
 			if (rowMove != 0 || colMove != 0) {
 				boardPage.undrawBlock(
-					BoardPage.indexToCoordinate(model.getActiveBlockRow()),
-					BoardPage.indexToCoordinate(model.getActiveBlockCol()),
+					BoardController.indexToCoordinate(model.getActiveBlockRow()),
+					BoardController.indexToCoordinate(model.getActiveBlockCol()),
 					activeBlock
 				);
 				
@@ -68,8 +68,8 @@ public class BoardController implements KeyPressHandler {
 				
 				// Redraw block in (possibly) new position.	
 				boardPage.drawBlock(
-					BoardPage.indexToCoordinate(model.getActiveBlockRow()),
-					BoardPage.indexToCoordinate(model.getActiveBlockCol()),
+					BoardController.indexToCoordinate(model.getActiveBlockRow()),
+					BoardController.indexToCoordinate(model.getActiveBlockCol()),
 					activeBlock
 				);
 				System.out.println("draw called.");
@@ -120,5 +120,9 @@ public class BoardController implements KeyPressHandler {
 			default:
 				break;
 		}
+	}
+
+	public static int indexToCoordinate(Integer index) {
+		return index * Block.SIZE;
 	}
 }
