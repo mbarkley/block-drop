@@ -59,7 +59,7 @@ public class BoardPage extends Composite {
 		// Check that canvas was supported.
 		if (canvas != null) {
 			System.out.println("Canvas successfully created.");
-			controller.attachPage(this);
+			controller.setPage(this);
 			
 			controller.startGame();
 		} else {

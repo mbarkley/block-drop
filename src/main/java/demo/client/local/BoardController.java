@@ -8,21 +8,42 @@ import com.google.gwt.user.client.Timer;
 import demo.client.shared.BlockOverflow;
 import demo.client.shared.BoardModel;
 
+/*
+ * A controller class for a Block Drop game. Handles game loop and user input.
+ */
 public class BoardController implements KeyPressHandler {
 	
+	/* A Block Drop board model. */
 	private BoardModel model;
+	/* A block model. */
 	private Block activeBlock;
 	
+	/* A timer for running the game loop. */
 	private Timer timer;
+	/* The number (in milliseconds) of time for a block to drop one square on the board. */
 	private int dropIncrement = 500;
+	/* The time (in milliseconds) between calls to the game loop. */
 	private int loopIncrement = 100;
+	/* A counter of ellapsed time (in milliseconds) since a block last dropped. */
 	private int loopCounter = 0;
 	
+	/* 
+	 * The amount of rows (positive is down) the active block on the board
+	 * should move this loop iteration.
+	 */
 	private int rowMove = 0;
+	/*
+	 * The amount of columns (positive is right) the active block on the board
+	 * should move this loop iteration.
+	 */
 	private int colMove = 0;
 	
+	/* The BoardPage on which this Block Drop game is displayed. */
 	private BoardPage boardPage;
 	
+	/*
+	 * Create a BoardController instance.
+	 */
 	public BoardController() {
 		// Initiate BoardModel.
 		model = new BoardModel();
@@ -37,10 +58,19 @@ public class BoardController implements KeyPressHandler {
 		};
 	}
 	
-	public void attachPage(BoardPage boardPage) {
+	/*
+	 * Set the page which this BoardController controls.
+	 * 
+	 * @param boardPage The BoardPage to be controlled.
+	 */
+	public void setPage(BoardPage boardPage) {
 		this.boardPage = boardPage;
 	}
 	
+	/*
+	 * Handle user input, and update the game state and view. This method is
+	 * is called every loopIncrement milliseconds.
+	 */
 	public void update() {
 		try {
 			// Drop by one row every dropIncrement milliseconds.
@@ -84,20 +114,30 @@ public class BoardController implements KeyPressHandler {
 			this.rowMove = 0;
 			loopCounter = loopCounter == dropIncrement ? 0 : loopCounter + loopIncrement;
 		} catch (BlockOverflow e) {
+			// TODO: Handle game ending.
 			System.out.println("Game Over.");
 			timer.cancel();
 		}
 	}
 
+	/*
+	 * Start a game of Block Drop.
+	 */
 	public void startGame() {
+		// Add this as a handler for keyboard events.
 		boardPage.addHandlerToCanvas(this);
 		// Start game loop.
 		timer.scheduleRepeating(loopIncrement);		
 	}
 	
+	/*
+	 * (non-Javadoc)
+	 * @see com.google.gwt.event.dom.client.KeyPressHandler#onKeyPress(com.google.gwt.event.dom.client.KeyPressEvent)
+	 */
 	@Override
 	public void onKeyPress(KeyPressEvent event) {
 		int keyCode = event.getNativeEvent().getKeyCode();
+		// First handle relevant key presses.
 		switch(keyCode) {
 		case KeyCodes.KEY_LEFT:
 			System.out.println("Left key pressed.");
@@ -108,7 +148,10 @@ public class BoardController implements KeyPressHandler {
 			colMove = 1;
 			break;
 		}
-		// Stop event from bubbling up to prevent scrolling while playing game.
+		/*
+		 *  If the user pressed a key used by this game, stop the event from
+		 *  bubbling up to prevent scrolling or other undesrible events.
+		 */
 		switch(keyCode) {
 			case KeyCodes.KEY_LEFT:
 			case KeyCodes.KEY_RIGHT:
@@ -122,6 +165,14 @@ public class BoardController implements KeyPressHandler {
 		}
 	}
 
+	/*
+	 * Convert an index (used to locate BlockModelss on the BoardModel) to a coordinate
+	 * (used to draw Blocks on the BoardPage canvas).
+	 * 
+	 * @param index The index of a BlockModel on a BoardModel to be converted to a coordinate.
+	 * 
+	 * @return The coordinate to pass to the Block.draw method for drawing a block in the correct position.
+	 */
 	public static int indexToCoordinate(Integer index) {
 		return index * Block.SIZE;
 	}
