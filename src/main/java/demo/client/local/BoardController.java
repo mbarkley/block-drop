@@ -13,6 +13,7 @@ import demo.client.shared.BoardModel;
  */
 public class BoardController implements KeyPressHandler {
 	
+	private static final int KEY_SPACE_BAR = 32;
 	/* A Block Drop board model. */
 	private BoardModel model;
 	/* A block model. */
@@ -39,6 +40,8 @@ public class BoardController implements KeyPressHandler {
 	private int colMove = 0;
 	/* True if the active block should rotate this loop iteration. */
 	private boolean rotate;
+	/* True if the active block should drop to the bottom of the screen. */
+	private boolean drop;
 	
 	/* The BoardPage on which this Block Drop game is displayed. */
 	private BoardPage boardPage;
@@ -75,9 +78,19 @@ public class BoardController implements KeyPressHandler {
 	 */
 	public void update() {
 		try {
-			// Drop by one row every dropIncrement milliseconds.
-			int rowMove = loopCounter == dropIncrement ? 1 : 0;
-			int colMove = this.colMove;
+			int rowMove;
+			int colMove;
+			
+			// If the user wishes to drop the block, do nothing else.
+			if (drop) {
+				colMove = 0;
+				rowMove = model.getDrop();
+				rotate = false;
+			} else {
+				// Drop by one row every dropIncrement milliseconds.
+				rowMove = loopCounter == dropIncrement ? 1 : 0;
+				colMove = this.colMove;
+			}
 			
 			// If we are not still using the same active block, make a new one.
 			if (!activeBlock.isModel(model.getActiveBlock())) {
@@ -93,7 +106,6 @@ public class BoardController implements KeyPressHandler {
 			// Rotate the block model if the user hit rotate.
 			if (rotate) {
 				model.rotateActiveBlock();
-				rotate = false;
 			}
 			
 			// Attempt to move model.
@@ -150,38 +162,54 @@ public class BoardController implements KeyPressHandler {
 	 */
 	@Override
 	public void onKeyPress(KeyPressEvent event) {
-		int keyCode = event.getNativeEvent().getKeyCode();
-		// First handle relevant key presses.
-		switch(keyCode) {
-		case KeyCodes.KEY_LEFT:
-			System.out.println("Left key pressed.");
-			colMove = -1;
-			break;
-		case KeyCodes.KEY_RIGHT:
-			System.out.println("Right key pressed.");
-			colMove = 1;
-			break;
-		case KeyCodes.KEY_UP:
-			System.out.println("Up key pressed.");
-			rotate = true;
-			break;
-		default:
-			break;
-		}
+
+		/*
+		 * Some key presses return char codes whereas others return key codes.
+		 */
+		int keyCode = event.getCharCode() == 0 ? event.getNativeEvent().getKeyCode() : event.getCharCode();
+		
 		/*
 		 *  If the user pressed a key used by this game, stop the event from
 		 *  bubbling up to prevent scrolling or other undesrible events.
 		 */
+		if (keyPressHelper(keyCode)) {
+			event.stopPropagation();
+			event.preventDefault();
+		}
+	}
+	
+	/*
+	 * Alter the current state based on user input.
+	 */
+	private boolean keyPressHelper(int keyCode) {
+	// First handle relevant key presses.
+		boolean relevantKey = false;
 		switch(keyCode) {
 			case KeyCodes.KEY_LEFT:
+				System.out.println("Left key pressed.");
+				colMove = -1;
+				relevantKey = true;
+				break;
 			case KeyCodes.KEY_RIGHT:
+				System.out.println("Right key pressed.");
+				colMove = 1;
+				relevantKey = true;
+				break;
 			case KeyCodes.KEY_UP:
-			case KeyCodes.KEY_DOWN:
-				event.preventDefault();
-				event.stopPropagation();
+				System.out.println("Up key pressed.");
+				rotate = true;
+				relevantKey = true;
+				break;
+			case KEY_SPACE_BAR:
+				System.out.println("Space bar pressed.");
+				drop = true;
+				relevantKey = true;
 				break;
 			default:
+				System.out.println("Key code pressed: "+keyCode);
 				break;
 		}
+		
+		return relevantKey;
 	}
 }

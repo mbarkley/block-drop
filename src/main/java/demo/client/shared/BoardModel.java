@@ -305,4 +305,15 @@ public class BoardModel {
 			System.out.println("Rotation failed.");
 		}
 	}
+
+	/*
+	 * Get the greatest distance directly downward that the active block can travel.
+	 */
+	public int getDrop() {
+		int i = 0;
+		while (isValidPosition(activeBlockRow+i, activeBlockColumn))
+			i += 1;
+		
+		return i-1;
+	}
 }
