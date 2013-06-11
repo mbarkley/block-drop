@@ -5,10 +5,9 @@ import com.google.gwt.event.dom.client.KeyPressEvent;
 import com.google.gwt.event.dom.client.KeyPressHandler;
 import com.google.gwt.user.client.Timer;
 
-import demo.client.shared.BlockModel;
+import demo.client.shared.BackgroundBlockModel;
 import demo.client.shared.BlockOverflow;
 import demo.client.shared.BoardModel;
-import demo.client.shared.RowsFullException;
 
 /*
  * A controller class for a Block Drop game. Handles game loop and user input.
@@ -45,6 +44,10 @@ public class BoardController implements KeyPressHandler {
 	/* True if the active block should drop to the bottom of the screen. */
 	private boolean drop;
 	
+	private ClearState clearState = ClearState.IDLE;
+	private Block toBeCleared;
+	private Block bgBlock;
+	
 	/* The BoardPage on which this Block Drop game is displayed. */
 	private BoardPage boardPage;
 	
@@ -79,45 +82,40 @@ public class BoardController implements KeyPressHandler {
 	 * is called every loopIncrement milliseconds.
 	 */
 	public void update() {
+		// Update the position of the active block.
+		boolean moved = activeBlockUpdate();
+		
+		// Check for rows to clear. Rows will stay in model until fully dealt with.
+		int numFullRows = model.numFullRows();
+		if (numFullRows > 0) {
+			switch(clearState) {
+				case IDLE:
+					// Get blocks to be cleared.
+					toBeCleared = new Block(model.getFullRows());
+					bgBlock = new Block(model.getAboveFullRows());
+					break;
+				case FIRST_UNDRAW:
+				case SECOND_UNDRAW:
+				case THIRD_UNDRAW:
+				case LAST_UNDRAW:
+					boardPage.undrawBlock(0, 0, toBeCleared);
+					break;
+				case FIRST_REDRAW:
+				case SECOND_REDRAW:
+				case THIRD_REDRAW:
+					boardPage.drawBlock(0, 0, toBeCleared);
+					break;
+				case DROPPING:
+					boardPage.undrawBlock(0, 0, bgBlock);
+					// Redraw background blocks that were above cleared rows lower.
+					boardPage.drawBlock(0, Block.indexToCoord(numFullRows), bgBlock);
+					model.clearFullRows();
+					break;
+			}
+			clearState = clearState.getNextState();
+		}
+		
 		try {
-			int rowMove;
-			int colMove;
-			
-			// If the user wishes to drop the block, do nothing else.
-			if (drop) {
-				colMove = 0;
-				rowMove = model.getDrop();
-				rotate = false;
-			} else {
-				// Drop by one row every dropIncrement milliseconds.
-				rowMove = loopCounter == dropIncrement ? 1 : 0;
-				colMove = this.colMove;
-			}
-			
-			boardPage.undrawBlock(
-				Block.indexToCoord(model.getActiveBlockCol()),
-				Block.indexToCoord(model.getActiveBlockRow()),
-				activeBlock
-			);
-			
-			// Rotate the block model if the user hit rotate.
-			if (rotate) {
-				model.rotateActiveBlock();
-			}
-			
-			// Attempt to move model.
-			boolean moved = model.moveActiveBlock(rowMove, colMove);
-			// If that didn't work, ignore the colMove (so that the block may still drop).
-			if (!moved)
-				moved = model.moveActiveBlock(rowMove, 0);
-			
-			// Redraw block in (possibly) new position.	
-			boardPage.drawBlock(
-				Block.indexToCoord(model.getActiveBlockCol()),
-				Block.indexToCoord(model.getActiveBlockRow()),
-				activeBlock
-			);
-			
 			// If the block could not drop, start a new block.
 			if (!moved && rowMove > 0) {
 				model.initNextBlock();
@@ -126,19 +124,7 @@ public class BoardController implements KeyPressHandler {
 			// TODO: Handle game ending.
 			System.out.println("Game Over.");
 			
-			// Redraw last block.
-			boardPage.drawBlock(
-					Block.indexToCoord(model.getActiveBlockCol()),
-					Block.indexToCoord(model.getActiveBlockRow()),
-					activeBlock
-			);
-			
 			timer.cancel();
-		} catch (RowsFullException e) {
-			// Check how many rows need to be cleared.
-			int numRows = e.getNumFullRows();
-			
-			BlockModel bgBlockModel = model.getBackgroundBlock();
 		} finally {
 			// Reset for next loop.
 			drop = false;
@@ -146,9 +132,51 @@ public class BoardController implements KeyPressHandler {
 			this.colMove = 0;
 			this.rowMove = 0;
 			loopCounter = loopCounter == dropIncrement ? 0 : loopCounter + loopIncrement;
+			// Reset the active block if necessary.
 			if (!activeBlock.isModel(model.getActiveBlock()))
 				activeBlock = Block.getBlockInstance(model.getActiveBlock());
 		}
+	}
+	
+	/*
+	 * Update the active block.
+	 * 
+	 * @return True iff the active block moved during this call.
+	 */
+	private boolean activeBlockUpdate() {
+		boardPage.undrawBlock(
+				Block.indexToCoord(model.getActiveBlockCol()),
+				Block.indexToCoord(model.getActiveBlockRow()),
+				activeBlock
+				);
+		
+		// If the user wishes to drop the block, do nothing else.
+		if (drop) {
+			colMove = 0;
+			rowMove = model.getDrop();
+			rotate = false;
+		// Rotate the block model if the user hit rotate.
+		} else if (rotate) {
+			model.rotateActiveBlock();
+		} else {
+			// Drop by one row every dropIncrement milliseconds.
+			rowMove = loopCounter == dropIncrement ? 1 : 0;
+		}
+		
+		// Attempt to move model.
+		boolean moved = model.moveActiveBlock(rowMove, colMove);
+		// If that didn't work, ignore the colMove (so that the block may still drop).
+		if (!moved)
+			moved = model.moveActiveBlock(rowMove, 0);
+		
+		// Redraw block in (possibly) new position.	
+		boardPage.drawBlock(
+				Block.indexToCoord(model.getActiveBlockCol()),
+				Block.indexToCoord(model.getActiveBlockRow()),
+				activeBlock
+				);
+		
+		return moved;
 	}
 
 	/*

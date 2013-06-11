@@ -26,7 +26,6 @@ public class BlockModel {
 		this(generateId());
 
 		// A single square with no offset.
-		squares = new ArrayList<SquareModel>();
 		squares.add(new SquareModel(0, 0));
 	}
 	
@@ -36,6 +35,7 @@ public class BlockModel {
 	 */
 	protected BlockModel(int id) {
 		this.id = id;
+		squares = new ArrayList<SquareModel>();
 	}
 	
 	/*
@@ -116,5 +116,9 @@ public class BlockModel {
 			square.setRow(newRowOffset);
 			square.setCol(newColOffset);
 		}
+	}
+	
+	public void addSquare(SquareModel square) {
+		squares.add(square);
 	}
 }

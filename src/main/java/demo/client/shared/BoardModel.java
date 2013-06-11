@@ -172,7 +172,7 @@ public class BoardModel {
 	 * @throws If the BlockModel that is active (before invoking this method) is partially off
 	 * the screen (i.e. the board is overflowing).
 	 */
-	public void initNextBlock() throws BlockOverflow, RowsFullException {
+	public void initNextBlock() throws BlockOverflow {
 		if (activeBlock != null)
 			writeActiveBlock();
 		activeBlock = nextBlock;
@@ -204,10 +204,8 @@ public class BoardModel {
 
 	/*
 	 * Write the current active block to the board in its current position.
-	 * 
-	 * @throws BlockOverflow If the block to be written is partially above the board.
 	 */
-	private void writeActiveBlock() throws BlockOverflow, RowsFullException {
+	private void writeActiveBlock() throws BlockOverflow {
 		
 		for (SquareModel squareModel : activeBlock.getIterator()) {
 			if (activeBlockRow + squareModel.getRow() < 0) {
@@ -220,28 +218,28 @@ public class BoardModel {
 				);
 			}
 		}
-		
-		// Check if any rows have been cleared.
-		int fullRows = numFullRows();
-		
-		if (fullRows > 0) {
-			throw new RowsFullException(fullRows);
-		}
 	}
 
 	/*
-	 * Get the number of consecutive rows from the bottom of the board which are full.
+	 * Get the number of consecutive rows on the board which are full.
 	 * 
-	 * @return The number of consecutive rows from the bottom of the board which are full.
+	 * @return The number of consecutive rows on the board which are full.
 	 */
-	private int numFullRows() {
+	public int numFullRows() {
 
 		int retVal = 0;
-		for (int i = ROW_NUM-1; i >= 0; i--) {
-			if (!board[i].isFull()) {
-				break;
+		
+		outerloop:
+		for (int i = 0; i < ROW_NUM; i++) {
+			if (board[i].isFull()) {
+				for (int j = 0; i + j < ROW_NUM; j++) {
+					if (board[i+j].isFull()) {
+						retVal += 1;
+					} else {
+						break outerloop;
+					}
+				}
 			}
-			retVal += 1;
 		}
 		
 		return retVal;
@@ -291,7 +289,7 @@ public class BoardModel {
 	private boolean isValidPosition(int row, int col) {
 		boolean isMovable = true;
 		for (SquareModel squareModel : activeBlock.getIterator()) {
-			if (getSquare(row+squareModel.getRow(), col+squareModel.getCol()) != 0) {
+			if (getSquare(row+squareModel.getRow(), col+squareModel.getCol()) != NO_TILE) {
 				isMovable = false;
 				break;
 			}
@@ -308,7 +306,7 @@ public class BoardModel {
 	 * 
 	 * @return True iff the block was successfully moved.
 	 */
-	public boolean moveActiveBlock(int rowMove, int colMove) throws BlockOverflow {
+	public boolean moveActiveBlock(int rowMove, int colMove) {
 		// Check if we can move active block.
 		boolean isMovable = isValidPosition(activeBlockRow+rowMove, activeBlockColumn+colMove);
 		
@@ -320,9 +318,6 @@ public class BoardModel {
 			// Return true only if there was actual movement.
 			return rowMove != 0 || colMove != 0;
 		} else {
-			// If this block couldn't move down from above the board, the board is overflowing.
-			if (rowMove == 1 && activeBlockRow < 0)
-				throw new BlockOverflow();
 			return false;
 		}
 	}
@@ -352,16 +347,76 @@ public class BoardModel {
 		return i-1;
 	}
 
-	public BackgroundBlockModel getBackgroundBlock() {
-		
+	/*
+	 * Get a model of the blocks which have settled on this BoardModel above
+	 * any full rows.
+	 */
+	public BackgroundBlockModel getAboveFullRows() {
 		BackgroundBlockModel retVal = new BackgroundBlockModel();
 		
+		// Start at top row of board and work way down.
 		for (int i = 0; i < ROW_NUM; i++) {
-			for (int j = 0; j < COL_NUM; j++) {
-				
+			// As long as rows are not full, add squares to the model.
+			if (!board[i].isFull()) {
+				for (int j = 0; j < COL_NUM; j++) {
+					if (board[i].getSquareValue(j) != NO_TILE) {
+						retVal.addSquare(new SquareModel(i, j));
+					}
+				}
+			// When we find a full row, we're done.
+			} else {
+				break;
 			}
 		}
 
+		return retVal;
+	}
+
+	/*
+	 * Clear any full rows.
+	 */
+	public void clearFullRows() {
+		Row[] newBoard = new Row[ROW_NUM];
+		
+		int i = ROW_NUM-1, j = ROW_NUM-1;
+		while (i >= 0) {
+			if (!board[i].isFull()) {
+				newBoard[j--] = board[i--];
+			} else {
+				i -= 1;
+			}
+		}
+		
+		// Fill the remaining space in newBoard with clear rows.
+		while (j >= 0) {
+			newBoard[j--] = new Row(COL_NUM);
+		}
+		
+		board = newBoard;
+	}
+
+	public BlockModel getFullRows() {
+		BlockModel retVal = new BackgroundBlockModel();
+		
+		outerloop:
+		for (int i = 0; i < ROW_NUM; i++) {
+			// Loop until we find a full row.
+			if (board[i].isFull()) {
+				// Then loop through the consecutive full rows.
+				for (int j = 0; i + j < ROW_NUM; j++) {
+					// Add all squares in the row, if full.
+					if (board[i+j].isFull()) {
+						for (int k = 0; k < COL_NUM; k++) {
+							retVal.addSquare(new SquareModel(i+j, k));
+						}
+					// Once we find a non-full row again, we're done.
+					} else {
+						break outerloop;
+					}
+				}
+			}
+		}
+		
 		return retVal;
 	}
 }
