@@ -3,6 +3,7 @@ package demo.client.local;
 import com.google.gwt.canvas.dom.client.Context2d;
 
 import demo.client.shared.BlockModel;
+import demo.client.shared.SquareModel;
 
 /* A class for drawing Block Drop blocks on an HTML5 canvas. */
 public class Block {
@@ -41,8 +42,8 @@ public class Block {
 	public void draw(int x, int y, Context2d context2d) {
 		Square square = new Square();
 		// Get an iterator of square coordinates based around the given coordinate (x,y).
-		for (Integer[] squarePos : model.getIterator()) {
-			square.draw(x+indexToCoord(squarePos[1]), y+indexToCoord(squarePos[0]), context2d);
+		for (SquareModel squareModel : model.getIterator()) {
+			square.draw(x+indexToCoord(squareModel.getCol()), y+indexToCoord(squareModel.getRow()), context2d);
 		}
 	}
 	
@@ -66,8 +67,12 @@ public class Block {
 	 */
 	public void getPath(int x, int y, Context2d context2d) {
 		Square square = new Square();
-		for (Integer[] squarePos : model.getIterator()) {
-			square.addSquareToCanvasPath(x+indexToCoord(squarePos[1]), y+indexToCoord(squarePos[0]), context2d);
+		for (SquareModel squareModel : model.getIterator()) {
+			square.addSquareToCanvasPath(
+					x+indexToCoord(squareModel.getCol()),
+					y+indexToCoord(squareModel.getRow()),
+					context2d
+			);
 		}
 	}
 

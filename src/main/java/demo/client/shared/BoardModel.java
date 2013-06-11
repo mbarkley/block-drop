@@ -166,39 +166,13 @@ public class BoardModel {
 	}
 
 	/*
-	 * The method should be called at a regular interval to update the board by causing
-	 * the active blocks position to drop, and handling when an active block settles at
-	 * the bottom of the screen.
-	 * 
-	 * @return True iff a piece moved.
-	 */
-	public boolean lowerActiveBlock() throws BlockOverflow {
-		// Check if we can move active block down.
-		boolean moved = moveActiveBlock(1, 0);
-		
-		// If it didn't move, write it to the board.
-		if (!moved) {
-			try {
-				writeActiveBlock();
-				// Switch to new active block.
-				return false;
-			} catch (BlockOverflow e) {
-				//TODO: Handle end of game? Or possibly restart.
-				throw e;
-			}
-		}
-		
-		return moved;
-	}
-
-	/*
 	 * Initialize the next BlockModel to be the active block. This should be called
 	 * whenever the current active block has settled at the bottom of the board.
 	 * 
 	 * @throws If the BlockModel that is active (before invoking this method) is partially off
 	 * the screen (i.e. the board is overflowing).
 	 */
-	public void initNextBlock() throws BlockOverflow {
+	public void initNextBlock() throws BlockOverflow, RowsFullException {
 		if (activeBlock != null)
 			writeActiveBlock();
 		activeBlock = nextBlock;
@@ -230,16 +204,47 @@ public class BoardModel {
 
 	/*
 	 * Write the current active block to the board in its current position.
+	 * 
+	 * @throws BlockOverflow If the block to be written is partially above the board.
 	 */
-	private void writeActiveBlock() throws BlockOverflow {
-		for (Integer[] squarePos : activeBlock.getIterator()) {
-			// If the index was out of bounds above the board, this player has lost.
-			if (activeBlockRow + squarePos[0] < 0) {
+	private void writeActiveBlock() throws BlockOverflow, RowsFullException {
+		
+		for (SquareModel squareModel : activeBlock.getIterator()) {
+			if (activeBlockRow + squareModel.getRow() < 0) {
 				throw new BlockOverflow();
 			} else {
-				setSquare(activeBlockRow+squarePos[0], activeBlockColumn+squarePos[1], activeBlock.getCode());
+				setSquare(
+						activeBlockRow+squareModel.getRow(),
+						activeBlockColumn+squareModel.getCol(),
+						activeBlock.getCode()
+				);
 			}
 		}
+		
+		// Check if any rows have been cleared.
+		int fullRows = numFullRows();
+		
+		if (fullRows > 0) {
+			throw new RowsFullException(fullRows);
+		}
+	}
+
+	/*
+	 * Get the number of consecutive rows from the bottom of the board which are full.
+	 * 
+	 * @return The number of consecutive rows from the bottom of the board which are full.
+	 */
+	private int numFullRows() {
+
+		int retVal = 0;
+		for (int i = ROW_NUM-1; i >= 0; i--) {
+			if (!board[i].isFull()) {
+				break;
+			}
+			retVal += 1;
+		}
+		
+		return retVal;
 	}
 
 	/*
@@ -285,8 +290,8 @@ public class BoardModel {
 	 */
 	private boolean isValidPosition(int row, int col) {
 		boolean isMovable = true;
-		for (Integer[] squarePos : activeBlock.getIterator()) {
-			if (getSquare(row+squarePos[0], col+squarePos[1]) != 0) {
+		for (SquareModel squareModel : activeBlock.getIterator()) {
+			if (getSquare(row+squareModel.getRow(), col+squareModel.getCol()) != 0) {
 				isMovable = false;
 				break;
 			}
@@ -345,5 +350,18 @@ public class BoardModel {
 			i += 1;
 		
 		return i-1;
+	}
+
+	public BackgroundBlockModel getBackgroundBlock() {
+		
+		BackgroundBlockModel retVal = new BackgroundBlockModel();
+		
+		for (int i = 0; i < ROW_NUM; i++) {
+			for (int j = 0; j < COL_NUM; j++) {
+				
+			}
+		}
+
+		return retVal;
 	}
 }

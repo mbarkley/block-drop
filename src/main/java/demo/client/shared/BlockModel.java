@@ -13,10 +13,9 @@ public class BlockModel {
 	private static int idGen = 1;
 
 	/* 
-	 * An array of pairs. Represents the offset positions of each tile in this block
-	 * from the central position.
+	 * A list of SquareModels, containing the squares of squares.
 	 */
-	private List<Integer[]> offsets;
+	private List<SquareModel> squares;
 	/* A unique id for identifying this block. */
 	private int id;
 	
@@ -26,9 +25,9 @@ public class BlockModel {
 	public BlockModel() {
 		this(generateId());
 
-		// Creates array {{0,0}}, a single square with no offset.
-		offsets = new ArrayList<Integer[]>();
-		offsets.add(new Integer[] {0,0});
+		// A single square with no offset.
+		squares = new ArrayList<SquareModel>();
+		squares.add(new SquareModel(0, 0));
 	}
 	
 	/*
@@ -40,17 +39,17 @@ public class BlockModel {
 	}
 	
 	/*
-	 * Set the offsets of the squares in this block from the blocks main position.
+	 * Set the squares of the squares in this block from the blocks main position.
 	 * The position of a single square on the board is calculated as main position + offset.
 	 * 
-	 * @param offsets An array of integer pairs, representing row and column offsets
+	 * @param squares An array of integer pairs, representing row and column squares
 	 * from this blocks main position.
 	 */
 	protected void setOffsets(int[][] offsets) {
-		this.offsets = new ArrayList<Integer[]>();
+		this.squares = new ArrayList<SquareModel>();
 		
 		for (int i = 0; i < offsets.length; i++) {
-			this.offsets.add(new Integer[] {offsets[i][0], offsets[i][1]});
+			this.squares.add(new SquareModel(offsets[i][0], offsets[i][1]));
 		}
 	}
 	
@@ -84,23 +83,23 @@ public class BlockModel {
 		return BASIC_CODE;
 	}
 	
-	public Iterable<Integer[]> getIterator() {
-		return offsets;
+	public Iterable<SquareModel> getIterator() {
+		return squares;
 	}
 	
 	/*
-	 * Rotate the offsets of the squares in this block by 90 degrees clockwise.
+	 * Rotate the squares of the squares in this block by 90 degrees clockwise.
 	 * Blocks that do not rotate around a central square should override this method.
 	 */
 	public void rotate() {
-		for (Integer[] offset : offsets) {
-			// Calculate new offsets (calculation derived from rotation matrix by 90 degrees)
-			int newRowOffset = -1 * offset[1];
-			int newColOffset = offset[0];
+		for (SquareModel square : squares) {
+			// Calculate new squares (calculation derived from rotation matrix by 90 degrees)
+			int newRowOffset = -1 * square.getCol();
+			int newColOffset = square.getRow();
 			
-			// Assign new offsets.
-			offset[0] = newRowOffset;
-			offset[1] = newColOffset;
+			// Assign new squares.
+			square.setRow(newRowOffset);
+			square.setCol(newColOffset);
 		}
 	}
 	
@@ -108,14 +107,14 @@ public class BlockModel {
 	 * Reverse the effect of a call to this.rotate.
 	 */
 	public void unrotate() {
-		for (Integer[] offset : offsets) {
-			// Calculate new offsets (calculation derived from rotation matrix by -90 degrees).
-			int newRowOffset = offset[1];
-			int newColOffset = -1 * offset[0];
+		for (SquareModel square : squares) {
+			// Calculate new squares (calculation derived from rotation matrix by -90 degrees).
+			int newRowOffset = square.getCol();
+			int newColOffset = -1 * square.getRow();
 			
-			// Assign new offsets.
-			offset[0] = newRowOffset;
-			offset[1] = newColOffset;
+			// Assign new squares.
+			square.setRow(newRowOffset);
+			square.setCol(newColOffset);
 		}
 	}
 }

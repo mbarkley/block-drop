@@ -5,8 +5,10 @@ import com.google.gwt.event.dom.client.KeyPressEvent;
 import com.google.gwt.event.dom.client.KeyPressHandler;
 import com.google.gwt.user.client.Timer;
 
+import demo.client.shared.BlockModel;
 import demo.client.shared.BlockOverflow;
 import demo.client.shared.BoardModel;
+import demo.client.shared.RowsFullException;
 
 /*
  * A controller class for a Block Drop game. Handles game loop and user input.
@@ -92,11 +94,6 @@ public class BoardController implements KeyPressHandler {
 				colMove = this.colMove;
 			}
 			
-			// If we are not still using the same active block, make a new one.
-			if (!activeBlock.isModel(model.getActiveBlock())) {
-				activeBlock = Block.getBlockInstance(model.getActiveBlock());
-			} 
-			
 			boardPage.undrawBlock(
 				Block.indexToCoord(model.getActiveBlockCol()),
 				Block.indexToCoord(model.getActiveBlockRow()),
@@ -122,15 +119,9 @@ public class BoardController implements KeyPressHandler {
 			);
 			
 			// If the block could not drop, start a new block.
-			if (!moved && rowMove > 0)
+			if (!moved && rowMove > 0) {
 				model.initNextBlock();
-			
-			// Reset for next loop.
-			drop = false;
-			rotate = false;
-			this.colMove = 0;
-			this.rowMove = 0;
-			loopCounter = loopCounter == dropIncrement ? 0 : loopCounter + loopIncrement;
+			}
 		} catch (BlockOverflow e) {
 			// TODO: Handle game ending.
 			System.out.println("Game Over.");
@@ -143,6 +134,20 @@ public class BoardController implements KeyPressHandler {
 			);
 			
 			timer.cancel();
+		} catch (RowsFullException e) {
+			// Check how many rows need to be cleared.
+			int numRows = e.getNumFullRows();
+			
+			BlockModel bgBlockModel = model.getBackgroundBlock();
+		} finally {
+			// Reset for next loop.
+			drop = false;
+			rotate = false;
+			this.colMove = 0;
+			this.rowMove = 0;
+			loopCounter = loopCounter == dropIncrement ? 0 : loopCounter + loopIncrement;
+			if (!activeBlock.isModel(model.getActiveBlock()))
+				activeBlock = Block.getBlockInstance(model.getActiveBlock());
 		}
 	}
 
