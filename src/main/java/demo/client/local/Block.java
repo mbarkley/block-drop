@@ -3,7 +3,6 @@ package demo.client.local;
 import com.google.gwt.canvas.dom.client.Context2d;
 
 import demo.client.shared.BlockModel;
-import demo.client.shared.LBlockModel;
 
 /* A class for drawing Block Drop blocks on an HTML5 canvas. */
 public class Block {
@@ -19,21 +18,14 @@ public class Block {
 	 * @return An instance of Block or a subclass thereof.
 	 */
 	public static Block getBlockInstance(BlockModel activeBlock) {
-		Block retVal;
-		if (activeBlock.getClass().equals(LBlockModel.class)) {
-			retVal = new LBlock((LBlockModel) activeBlock);
-		} else {
-			retVal = new Block(activeBlock);
-		}
-		
-		return retVal;
+		return new Block(activeBlock);
 	}
 	
 	/* The BlockModel associated with this instance. */
 	private BlockModel model;
 
 	/*
-	 * Create a block of a single tile. This method should be overridden by subclasses.
+	 * Create a Block instance.
 	 */
 	public Block(BlockModel blockModel) {
 		model = blockModel;
@@ -79,8 +71,8 @@ public class Block {
 		}
 	}
 
-	public void rotateClockwise() {
-		model.rotateClockwise();
+	public void rotate() {
+		model.rotate();
 	}
 
 	/*

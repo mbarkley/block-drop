@@ -141,11 +141,26 @@ public class BlockModel {
 	 * Rotate the offsets of the squares in this block by 90 degrees clockwise.
 	 * Blocks that do not rotate around a central square should override this method.
 	 */
-	public void rotateClockwise() {
+	public void rotate() {
 		for (int[] offset : offsets) {
-			// Calculate new offsets (calculation derived from rotation matrix)
+			// Calculate new offsets (calculation derived from rotation matrix by 90 degrees)
 			int newRowOffset = -1 * offset[1];
 			int newColOffset = offset[0];
+			
+			// Assign new offsets.
+			offset[0] = newRowOffset;
+			offset[1] = newColOffset;
+		}
+	}
+	
+	/*
+	 * Reverse the effect of a call to this.rotate.
+	 */
+	public void unrotate() {
+		for (int[] offset : offsets) {
+			// Calculate new offsets (calculation derived from rotation matrix by -90 degrees).
+			int newRowOffset = offset[1];
+			int newColOffset = -1 * offset[0];
 			
 			// Assign new offsets.
 			offset[0] = newRowOffset;

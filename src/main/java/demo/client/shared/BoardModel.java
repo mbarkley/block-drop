@@ -131,16 +131,38 @@ public class BoardModel {
 	 * Generate the next BlockModel to be used as the active block on this board.
 	 */
 	private BlockModel generateNextBlock() {
-		int decider = Random.nextInt(2);
+		int decider = Random.nextInt(7);
+		
+		BlockModel retVal;
 		
 		switch(decider) {
 			case 0:
-				return new LBlockModel();
+				retVal = new LBlockModel();
+				break;
 			case 1:
-				return new ReverseLBlockModel();
+				retVal = new ReverseLBlockModel();
+				break;
+			case 2:
+				retVal = new TBlockModel();
+				break;
+			case 3:
+				retVal = new SBlockModel();
+				break;
+			case 4:
+				retVal = new ZBlockModel();
+				break;
+			case 5:
+				retVal = new LongBlockModel();
+				break;
+			case 6:
+				retVal = new SquareBlockModel();
+				break;
 			default:
-				return null;
+				retVal = null;
+				break;
 		}
+		
+		return retVal;
 	}
 
 	/*
@@ -305,13 +327,11 @@ public class BoardModel {
 	 */
 	public void rotateActiveBlock() {
 		// Try rotating block.
-		activeBlock.rotateClockwise();
+		activeBlock.rotate();
 		
 		// If this position is invalid, undo it.
 		if (!isValidPosition(activeBlockRow, activeBlockColumn)) {
-			// TODO: Do this less lazily.
-			for (int i = 0; i < 3; i++)
-				activeBlock.rotateClockwise();
+			activeBlock.unrotate();
 			System.out.println("Rotation failed.");
 		}
 	}
