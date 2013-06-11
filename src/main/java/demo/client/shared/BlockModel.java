@@ -1,61 +1,12 @@
 package demo.client.shared;
 
-import java.util.Iterator;
+import java.util.ArrayList;
+import java.util.List;
 
 /*
  * The base class for a falling block in a Block Drop BoardModel.
  */
 public class BlockModel {
-	
-	/*
-	 * For iterating through the positions of squares in a single block.
-	 */
-	public class SquareIterator implements Iterator<Integer[]> {
-
-		/* Index of next position to return. */
-		private int next;
-		
-		/*
-		 * Create a SquareIterator.
-		 * 
-		 * @param offsets The offsets of each square to iterate through.
-		 */
-		public SquareIterator() {
-			super();
-			next = 0;
-		}
-		
-		/*
-		 * (non-Javadoc)
-		 * @see java.util.Iterator#hasNext()
-		 */
-		@Override
-		public boolean hasNext() {
-			return next < offsets.length;
-		}
-
-		/*
-		 * (non-Javadoc)
-		 * @see java.util.Iterator#next()
-		 */
-		@Override
-		public Integer[] next() {
-			Integer[] res = new Integer[] {
-					new Integer(offsets[next][0]),
-					new Integer(offsets[next][1])};
-			next++;
-			return res;
-		}
-
-		/*
-		 * (non-Javadoc)
-		 * @see java.util.Iterator#remove()
-		 */
-		@Override
-		public void remove() {
-			throw new UnsupportedOperationException();
-		}
-	}
 	
 	public static final int BASIC_CODE = 1;
 	
@@ -65,7 +16,7 @@ public class BlockModel {
 	 * An array of pairs. Represents the offset positions of each tile in this block
 	 * from the central position.
 	 */
-	private int[][] offsets;
+	private List<Integer[]> offsets;
 	/* A unique id for identifying this block. */
 	private int id;
 	
@@ -75,8 +26,9 @@ public class BlockModel {
 	public BlockModel() {
 		this(generateId());
 
-		// Creates array {{0,0}}, so single square with no offset.
-		offsets = new int[1][2];
+		// Creates array {{0,0}}, a single square with no offset.
+		offsets = new ArrayList<Integer[]>();
+		offsets.add(new Integer[] {0,0});
 	}
 	
 	/*
@@ -95,7 +47,11 @@ public class BlockModel {
 	 * from this blocks main position.
 	 */
 	protected void setOffsets(int[][] offsets) {
-		this.offsets = offsets;
+		this.offsets = new ArrayList<Integer[]>();
+		
+		for (int i = 0; i < offsets.length; i++) {
+			this.offsets.add(new Integer[] {offsets[i][0], offsets[i][1]});
+		}
 	}
 	
 	/*
@@ -129,12 +85,7 @@ public class BlockModel {
 	}
 	
 	public Iterable<Integer[]> getIterator() {
-		return new Iterable<Integer[]>() {
-			@Override
-			public Iterator<Integer[]> iterator() {
-				return new SquareIterator();
-			}
-		};
+		return offsets;
 	}
 	
 	/*
@@ -142,7 +93,7 @@ public class BlockModel {
 	 * Blocks that do not rotate around a central square should override this method.
 	 */
 	public void rotate() {
-		for (int[] offset : offsets) {
+		for (Integer[] offset : offsets) {
 			// Calculate new offsets (calculation derived from rotation matrix by 90 degrees)
 			int newRowOffset = -1 * offset[1];
 			int newColOffset = offset[0];
@@ -157,7 +108,7 @@ public class BlockModel {
 	 * Reverse the effect of a call to this.rotate.
 	 */
 	public void unrotate() {
-		for (int[] offset : offsets) {
+		for (Integer[] offset : offsets) {
 			// Calculate new offsets (calculation derived from rotation matrix by -90 degrees).
 			int newRowOffset = offset[1];
 			int newColOffset = -1 * offset[0];
