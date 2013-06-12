@@ -2,8 +2,8 @@ package demo.client.local;
 
 import com.google.gwt.canvas.dom.client.Context2d;
 
-import demo.client.shared.BlockModel;
-import demo.client.shared.SquareModel;
+import demo.client.shared.model.BlockModel;
+import demo.client.shared.model.SquareModel;
 
 /* A class for drawing Block Drop blocks on an HTML5 canvas. */
 public class Block {

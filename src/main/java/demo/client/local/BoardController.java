@@ -5,9 +5,9 @@ import com.google.gwt.event.dom.client.KeyPressEvent;
 import com.google.gwt.event.dom.client.KeyPressHandler;
 import com.google.gwt.user.client.Timer;
 
-import demo.client.shared.BackgroundBlockModel;
-import demo.client.shared.BlockOverflow;
-import demo.client.shared.BoardModel;
+import demo.client.shared.model.BackgroundBlockModel;
+import demo.client.shared.model.BlockOverflow;
+import demo.client.shared.model.BoardModel;
 
 /*
  * A controller class for a Block Drop game. Handles game loop and user input.

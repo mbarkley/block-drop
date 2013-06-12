@@ -1,4 +1,4 @@
-package demo.client.shared;
+package demo.client.shared.model;
 
 /*
  * A T-shaped block in Block Drop.

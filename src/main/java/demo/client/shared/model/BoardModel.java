@@ -1,72 +1,12 @@
-package demo.client.shared;
+package demo.client.shared.model;
 
 import com.google.gwt.user.client.Random;
+
 
 /*
  * A model of the Block Drop board.
  */
 public class BoardModel {
-
-	/*
-	 * A single row in the Block Drop board.
-	 */
-	public class Row {
-
-		/* The spots in this row. Indices go left to right. */
-		private int[] squares;
-		
-		/* The width of this row. */
-		public final int WIDTH;
-		
-		/*
-		 * Create a row of width size.
-		 * 
-		 * @param size The width of this row.
-		 */
-		public Row(int size) {
-			WIDTH = size;
-			// Values are initialized to value 0 (which is unoccupied).
-			squares = new int[WIDTH];
-		}
-
-		/*
-		 * Get the value at index in this row.
-		 * 
-		 * @param index The index to get in this row.
-		 * 
-		 * @return The value at index in this row.
-		 * 
-		 * @throws Exception If the index is out of range.
-		 */
-		public int getSquareValue(int index) {
-			return squares[index];
-		}
-		
-		/*
-		 * Set the value at index in this row.
-		 * 
-		 * @param index The index of the square to set in this row.
-		 * @param value The value to set.
-		 * 
-		 * @throws Exception If the index is out of range.
-		 */
-		public void setSquare(int index, int value) {
-			squares[index] = value;
-		}
-		
-		/*
-		 * Check if this row is entirely occupied.
-		 * 
-		 * @return True iff this row is entirely occupied.
-		 */
-		public boolean isFull() {
-			for (int i = 0; i < WIDTH; i++)
-				if (squares[i] == 0)
-					return false;
-			
-			return true;
-		}
-	}
 
 	/* The value representing a vacant spot on the board. */
 	public static final int NO_TILE = 0;
@@ -221,24 +161,17 @@ public class BoardModel {
 	}
 
 	/*
-	 * Get the number of consecutive rows on the board which are full.
+	 * Get the number of rows on the board which are full.
 	 * 
-	 * @return The number of consecutive rows on the board which are full.
+	 * @return The number of rows on the board which are full.
 	 */
 	public int numFullRows() {
 
 		int retVal = 0;
 		
-		outerloop:
 		for (int i = 0; i < ROW_NUM; i++) {
 			if (board[i].isFull()) {
-				for (int j = 0; i + j < ROW_NUM; j++) {
-					if (board[i+j].isFull()) {
-						retVal += 1;
-					} else {
-						break outerloop;
-					}
-				}
+				retVal += 1;
 			}
 		}
 		

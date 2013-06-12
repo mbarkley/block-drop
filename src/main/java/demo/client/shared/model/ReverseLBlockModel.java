@@ -1,15 +1,14 @@
-package demo.client.shared;
-
+package demo.client.shared.model;
 
 /*
- * A model for an L-shaped block in Block Drop.
+ * A reverse-L-shaped block in Block Drop.
  */
-public class LBlockModel extends BlockModel {
+public class ReverseLBlockModel extends BlockModel {
 
 	/*
-	 * Create a LBlockModel instance.
+	 * Create a ReverseLBlockModel instance.
 	 */
-	public LBlockModel() {
+	public ReverseLBlockModel() {
 		// Assign unique id.
 		super(generateId());
 		
@@ -18,7 +17,7 @@ public class LBlockModel extends BlockModel {
 				new int[] {-1,0}, // The top of the L
 				new int[] {0,0}, // The middle of the L
 				new int[] {1,0}, // The corner of the L
-				new int[] {1,1} // The tail of the L
+				new int[] {1,-1} // The tail of the L
 		});
 	}
 }

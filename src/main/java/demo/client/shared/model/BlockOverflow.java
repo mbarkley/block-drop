@@ -1,3 +1,3 @@
-package demo.client.shared;
+package demo.client.shared.model;
 
 public class BlockOverflow extends Exception {}
