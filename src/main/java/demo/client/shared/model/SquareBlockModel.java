@@ -8,6 +8,8 @@ package demo.client.shared.model;
  */
 public class SquareBlockModel extends BlockModel {
 
+	public static final int CODE = 5;
+	
 	/*
 	 * Create a SquareBlock instance.
 	 */
@@ -20,7 +22,7 @@ public class SquareBlockModel extends BlockModel {
 				new int[] {1,0},	// Bottom-left square.
 				new int[] {1,1},	// Bottom-right square.
 				new int[] {0,1}		// Top-right square.
-		});
+		}, getCode());
 	}
 	
 	/*
@@ -36,5 +38,9 @@ public class SquareBlockModel extends BlockModel {
 	public void unrotate() {
 		// Do nothing.
 		return;
+	}
+	
+	public static int getCode() {
+		return CODE;
 	}
 }

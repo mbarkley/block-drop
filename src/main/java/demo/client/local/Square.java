@@ -95,4 +95,13 @@ public class Square {
 		context2d.rect(x+1, y+1, SIZE-2, SIZE-2);
 		context2d.closePath();
 	}
+	
+	/*
+	 * Set the interior colour of this square.
+	 * 
+	 * @param cssColour A string with the value of a CSS colour.
+	 */
+	public void setInteriorColour(String cssColour) {
+		interiorColour = cssColour;
+	}
 }

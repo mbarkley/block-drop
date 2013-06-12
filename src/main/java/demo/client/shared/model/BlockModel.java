@@ -26,7 +26,7 @@ public class BlockModel {
 		this(generateId());
 
 		// A single square with no offset.
-		squares.add(new SquareModel(0, 0));
+		squares.add(new SquareModel(0, 0, BlockModel.getCode()));
 	}
 	
 	/*
@@ -45,11 +45,11 @@ public class BlockModel {
 	 * @param squares An array of integer pairs, representing row and column squares
 	 * from this blocks main position.
 	 */
-	protected void setOffsets(int[][] offsets) {
+	protected void setOffsets(int[][] offsets, int code) {
 		this.squares = new ArrayList<SquareModel>();
 		
 		for (int i = 0; i < offsets.length; i++) {
-			this.squares.add(new SquareModel(offsets[i][0], offsets[i][1]));
+			this.squares.add(new SquareModel(offsets[i][0], offsets[i][1], code));
 		}
 	}
 	
@@ -79,7 +79,7 @@ public class BlockModel {
 	 * 
 	 * @return An integer representing this type of block on the board.
 	 */
-	public int getCode() {
+	public static int getCode() {
 		return BASIC_CODE;
 	}
 	

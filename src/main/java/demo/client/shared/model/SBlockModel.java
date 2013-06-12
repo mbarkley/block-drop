@@ -5,6 +5,8 @@ package demo.client.shared.model;
  */
 public class SBlockModel extends ToggledBlockModel {
 
+	public static final int CODE = 4;
+	
 	/*
 	 * Create an SBlockModel instance.
 	 */
@@ -17,6 +19,10 @@ public class SBlockModel extends ToggledBlockModel {
 				new int[] {1,0},	// Bottom square.
 				new int[] {0,-1},	// Left-middle of square.
 				new int[] {-1,-1}	// Top of square.
-		});
+		}, getCode());
+	}
+	
+	public static int getCode() {
+		return CODE;
 	}
 }

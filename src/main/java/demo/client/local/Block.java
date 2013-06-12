@@ -43,6 +43,7 @@ public class Block {
 		Square square = new Square();
 		// Get an iterator of square coordinates based around the given coordinate (x,y).
 		for (SquareModel squareModel : model.getIterator()) {
+			square.setInteriorColour(ColorMapper.codeToColour(squareModel.getCode()));
 			square.draw(x+indexToCoord(squareModel.getCol()), y+indexToCoord(squareModel.getRow()), context2d);
 		}
 	}

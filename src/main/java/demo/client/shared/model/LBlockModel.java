@@ -1,12 +1,12 @@
 package demo.client.shared.model;
 
-
-
 /*
  * A model for an L-shaped block in Block Drop.
  */
 public class LBlockModel extends BlockModel {
-
+	
+	public static final int CODE = 8;
+	
 	/*
 	 * Create a LBlockModel instance.
 	 */
@@ -20,6 +20,10 @@ public class LBlockModel extends BlockModel {
 				new int[] {0,0}, // The middle of the L
 				new int[] {1,0}, // The corner of the L
 				new int[] {1,1} // The tail of the L
-		});
+		}, getCode());
+	}
+
+	public static int getCode() {
+		return CODE;
 	}
 }

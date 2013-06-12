@@ -5,6 +5,8 @@ package demo.client.shared.model;
  */
 public class TBlockModel extends BlockModel {
 
+	public static final int CODE = 6;
+	
 	/*
 	 * Create a TBlockModel instance.
 	 */
@@ -18,6 +20,10 @@ public class TBlockModel extends BlockModel {
 			new int[] {-1,0}, 	// Stem of T
 			new int[] {0,-1}, 	// Right-top of T
 			new int[] {0,1} 	// Left top of T
-		});
+		}, getCode());
+	}
+	
+	public static int getCode() {
+		return CODE;
 	}
 }

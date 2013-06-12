@@ -5,6 +5,8 @@ package demo.client.shared.model;
  */
 public class ZBlockModel extends ToggledBlockModel {
 
+	public static final int CODE = 7;
+	
 	/*
 	 * Create a ZBlockModel instance.
 	 */
@@ -17,6 +19,10 @@ public class ZBlockModel extends ToggledBlockModel {
 				new int[] {1,0},	// Bottom square.
 				new int[] {0,1},	// Middle-right square.
 				new int[] {-1,1}	// Top square.
-		});
+		}, getCode());
+	}
+	
+	public static int getCode() {
+		return CODE;
 	}
 }

@@ -154,7 +154,7 @@ public class BoardModel {
 				setSquare(
 						activeBlockRow+squareModel.getRow(),
 						activeBlockColumn+squareModel.getCol(),
-						activeBlock.getCode()
+						squareModel.getCode()
 				);
 			}
 		}
@@ -293,7 +293,7 @@ public class BoardModel {
 			if (!board[i].isFull()) {
 				for (int j = 0; j < COL_NUM; j++) {
 					if (board[i].getSquareValue(j) != NO_TILE) {
-						retVal.addSquare(new SquareModel(i, j));
+						retVal.addSquare(new SquareModel(i, j, board[i].getSquareValue(j)));
 					}
 				}
 			// When we find a full row, we're done.
@@ -340,7 +340,7 @@ public class BoardModel {
 					// Add all squares in the row, if full.
 					if (board[i+j].isFull()) {
 						for (int k = 0; k < COL_NUM; k++) {
-							retVal.addSquare(new SquareModel(i+j, k));
+							retVal.addSquare(new SquareModel(i+j, k, board[i+j].getSquareValue(k)));
 						}
 					// Once we find a non-full row again, we're done.
 					} else {

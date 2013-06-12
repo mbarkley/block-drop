@@ -4,7 +4,9 @@ package demo.client.shared.model;
  * A reverse-L-shaped block in Block Drop.
  */
 public class ReverseLBlockModel extends BlockModel {
-
+	
+	public static final int CODE = 3;
+	
 	/*
 	 * Create a ReverseLBlockModel instance.
 	 */
@@ -18,6 +20,10 @@ public class ReverseLBlockModel extends BlockModel {
 				new int[] {0,0}, // The middle of the L
 				new int[] {1,0}, // The corner of the L
 				new int[] {1,-1} // The tail of the L
-		});
+		}, getCode());
+	}
+	
+	public static int getCode() {
+		return CODE;
 	}
 }
