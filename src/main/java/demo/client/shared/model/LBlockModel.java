@@ -22,6 +22,10 @@ public class LBlockModel extends BlockModel {
 				new int[] {1,1} // The tail of the L
 		}, getCode());
 	}
+	
+	public double getCentreColDiff() {
+		return -0.5;
+	}
 
 	public static int getCode() {
 		return CODE;

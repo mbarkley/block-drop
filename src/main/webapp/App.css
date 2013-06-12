@@ -15,7 +15,7 @@ body {
 	padding: 0px;
 }
 .no-border {
-	border: none;
+	border: 0px;
 }
 /* GENERIC STYLES END */
 
@@ -28,16 +28,16 @@ body {
 }
 .side-panel {
 	width: 300px;
-	
-	padding: 0px;
-	margin: 0px;
-	border: none;
-	
 	background-color: black;
 }
 .centre-panel {
 	width: 600px;
 	
 	position: relative;
+}
+.next-piece {
+	width: 300px;
+	height: 300px;
+	position: absolute;
 }
 /* BOARD.HTML STYLES END */

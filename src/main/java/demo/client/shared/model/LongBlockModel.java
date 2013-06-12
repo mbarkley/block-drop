@@ -22,6 +22,10 @@ public class LongBlockModel extends ToggledBlockModel {
 		}, getCode());
 	}
 	
+	public double getCentreRowDiff() {
+		return -0.5;
+	}
+	
 	public static int getCode() {
 		return CODE;
 	}

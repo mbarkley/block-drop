@@ -25,6 +25,14 @@ public class SquareBlockModel extends BlockModel {
 		}, getCode());
 	}
 	
+	public double getCentreRowDiff() {
+		return -0.5;
+	}
+	
+	public double getCentreColDiff() {
+		return -0.5;
+	}
+	
 	/*
 	 * (non-Javadoc)
 	 * @see demo.client.shared.BlockModel#rotate()

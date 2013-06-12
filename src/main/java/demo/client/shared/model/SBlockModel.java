@@ -22,6 +22,10 @@ public class SBlockModel extends ToggledBlockModel {
 		}, getCode());
 	}
 	
+	public double getCentreColDiff() {
+		return 0.5;
+	}
+	
 	public static int getCode() {
 		return CODE;
 	}

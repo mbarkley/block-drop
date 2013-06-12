@@ -39,7 +39,7 @@ public class Block {
 	 * @param y The y coordinate of the position at which to draw this block.
 	 * @param context2d The context on which to draw this block.
 	 */
-	public void draw(int x, int y, Context2d context2d) {
+	public void draw(double x, double y, Context2d context2d) {
 		Square square = new Square();
 		// Get an iterator of square coordinates based around the given coordinate (x,y).
 		for (SquareModel squareModel : model.getIterator()) {
@@ -80,9 +80,17 @@ public class Block {
 	public void rotate() {
 		model.rotate();
 	}
+	
+	public double getCentreRowDiff() {
+		return model.getCentreRowDiff();
+	}
+	
+	public double getCentreColDiff() {
+		return model.getCentreColDiff();
+	}
 
 	/*
-	 * Convert an index (used to locate BlockModelss on the BoardModel) to a coordinate
+	 * Convert an index (used to locate BlockModels on the BoardModel) to a coordinate
 	 * (used to draw Blocks on the BoardPage canvas).
 	 * 
 	 * @param index The index of a BlockModel on a BoardModel to be converted to a coordinate.

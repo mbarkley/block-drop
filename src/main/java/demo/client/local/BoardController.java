@@ -19,6 +19,8 @@ public class BoardController implements KeyPressHandler {
 	private BoardModel model;
 	/* A block model. */
 	private Block activeBlock;
+	/* A block model. */
+	private Block nextBlock;
 	
 	/* A timer for running the game loop. */
 	private Timer timer;
@@ -58,6 +60,7 @@ public class BoardController implements KeyPressHandler {
 		// Initiate BoardModel.
 		model = new BoardModel();
 		activeBlock = Block.getBlockInstance(model.getActiveBlock());
+		nextBlock = Block.getBlockInstance(model.getNextBlock());
 		
 		// Create a timer to run the game loop.
 		timer = new Timer() {
@@ -135,6 +138,8 @@ public class BoardController implements KeyPressHandler {
 			// Reset the active block if necessary.
 			if (!activeBlock.isModel(model.getActiveBlock()))
 				activeBlock = Block.getBlockInstance(model.getActiveBlock());
+				nextBlock = Block.getBlockInstance(model.getNextBlock());
+				boardPage.drawBlockToNextCanvas(nextBlock);
 		}
 	}
 	
@@ -184,7 +189,7 @@ public class BoardController implements KeyPressHandler {
 	 */
 	public void startGame() {
 		// Add this as a handler for keyboard events.
-		boardPage.addHandlerToCanvas(this);
+		boardPage.addHandlerToMainCanvas(this);
 		// Start game loop.
 		timer.scheduleRepeating(loopIncrement);		
 	}

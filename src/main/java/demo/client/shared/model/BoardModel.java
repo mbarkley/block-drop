@@ -109,7 +109,7 @@ public class BoardModel {
 	 * Initialize the next BlockModel to be the active block. This should be called
 	 * whenever the current active block has settled at the bottom of the board.
 	 * 
-	 * @throws If the BlockModel that is active (before invoking this method) is partially off
+	 * @throws BlockOverflow If the BlockModel that is active (before invoking this method) is partially off
 	 * the screen (i.e. the board is overflowing).
 	 */
 	public void initNextBlock() throws BlockOverflow {
@@ -351,5 +351,14 @@ public class BoardModel {
 		}
 		
 		return retVal;
+	}
+
+	/*
+	 * Get the next block.
+	 * 
+	 * @return The next block to come in this game.
+	 */
+	public BlockModel getNextBlock() {
+		return nextBlock;
 	}
 }

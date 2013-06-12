@@ -18,24 +18,31 @@ import com.google.gwt.user.client.ui.Composite;
 @Templated("Board.html")
 public class BoardPage extends Composite {
 	
-	public static final String CANVAS_WRAPPER_ID = "canvas-wrapper";
+	public static final String CANVAS_WRAPPER_ID = "mainCanvas-wrapper";
 
 	/* The height of the board in squares. */
 	public static final int HEIGHT = 15;
 	/* The width of the board in squares. */
 	public static final int WIDTH = 10;
 	/* Canvas coordinate-space height (in pixels). */
-	public static final int COORD_HEIGHT = 900;
+	public static final int MAIN_COORD_HEIGHT = 900;
 	/* Canvas coordinate-space width (in pixels). */
-	public static final int COORD_WIDTH = 600;
+	public static final int MAIN_COORD_WIDTH = 600;
 	/* The dimension of each square in pixels. */
 	public static final int SIZE = 60;
 	/* The background colour of the Block Drop board. */
 	public static final String BOARD_COLOUR = "rgb(255,255,255)";
+
+	public static final int NEXT_COORD_HEIGHT = 300;
+
+	private static final int NEXT_COORD_WIDTH = 300;
 	
-	/* A canvas for drawing a Block Drop game. */
-	@DataField
-	private Canvas canvas = Canvas.createIfSupported();;
+	/* A mainCanvas for drawing a Block Drop game. */
+	@DataField("canvas")
+	private Canvas mainCanvas = Canvas.createIfSupported();
+	/* A mainCanvas for drawing the next piece in the Block Drop game. */
+	@DataField("next-piece")
+	private Canvas nextPieceCanvas = Canvas.createIfSupported();
 	/* A controller for this view. */
 	private BoardController controller;
 	
@@ -44,8 +51,10 @@ public class BoardPage extends Composite {
 	 */
 	public BoardPage() {
 		System.out.println("Initiating BoardModel");
-		canvas.setCoordinateSpaceHeight(COORD_HEIGHT);
-		canvas.setCoordinateSpaceWidth(COORD_WIDTH);
+		mainCanvas.setCoordinateSpaceHeight(MAIN_COORD_HEIGHT);
+		mainCanvas.setCoordinateSpaceWidth(MAIN_COORD_WIDTH);
+		nextPieceCanvas.setCoordinateSpaceHeight(NEXT_COORD_HEIGHT);
+		nextPieceCanvas.setCoordinateSpaceWidth(NEXT_COORD_WIDTH);
 		controller = new BoardController();
 	}
 	
@@ -54,8 +63,8 @@ public class BoardPage extends Composite {
 	 */
 	@PostConstruct
 	private void constructUI() {
-		// Check that canvas was supported.
-		if (canvas != null) {
+		// Check that mainCanvas was supported.
+		if (mainCanvas != null) {
 			System.out.println("Canvas successfully created.");
 			controller.setPage(this);
 			
@@ -66,45 +75,54 @@ public class BoardPage extends Composite {
 	}
 
 	/*
-	 * Fill the current path on this page's canvas with the board background colour.
+	 * Fill the current path on this page's mainCanvas with the board background colour.
 	 */
 	private void drawBackground() {
-		canvas.getContext2d().setFillStyle(BOARD_COLOUR);
-		canvas.getContext2d().fill();
+		mainCanvas.getContext2d().setFillStyle(BOARD_COLOUR);
+		mainCanvas.getContext2d().fill();
 	}
 
 	/*
-	 * Undraw the given block from this page's canvas.
-	 * Note: Any path on the canvas will be lost after invoking this method.
+	 * Undraw the given block from this page's mainCanvas.
+	 * Note: Any path on the mainCanvas will be lost after invoking this method.
 	 * 
 	 * @param x The x coordinate of the position of the block.
 	 * @param y The y coordinate of the position of the block.
 	 * @param activeBlock The block to undraw.
 	 */
 	public void undrawBlock(int x, int y, Block activeBlock) {
-		canvas.getContext2d().beginPath();
-		activeBlock.getPath(x, y, canvas.getContext2d());
-		canvas.getContext2d().closePath();
+		mainCanvas.getContext2d().beginPath();
+		activeBlock.getPath(x, y, mainCanvas.getContext2d());
+		mainCanvas.getContext2d().closePath();
 		drawBackground();		
 	}
 
 	/*
-	 * Draw a block on this page's canvas.
+	 * Draw a block on this page's mainCanvas.
 	 * 
 	 * @param x The x coordinate of the position of the block.
 	 * @param y The y coordinate of the position of the block.
 	 * @param activeBlock The block to draw.
 	 */
 	public void drawBlock(int x, int y, Block activeBlock) {
-		activeBlock.draw(x, y, canvas.getContext2d());
+		activeBlock.draw(x, y, mainCanvas.getContext2d());
 	}
 
 	/*
-	 * Add a key press handler to this page's canvas.
+	 * Add a key press handler to this page's mainCanvas.
 	 * 
-	 * @param handler A key press handler for the canvas.
+	 * @param handler A key press handler for the mainCanvas.
 	 */
-	public void addHandlerToCanvas(KeyPressHandler handler) {
-		canvas.addKeyPressHandler(handler);
+	public void addHandlerToMainCanvas(KeyPressHandler handler) {
+		mainCanvas.addKeyPressHandler(handler);
+	}
+	
+	public void drawBlockToNextCanvas(Block nextBlock) {
+		nextPieceCanvas.getContext2d().clearRect(0, 0, NEXT_COORD_WIDTH, MAIN_COORD_HEIGHT);
+		nextBlock.draw(
+				2*Block.SIZE+nextBlock.getCentreColDiff()*Block.SIZE,
+				2*Block.SIZE+nextBlock.getCentreRowDiff()*Block.SIZE,
+				nextPieceCanvas.getContext2d()
+				);
 	}
 }

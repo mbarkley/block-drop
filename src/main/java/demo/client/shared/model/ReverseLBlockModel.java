@@ -23,6 +23,10 @@ public class ReverseLBlockModel extends BlockModel {
 		}, getCode());
 	}
 	
+	public double getCentreColDiff() {
+		return 0.5;
+	}
+	
 	public static int getCode() {
 		return CODE;
 	}

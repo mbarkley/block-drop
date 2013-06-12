@@ -121,4 +121,12 @@ public class BlockModel {
 	public void addSquare(SquareModel square) {
 		squares.add(square);
 	}
+
+	public double getCentreRowDiff() {
+		return 0;
+	}
+
+	public double getCentreColDiff() {
+		return 0;
+	}
 }
