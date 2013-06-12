@@ -118,7 +118,15 @@ public class BoardPage extends Composite {
 	}
 	
 	public void drawBlockToNextCanvas(Block nextBlock) {
-		nextPieceCanvas.getContext2d().clearRect(0, 0, NEXT_COORD_WIDTH, MAIN_COORD_HEIGHT);
+		// Clear everything.
+		nextPieceCanvas.getContext2d().setFillStyle("lightgrey");
+		nextPieceCanvas.getContext2d().fillRect(0, 0, NEXT_COORD_WIDTH, MAIN_COORD_HEIGHT);
+		
+		// Draw title.
+		nextPieceCanvas.getContext2d().setFillStyle("black");
+		nextPieceCanvas.getContext2d().setFont("bold 20px sans-serif");
+		nextPieceCanvas.getContext2d().fillText("Next Block", 10, 20);
+		
 		nextBlock.draw(
 				2*Block.SIZE+nextBlock.getCentreColDiff()*Block.SIZE,
 				2*Block.SIZE+nextBlock.getCentreRowDiff()*Block.SIZE,
