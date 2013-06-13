@@ -160,10 +160,11 @@ public class BoardController implements KeyPressHandler {
 			colMove = 0;
 			rowMove = model.getDrop();
 			rotate = false;
-		// Rotate the block model if the user hit rotate.
-		} else if (rotate) {
-			model.rotateActiveBlock();
 		} else {
+			// Rotate the block model if the user hit rotate.
+			if (rotate) {
+				model.rotateActiveBlock();
+			}
 			// Drop by one row every dropIncrement milliseconds.
 			rowMove = loopCounter == dropIncrement ? 1 : 0;
 		}
