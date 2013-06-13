@@ -90,12 +90,12 @@ public class BoardController implements KeyPressHandler {
 	 * is called every loopTime milliseconds.
 	 */
 	public void update() {
-		// Update the position of the active block.
-		boolean moved = activeBlockUpdate();
+		boolean moved = false;
 		
 		// Check for rows to clear. Rows will stay in model until fully dealt with.
 		int numFullRows = model.numFullRows();
 		if (numFullRows > 0) {
+			if (clearState.getCounter() == 0)
 			switch(clearState) {
 				case START:
 					// Get blocks to be cleared.
@@ -121,19 +121,23 @@ public class BoardController implements KeyPressHandler {
 					break;
 			}
 			clearState = clearState.getNextState();
-		}
-		
-		try {
-			// If the block could not drop, start a new block.
-			if (!moved && rowMove > 0) {
-				model.initNextBlock();
-			}
-		} catch (BlockOverflow e) {
-			// TODO: Handle game ending.
-			System.out.println("Game Over.");
+
+		// Only drop a new block if we are not clearing rows currently.
+		} else {
+			// Update the position of the active block and record movement.
+			moved = activeBlockUpdate();
 			
-			timer.cancel();
-		} finally {
+			try {
+				// If the block could not drop, start a new block.
+				if (!moved && rowMove > 0) {
+					model.initNextBlock();
+				}
+			} catch (BlockOverflow e) {
+				// TODO: Handle game ending.
+				System.out.println("Game Over.");
+
+				timer.cancel();
+			}
 			// Reset for next loop.
 			drop = false;
 			rotate = false;
@@ -143,9 +147,10 @@ public class BoardController implements KeyPressHandler {
 			// Reset the active block if necessary.
 			if (!activeBlock.isModel(model.getActiveBlock()))
 				activeBlock = Block.getBlockInstance(model.getActiveBlock());
-				nextBlock = Block.getBlockInstance(model.getNextBlock());
-				boardPage.drawBlockToNextCanvas(nextBlock);
+			nextBlock = Block.getBlockInstance(model.getNextBlock());
+			boardPage.drawBlockToNextCanvas(nextBlock);
 		}
+
 	}
 	
 	/*

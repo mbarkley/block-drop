@@ -14,7 +14,7 @@ public enum ClearState {
 	LAST_UNDRAW,
 	DROPPING;		// Move remaining blocks down to bottom of screen.
 
-	private static final int CYCLES = 32;
+	private static final int CYCLES = 8;
 
 	private int counter = 0;
 
@@ -23,8 +23,9 @@ public enum ClearState {
 	}
 	
 	public ClearState getNextState() {
-		ClearState retVal = null;
+		ClearState retVal = this;
 		if (counter == CYCLES || this == START) {
+			counter = 0;
 			switch(this) {
 			case START:
 				retVal = FIRST_UNDRAW;
@@ -62,5 +63,9 @@ public enum ClearState {
 		
 		retVal.setCounter(counter);
 		return retVal;
+	}
+
+	public int getCounter() {
+		return counter;
 	}
 }
