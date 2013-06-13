@@ -24,11 +24,14 @@ public class BoardController implements KeyPressHandler {
 	
 	/* A timer for running the game loop. */
 	private Timer timer;
-	/* The number (in milliseconds) of time for a block to drop one square on the board. */
-	private int dropIncrement = 500;
+	/* 
+	 * The number of iterations for a block to drop one square on the board. 
+	 * Must be a multiple of 4.
+	 */
+	private int dropIncrement = 16;
 	/* The time (in milliseconds) between calls to the game loop. */
-	private int loopIncrement = 100;
-	/* A counter of ellapsed time (in milliseconds) since a block last dropped. */
+	private int loopTime = 25;
+	/* A counter of ellapsed iterations since a block last dropped. */
 	private int loopCounter = 0;
 	
 	/* 
@@ -45,8 +48,10 @@ public class BoardController implements KeyPressHandler {
 	private boolean rotate;
 	/* True if the active block should drop to the bottom of the screen. */
 	private boolean drop;
+	/* True if the active block drop speed should be increased. */
+	private boolean fast;
 	
-	private ClearState clearState = ClearState.IDLE;
+	private ClearState clearState = ClearState.START;
 	private Block toBeCleared;
 	private Block bgBlock;
 	
@@ -82,7 +87,7 @@ public class BoardController implements KeyPressHandler {
 	
 	/*
 	 * Handle user input, and update the game state and view. This method is
-	 * is called every loopIncrement milliseconds.
+	 * is called every loopTime milliseconds.
 	 */
 	public void update() {
 		// Update the position of the active block.
@@ -92,7 +97,7 @@ public class BoardController implements KeyPressHandler {
 		int numFullRows = model.numFullRows();
 		if (numFullRows > 0) {
 			switch(clearState) {
-				case IDLE:
+				case START:
 					// Get blocks to be cleared.
 					toBeCleared = new Block(model.getFullRows());
 					bgBlock = new Block(model.getAboveFullRows());
@@ -134,7 +139,7 @@ public class BoardController implements KeyPressHandler {
 			rotate = false;
 			this.colMove = 0;
 			this.rowMove = 0;
-			loopCounter = loopCounter == dropIncrement ? 0 : loopCounter + loopIncrement;
+			loopCounter = loopCounter == dropIncrement ? 0 : loopCounter + 1;
 			// Reset the active block if necessary.
 			if (!activeBlock.isModel(model.getActiveBlock()))
 				activeBlock = Block.getBlockInstance(model.getActiveBlock());
@@ -165,8 +170,15 @@ public class BoardController implements KeyPressHandler {
 			if (rotate) {
 				model.rotateActiveBlock();
 			}
-			// Drop by one row every dropIncrement milliseconds.
-			rowMove = loopCounter == dropIncrement ? 1 : 0;
+			// Check if the user wants to increase the speed at which the block drops
+			if (fast) {
+				rowMove = 1;
+				fast = false;
+			// Otherwise maintain the normal speed.
+			} else {
+				// Drop by one row every if counter hits dropIncrement.
+				rowMove = loopCounter == dropIncrement ? 1 : 0;
+			}
 		}
 		
 		// Attempt to move model.
@@ -192,7 +204,7 @@ public class BoardController implements KeyPressHandler {
 		// Add this as a handler for keyboard events.
 		boardPage.addHandlerToMainCanvas(this);
 		// Start game loop.
-		timer.scheduleRepeating(loopIncrement);		
+		timer.scheduleRepeating(loopTime);
 	}
 	
 	/*
@@ -222,30 +234,31 @@ public class BoardController implements KeyPressHandler {
 	 */
 	private boolean keyPressHelper(int keyCode) {
 	// First handle relevant key presses.
-		boolean relevantKey = false;
+		boolean relevantKey = true;
 		switch(keyCode) {
 			case KeyCodes.KEY_LEFT:
 				System.out.println("Left key pressed.");
 				colMove = -1;
-				relevantKey = true;
 				break;
 			case KeyCodes.KEY_RIGHT:
 				System.out.println("Right key pressed.");
 				colMove = 1;
-				relevantKey = true;
 				break;
 			case KeyCodes.KEY_UP:
 				System.out.println("Up key pressed.");
 				rotate = true;
-				relevantKey = true;
+				break;
+			case KeyCodes.KEY_DOWN:
+				System.out.println("Down key pressed.");
+				fast = true;
 				break;
 			case KEY_SPACE_BAR:
 				System.out.println("Space bar pressed.");
 				drop = true;
-				relevantKey = true;
 				break;
 			default:
 				System.out.println("Key code pressed: "+keyCode);
+				relevantKey = false;
 				break;
 		}
 		
