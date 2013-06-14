@@ -124,6 +124,12 @@ public class BoardController implements KeyPressHandler {
 
 		// Only drop a new block if we are not clearing rows currently.
 		} else {
+			// Reset the active block if necessary.
+			if (!activeBlock.isModel(model.getActiveBlock())) {
+				activeBlock = Block.getBlockInstance(model.getActiveBlock());
+				nextBlock = Block.getBlockInstance(model.getNextBlock());
+				boardPage.drawBlockToNextCanvas(nextBlock);
+			}
 			// Update the position of the active block and record movement.
 			moved = activeBlockUpdate();
 			
@@ -144,11 +150,6 @@ public class BoardController implements KeyPressHandler {
 			this.colMove = 0;
 			this.rowMove = 0;
 			loopCounter = loopCounter == dropIncrement ? 0 : loopCounter + 1;
-			// Reset the active block if necessary.
-			if (!activeBlock.isModel(model.getActiveBlock()))
-				activeBlock = Block.getBlockInstance(model.getActiveBlock());
-			nextBlock = Block.getBlockInstance(model.getNextBlock());
-			boardPage.drawBlockToNextCanvas(nextBlock);
 		}
 
 	}
