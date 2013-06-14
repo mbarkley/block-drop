@@ -95,33 +95,7 @@ public class BoardController implements KeyPressHandler {
 		// Check for rows to clear. Rows will stay in model until fully dealt with.
 		int numFullRows = model.numFullRows();
 		if (numFullRows > 0) {
-			if (clearState.getCounter() == 0)
-			switch(clearState) {
-				case START:
-					// Get blocks to be cleared.
-					toBeCleared = new Block(model.getFullRows());
-					bgBlock = new Block(model.getAboveFullRows());
-					break;
-				case FIRST_UNDRAW:
-				case SECOND_UNDRAW:
-				case THIRD_UNDRAW:
-				case LAST_UNDRAW:
-					boardPage.undrawBlock(0, 0, toBeCleared);
-					break;
-				case FIRST_REDRAW:
-				case SECOND_REDRAW:
-				case THIRD_REDRAW:
-					boardPage.drawBlock(0, 0, toBeCleared);
-					break;
-				case DROPPING:
-					boardPage.undrawBlock(0, 0, bgBlock);
-					// Redraw background blocks that were above cleared rows lower.
-					boardPage.drawBlock(0, Block.indexToCoord(numFullRows), bgBlock);
-					model.clearFullRows();
-					break;
-			}
-			clearState = clearState.getNextState();
-
+			clearRows(numFullRows);
 		// Only drop a new block if we are not clearing rows currently.
 		} else {
 			// Reset the active block if necessary.
@@ -152,6 +126,35 @@ public class BoardController implements KeyPressHandler {
 			loopCounter = loopCounter == dropIncrement ? 0 : loopCounter + 1;
 		}
 
+	}
+	
+	private void clearRows(int numFullRows) {
+		if (clearState.getCounter() == 0)
+		switch(clearState) {
+			case START:
+				// Get blocks to be cleared.
+				toBeCleared = new Block(model.getFullRows());
+				bgBlock = new Block(model.getAboveFullRows());
+				break;
+			case FIRST_UNDRAW:
+			case SECOND_UNDRAW:
+			case THIRD_UNDRAW:
+			case LAST_UNDRAW:
+				boardPage.undrawBlock(0, 0, toBeCleared);
+				break;
+			case FIRST_REDRAW:
+			case SECOND_REDRAW:
+			case THIRD_REDRAW:
+				boardPage.drawBlock(0, 0, toBeCleared);
+				break;
+			case DROPPING:
+				boardPage.undrawBlock(0, 0, bgBlock);
+				// Redraw background blocks that were above cleared rows lower.
+				boardPage.drawBlock(0, Block.indexToCoord(numFullRows), bgBlock);
+				model.clearFullRows();
+				break;
+		}
+		clearState = clearState.getNextState();
 	}
 	
 	/*
