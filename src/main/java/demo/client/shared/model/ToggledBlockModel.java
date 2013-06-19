@@ -7,34 +7,37 @@ package demo.client.shared.model;
  */
 public class ToggledBlockModel extends BlockModel {
 
-	private boolean isRotated = false;
-	
-	public ToggledBlockModel(int id) {
-		// Assign unique id.
-		super(id);
-	}
-	
-	/*
-	 * (non-Javadoc)
-	 * @see demo.client.shared.BlockModel#rotate()
-	 */
-	@Override
-	public void rotate() {
-		if (isRotated) {
-			super.unrotate();
-			isRotated = false;
-		} else {
-			super.rotate();
-			isRotated = true;
-		}
-	}
-	
-	/*
-	 * (non-Javadoc)
-	 * @see demo.client.shared.BlockModel#unrotate()
-	 */
-	@Override
-	public void unrotate() {
-		this.rotate();
-	}
+  private boolean isRotated = false;
+
+  public ToggledBlockModel(int id) {
+    // Assign unique id.
+    super(id);
+  }
+
+  /*
+   * (non-Javadoc)
+   * 
+   * @see demo.client.shared.BlockModel#rotate()
+   */
+  @Override
+  public void rotate() {
+    if (isRotated) {
+      super.unrotate();
+      isRotated = false;
+    }
+    else {
+      super.rotate();
+      isRotated = true;
+    }
+  }
+
+  /*
+   * (non-Javadoc)
+   * 
+   * @see demo.client.shared.BlockModel#unrotate()
+   */
+  @Override
+  public void unrotate() {
+    this.rotate();
+  }
 }

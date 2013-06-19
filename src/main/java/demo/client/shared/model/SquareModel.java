@@ -2,33 +2,33 @@ package demo.client.shared.model;
 
 public class SquareModel {
 
-	private int rowOffset;
-	private int colOffset;
-	private int code;
-	
-	public SquareModel(int rowIndex, int colIndex, int code) {
-		this.rowOffset = rowIndex;
-		this.colOffset = colIndex;
-		this.code = code;
-	}
+  private int rowOffset;
+  private int colOffset;
+  private int code;
 
-	public int getCol() {
-		return colOffset;
-	}
+  public SquareModel(int rowIndex, int colIndex, int code) {
+    this.rowOffset = rowIndex;
+    this.colOffset = colIndex;
+    this.code = code;
+  }
 
-	public int getRow() {
-		return rowOffset;
-	}
+  public int getCol() {
+    return colOffset;
+  }
 
-	public void setRow(int newRowOffset) {
-		rowOffset = newRowOffset;
-	}
+  public int getRow() {
+    return rowOffset;
+  }
 
-	public void setCol(int newColOffset) {
-		colOffset = newColOffset;
-	}
+  public void setRow(int newRowOffset) {
+    rowOffset = newRowOffset;
+  }
 
-	public int getCode() {
-		return code;
-	}
+  public void setCol(int newColOffset) {
+    colOffset = newColOffset;
+  }
+
+  public int getCode() {
+    return code;
+  }
 }
