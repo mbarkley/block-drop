@@ -67,7 +67,7 @@ public class Client {
 	public void postSetup() {
 		String initialValue = "Foobar";
 		String msg = "Please select a username.";
-		nickname = Window.prompt(msg, initialValue);
+		//nickname = Window.prompt(msg, initialValue);
 		
 		if (nickname == null)
 			nickname = "default";

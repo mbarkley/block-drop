@@ -1,11 +1,14 @@
 package demo.client.local;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import com.google.gwt.event.dom.client.KeyCodes;
 import com.google.gwt.event.dom.client.KeyPressEvent;
 import com.google.gwt.event.dom.client.KeyPressHandler;
 import com.google.gwt.user.client.Timer;
 
-import demo.client.shared.model.BackgroundBlockModel;
+import demo.client.shared.ScoreTracker;
 import demo.client.shared.model.BlockOverflow;
 import demo.client.shared.model.BoardModel;
 
@@ -21,6 +24,8 @@ public class BoardController implements KeyPressHandler {
 	private Block activeBlock;
 	/* A block model. */
 	private Block nextBlock;
+	/* The players score in the game. */
+	private List<ScoreTracker> scoreList;
 	
 	/* A timer for running the game loop. */
 	private Timer timer;
@@ -31,7 +36,7 @@ public class BoardController implements KeyPressHandler {
 	private int dropIncrement = 16;
 	/* The time (in milliseconds) between calls to the game loop. */
 	private int loopTime = 25;
-	/* A counter of ellapsed iterations since a block last dropped. */
+	/* A counter of elapsed iterations since a block last dropped. */
 	private int loopCounter = 0;
 	
 	/* 
@@ -152,11 +157,22 @@ public class BoardController implements KeyPressHandler {
 				// Redraw background blocks that were above cleared rows lower.
 				boardPage.drawBlock(0, Block.indexToCoord(numFullRows), bgBlock);
 				model.clearFullRows();
+				// Update the score.
+				updateScore(numFullRows);
 				break;
 		}
 		clearState = clearState.getNextState();
 	}
 	
+	private void updateScore(int numFullRows) {
+		getScoreTracker().updateScore(numFullRows);
+	}
+
+	private ScoreTracker getScoreTracker() {
+		// TODO Implement properly.
+		return boardPage.getScoreList().get(0);
+	}
+
 	/*
 	 * Update the active block.
 	 * 
@@ -212,6 +228,17 @@ public class BoardController implements KeyPressHandler {
 	public void startGame() {
 		// Add this as a handler for keyboard events.
 		boardPage.addHandlerToMainCanvas(this);
+		
+	      // Initiate score tracker.
+        ScoreTracker score = new ScoreTracker();
+        score.setName("name"); // TODO: Get users name.
+        score.setScore(0);
+        scoreList = boardPage.getScoreList();
+        scoreList.add(score);
+		
+		// TODO: Actually deal with this list.
+		boardPage.initScoreList(scoreList);
+		
 		// Start game loop.
 		timer.scheduleRepeating(loopTime);
 	}

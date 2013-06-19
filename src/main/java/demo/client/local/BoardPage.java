@@ -1,7 +1,11 @@
 package demo.client.local;
 
-import javax.annotation.PostConstruct;
+import java.util.List;
 
+import javax.annotation.PostConstruct;
+import javax.inject.Inject;
+
+import org.jboss.errai.ui.client.widget.ListWidget;
 import org.jboss.errai.ui.nav.client.local.DefaultPage;
 import org.jboss.errai.ui.nav.client.local.Page;
 import org.jboss.errai.ui.shared.api.annotations.DataField;
@@ -10,6 +14,8 @@ import org.jboss.errai.ui.shared.api.annotations.Templated;
 import com.google.gwt.canvas.client.Canvas;
 import com.google.gwt.event.dom.client.KeyPressHandler;
 import com.google.gwt.user.client.ui.Composite;
+
+import demo.client.shared.ScoreTracker;
 
 /*
  * An Errai Navigation Page providing the UI for a Block Drop game.
@@ -43,6 +49,15 @@ public class BoardPage extends Composite {
 	/* A mainCanvas for drawing the next piece in the Block Drop game. */
 	@DataField("next-piece")
 	private Canvas nextPieceCanvas = Canvas.createIfSupported();
+	@DataField("score-list")
+	@Inject
+	private ListWidget<ScoreTracker, ScorePanel> scoreDisplay;
+	private ScorePanel panel;
+	
+	public ScoreTracker getScoreModel() {
+		return panel.getModel();
+	}
+	
 	/* A controller for this view. */
 	private BoardController controller;
 	
@@ -51,10 +66,14 @@ public class BoardPage extends Composite {
 	 */
 	public BoardPage() {
 		System.out.println("Initiating BoardModel");
+		
+		// Initialize canvases.
 		mainCanvas.setCoordinateSpaceHeight(MAIN_COORD_HEIGHT);
 		mainCanvas.setCoordinateSpaceWidth(MAIN_COORD_WIDTH);
 		nextPieceCanvas.setCoordinateSpaceHeight(NEXT_COORD_HEIGHT);
 		nextPieceCanvas.setCoordinateSpaceWidth(NEXT_COORD_WIDTH);
+		
+		// Initialize controller.
 		controller = new BoardController();
 	}
 	
@@ -72,6 +91,10 @@ public class BoardPage extends Composite {
 		} else {
 			// TODO: Display message to user that HTML5 Canvas is required.
 		}
+	}
+
+	public void initScoreList(List<ScoreTracker> scoreList) {
+		scoreDisplay.setItems(scoreList);
 	}
 
 	/*
@@ -132,5 +155,9 @@ public class BoardPage extends Composite {
 				2*Block.SIZE+nextBlock.getCentreRowDiff()*Block.SIZE,
 				nextPieceCanvas.getContext2d()
 				);
+	}
+
+	public List<ScoreTracker> getScoreList() {
+		return scoreDisplay.getValue();
 	}
 }
