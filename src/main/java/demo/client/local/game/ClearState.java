@@ -1,4 +1,4 @@
-package demo.client.local;
+package demo.client.local.game;
 
 /*
  * For tracking state while clearing rows.

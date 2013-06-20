@@ -1,4 +1,4 @@
-package demo.client.local;
+package demo.client.local.game;
 
 import com.google.gwt.canvas.dom.client.Context2d;
 

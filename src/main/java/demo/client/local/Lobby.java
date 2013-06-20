@@ -27,6 +27,7 @@ import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.gwt.user.client.ui.Widget;
 
+import demo.client.local.game.BoardPage;
 import demo.client.shared.GameRoom;
 import demo.client.shared.Invitation;
 import demo.client.shared.LobbyUpdate;

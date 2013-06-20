@@ -1,4 +1,4 @@
-package demo.client.local;
+package demo.client.local.game;
 
 import java.util.HashMap;
 import java.util.Map;
