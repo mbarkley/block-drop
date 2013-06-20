@@ -6,8 +6,6 @@ import javax.annotation.PostConstruct;
 import javax.inject.Inject;
 
 import org.jboss.errai.ui.client.widget.ListWidget;
-import org.jboss.errai.ui.nav.client.local.DefaultPage;
-import org.jboss.errai.ui.nav.client.local.Page;
 import org.jboss.errai.ui.shared.api.annotations.DataField;
 import org.jboss.errai.ui.shared.api.annotations.Templated;
 
@@ -20,7 +18,6 @@ import demo.client.shared.ScoreTracker;
 /*
  * An Errai Navigation Page providing the UI for a Block Drop game.
  */
-@Page(role = DefaultPage.class)
 @Templated("Board.html")
 public class BoardPage extends Composite {
 
@@ -49,8 +46,8 @@ public class BoardPage extends Composite {
   /* A mainCanvas for drawing the next piece in the Block Drop game. */
   @DataField("next-piece")
   private Canvas nextPieceCanvas = Canvas.createIfSupported();
-  @DataField("score-list")
   @Inject
+  @DataField("score-list")
   private ListWidget<ScoreTracker, ScorePanel> scoreDisplay;
   private ScorePanel panel;
 

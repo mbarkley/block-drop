@@ -1,4 +1,4 @@
-package demo.client.local;
+package demo.client.local.lobby;
 
 import javax.annotation.PostConstruct;
 import javax.enterprise.context.ApplicationScoped;
@@ -7,10 +7,12 @@ import javax.inject.Inject;
 import org.jboss.errai.ioc.client.api.EntryPoint;
 import org.jboss.errai.ui.nav.client.local.Navigation;
 
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.RootPanel;
 
 import demo.client.shared.GameRoom;
 import demo.client.shared.Player;
+
 
 /*
  * A container class for a game client.
@@ -65,11 +67,10 @@ public class Client {
   /*
    * Prompt the user for a nickname and attach the navigation panel.
    */
-  @PostConstruct
-  public void postSetup() {
+  public void init() {
     String initialValue = "Foobar";
     String msg = "Please select a username.";
-    // nickname = Window.prompt(msg, initialValue);
+    nickname = Window.prompt(msg, initialValue);
 
     if (nickname == null)
       nickname = "default";

@@ -1,6 +1,7 @@
 package demo.client.shared;
 
 import org.jboss.errai.common.client.api.annotations.Portable;
+import org.jboss.errai.databinding.client.api.Bindable;
 import org.jboss.errai.enterprise.client.cdi.api.Conversational;
 
 /*
@@ -9,6 +10,7 @@ import org.jboss.errai.enterprise.client.cdi.api.Conversational;
  */
 @Portable
 @Conversational
+@Bindable
 public class Player {
 
   /*

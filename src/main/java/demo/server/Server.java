@@ -1,5 +1,6 @@
 package demo.server;
 
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -104,8 +105,8 @@ public class Server implements MessageCallback {
     // If the player has not been registered, give them an id.
     if (!request.hasRegistered()) {
       player.setId(nextPlayerId());
-      // Otherwise they are likely going from a game to the lobby, so just reset their game id.
     }
+    // Otherwise they are likely going from a game to the lobby, so just reset their game id.
     else {
       player.setGameId(0);
     }
@@ -183,5 +184,15 @@ public class Server implements MessageCallback {
     if (invitation.isAccepted()) {
       // Start game
     }
+  }
+
+  private GameRoom createGameRoom(Collection<Player> players) {
+    GameRoom gameRoom = new GameRoom();
+    gameRoom.setId(nextGameId());
+    for (Player p : players) {
+      gameRoom.addPlayer(p);
+    }
+    
+    return gameRoom;
   }
 }
