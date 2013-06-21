@@ -7,6 +7,8 @@ import com.google.gwt.event.dom.client.KeyPressEvent;
 import com.google.gwt.event.dom.client.KeyPressHandler;
 import com.google.gwt.user.client.Timer;
 
+import demo.client.local.lobby.Client;
+import demo.client.shared.Player;
 import demo.client.shared.ScoreTracker;
 import demo.client.shared.model.BlockOverflow;
 import demo.client.shared.model.BoardModel;
@@ -225,9 +227,7 @@ public class BoardController implements KeyPressHandler {
     boardPage.addHandlerToMainCanvas(this);
 
     // Initiate score tracker.
-    ScoreTracker score = new ScoreTracker();
-    score.setName("name"); // TODO: Get users name.
-    score.setScore(0);
+    ScoreTracker score = createScoreTracker(Client.getInstance().getPlayer());
     scoreList = boardPage.getScoreList();
     scoreList.add(score);
 
@@ -236,6 +236,15 @@ public class BoardController implements KeyPressHandler {
 
     // Start game loop.
     timer.scheduleRepeating(loopTime);
+  }
+  
+  private ScoreTracker createScoreTracker(Player player) {
+    ScoreTracker score = new ScoreTracker();
+    score.setId(player.getId());
+    score.setName(player.getNick());
+    score.setScore(0);
+    
+    return score;
   }
 
   /*

@@ -6,6 +6,7 @@ import javax.annotation.PostConstruct;
 import javax.inject.Inject;
 
 import org.jboss.errai.ui.client.widget.ListWidget;
+import org.jboss.errai.ui.nav.client.local.Page;
 import org.jboss.errai.ui.shared.api.annotations.DataField;
 import org.jboss.errai.ui.shared.api.annotations.Templated;
 
@@ -18,6 +19,7 @@ import demo.client.shared.ScoreTracker;
 /*
  * An Errai Navigation Page providing the UI for a Block Drop game.
  */
+@Page
 @Templated("Board.html")
 public class BoardPage extends Composite {
 

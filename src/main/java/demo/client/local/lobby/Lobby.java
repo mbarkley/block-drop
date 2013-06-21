@@ -1,8 +1,5 @@
 package demo.client.local.lobby;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import javax.annotation.PostConstruct;
 import javax.enterprise.event.Event;
 import javax.enterprise.event.Observes;
@@ -22,14 +19,9 @@ import org.jboss.errai.ui.nav.client.local.TransitionTo;
 import org.jboss.errai.ui.shared.api.annotations.DataField;
 import org.jboss.errai.ui.shared.api.annotations.Templated;
 
-import com.google.gwt.event.dom.client.ClickEvent;
-import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.Window;
-import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.HorizontalPanel;
-import com.google.gwt.user.client.ui.VerticalPanel;
-import com.google.gwt.user.client.ui.Widget;
 
 import demo.client.local.game.BoardPage;
 import demo.client.shared.GameRoom;
@@ -133,7 +125,7 @@ public class Lobby extends Composite {
    */
   @PostConstruct
   public void postConstruct() {
-    Client.getInstance().init();
+    Client.getInstance().maybeInit();
     joinLobby();
   }
 

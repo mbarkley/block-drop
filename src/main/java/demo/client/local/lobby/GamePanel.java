@@ -19,7 +19,7 @@ public class GamePanel extends Composite implements HasModel<GameRoom> {
   @Override
   public void setModel(GameRoom model) {
     // TODO Auto-generated method stub
-    
+
   }
 
 }

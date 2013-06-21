@@ -16,14 +16,14 @@ import demo.client.shared.Player;
 
 @Templated
 public class PlayerPanel extends Composite implements HasModel<Player> {
-  
+
   @Inject
   @AutoBound
   DataBinder<Player> model;
-  
+
   @DataField
   @Inject
-  @Bound(property="nick")
+  @Bound(property = "nick")
   private Label name;
 
   @Override
@@ -35,5 +35,4 @@ public class PlayerPanel extends Composite implements HasModel<Player> {
   public void setModel(Player model) {
     this.model.setModel(model);
   }
-
 }

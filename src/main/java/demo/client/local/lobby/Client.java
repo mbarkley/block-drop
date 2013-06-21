@@ -63,11 +63,17 @@ public class Client {
 
     instance = this;
   }
+  
+  public void maybeInit() {
+    if (nickname == null) {
+      init();
+    }
+  }
 
   /*
    * Prompt the user for a nickname and attach the navigation panel.
    */
-  public void init() {
+  private void init() {
     String initialValue = "Foobar";
     String msg = "Please select a username.";
     nickname = Window.prompt(msg, initialValue);
