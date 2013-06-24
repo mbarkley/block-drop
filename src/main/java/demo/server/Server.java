@@ -1,6 +1,5 @@
 package demo.server;
 
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -14,10 +13,10 @@ import org.jboss.errai.bus.client.api.messaging.Message;
 import org.jboss.errai.bus.client.api.messaging.MessageBus;
 import org.jboss.errai.bus.client.api.messaging.MessageCallback;
 import org.jboss.errai.bus.client.api.messaging.RequestDispatcher;
-import org.jboss.errai.bus.server.annotations.Command;
 import org.jboss.errai.bus.server.annotations.Service;
 import org.jboss.errai.common.client.protocols.MessageParts;
 
+import demo.client.shared.Command;
 import demo.client.shared.GameRoom;
 import demo.client.shared.Invitation;
 import demo.client.shared.LobbyUpdate;
@@ -136,14 +135,29 @@ public class Server implements MessageCallback {
    */
   public void handleInvitation(@Observes Invitation invitation) {
     // For debugging.
-    System.out.println("Server" + debugId + ": Invitation received from " + invitation.getInviter().getNick() + " to "
-            + invitation.getInvitee().getNick());
-    System.out.println("Server" + debugId + ": Attempting to relay invitation to " + "Client"
-            + invitation.getInvitee().getId());
+    System.out.println("Server" + debugId + ": Invitation received from " + invitation.getHost().getNick());
 
-    // Relay invitation to appropriate client.
-    MessageBuilder.createMessage().toSubject("Client" + invitation.getInvitee().getId()).command("invitation")
-            .withValue(invitation).noErrorHandling().sendNowWith(dispatcher);
+    // Make game room
+    GameRoom room = new GameRoom();
+    room.setId(nextGameId());
+    games.put(room.getId(), room);
+    invitation.setGameId(room.getId());
+    addPlayer(invitation.getHost(), room.getId());
+
+    for (Player guest : invitation.getGuests()) {
+      System.out.println("Server" + debugId + ": Attempting to relay invitation to " + "Client" + guest.getId());
+      // Relay invitation to appropriate client.
+      Invitation targetedInvite = new Invitation(invitation, guest);
+      MessageBuilder.createMessage().toSubject("Client" + guest.getId()).command(Command.INVITATION)
+              .withValue(targetedInvite).noErrorHandling().sendNowWith(dispatcher);
+    }
+  }
+
+  private void addPlayer(Player target, int gameId) {
+    players.remove(target);
+    games.get(gameId).addPlayer(target);
+    MessageBuilder.createMessage().toSubject("Client" + target.getId()).command(Command.JOIN_GAME)
+            .withValue(games.get(gameId)).noErrorHandling().sendNowWith(dispatcher);
   }
 
   /*
@@ -157,42 +171,25 @@ public class Server implements MessageCallback {
   }
 
   /*
-   * This method only exists so that TTTClient can implement the MessageCallback interface. All
-   * callbacks should be handled by an another annotated method.
-   * 
-   * (non-Javadoc)
-   * 
    * @see
    * org.jboss.errai.bus.client.api.messaging.MessageCallback#callback(org.jboss.errai.bus.client
    * .api.messaging.Message)
    */
   @Override
   public void callback(Message message) {
-  }
+    switch (Command.valueOf(message.getCommandType())) {
+    case JOIN_GAME:
+      addToGame(message.getValue(Invitation.class));
+      break;
+    case INVITATION:
+      break;
+    default:
+      break;
 
-  /*
-   * Relay a response to an invitation to the inviting client. This method should only be invoked by
-   * the Errai Framework.
-   */
-  @Command("invitation-response")
-  public void invitationRelayCallback(Message message) {
-    Invitation invitation = message.get(Invitation.class, MessageParts.Value);
-
-    // For debugging.
-    System.out.println("Server" + debugId + ": Relaying invitation response from " + invitation.getInvitee().getNick());
-
-    if (invitation.isAccepted()) {
-      // Start game
     }
   }
 
-  private GameRoom createGameRoom(Collection<Player> players) {
-    GameRoom gameRoom = new GameRoom();
-    gameRoom.setId(nextGameId());
-    for (Player p : players) {
-      gameRoom.addPlayer(p);
-    }
-    
-    return gameRoom;
+  private void addToGame(Invitation invitation) {
+    addPlayer(invitation.getTarget(), invitation.getGameId());
   }
 }

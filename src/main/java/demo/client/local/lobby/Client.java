@@ -1,6 +1,5 @@
 package demo.client.local.lobby;
 
-import javax.annotation.PostConstruct;
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 
@@ -138,7 +137,7 @@ public class Client {
    * 
    * @param game The game object representing the game this client is currently in.
    */
-  public void setGame(GameRoom game) {
+  public void setGameRoom(GameRoom game) {
     this.game = game;
   }
 }

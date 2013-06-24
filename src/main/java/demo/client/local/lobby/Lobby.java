@@ -23,9 +23,9 @@ import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.HorizontalPanel;
-import com.google.gwt.user.client.ui.Widget;
 
 import demo.client.local.game.BoardPage;
+import demo.client.shared.Command;
 import demo.client.shared.GameRoom;
 import demo.client.shared.Invitation;
 import demo.client.shared.LobbyUpdate;
@@ -91,10 +91,11 @@ public class Lobby extends Composite {
 
       @Override
       public void onClick(ClickEvent event) {
-        // TODO: Handle starting game properly.
-
-        MessageBuilder.createMessage("Client" + Client.getInstance().getPlayer().getId()).command("start-game")
-                .noErrorHandling().sendNowWith(messageBus);
+        // This player should always join a new game that he starts.
+        Invitation invite = new Invitation();
+        invite.setHost(Client.getInstance().getPlayer());
+        invite.setGuests(selected);
+        gameInvitation.fire(invite);
       }
     });
 
@@ -142,7 +143,7 @@ public class Lobby extends Composite {
     if (!Client.getInstance().hasRegisteredPlayer()) {
       // For debugging.
       System.out.println(Client.getInstance().getNickname() + ": Subscribing to subject Client" + player.getId());
-
+      
       messageBus.subscribe("Client" + player.getId(), new LobbyMessageCallback());
     }
 

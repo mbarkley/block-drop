@@ -3,7 +3,9 @@ package demo.client.shared;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.jboss.errai.common.client.api.annotations.Portable;
 
+@Portable
 public class GameRoom {
 
   private int id;

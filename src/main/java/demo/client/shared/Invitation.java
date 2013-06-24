@@ -1,5 +1,8 @@
 package demo.client.shared;
 
+import java.util.HashSet;
+import java.util.Set;
+
 import org.jboss.errai.common.client.api.annotations.Portable;
 
 /*
@@ -8,85 +11,56 @@ import org.jboss.errai.common.client.api.annotations.Portable;
 @Portable
 public class Invitation {
 
-  /* The player who initiated the invitation. */
-  private Player inviter = null;
-  /* The player to whom the invitation is targetted. */
-  private Player invitee = null;
-  /* The status of whether or not the invitee has accepted this invitation. */
-  private boolean accepted = false;
+  private Player host;
+  private Set<Player> guests;
+  private int gameId;
+  private Player target;
 
-  /*
-   * A default no-arg constructor for JavaBean compliance. Users should prefer the constructor with
-   * Player arguments.
-   */
   public Invitation() {
+    host = null;
+    guests = new HashSet<Player>();
+    target = null;
+    setGameId(0);
+  }
+  
+  public Invitation(Invitation original, Player newTarget) {
+    this();
+    setHost(original.getHost());
+    setGuests(original.getGuests());
+    setGameId(original.getGameId());
+    setTarget(newTarget);
+  }
+  
+  public Player getHost() {
+    return host;
   }
 
-  /*
-   * Create an invitation from inviter to invitee.
-   * 
-   * @param inviter The player who initiated the invitation.
-   * 
-   * @param invitee The player to whom the invitation is targetted.
-   */
-  public Invitation(Player inviter, Player invitee) {
-    this.setInviter(inviter);
-    this.setInvitee(invitee);
+  public void setHost(Player player) {
+    host = player;
+  }
+  
+  public Set<Player> getGuests() {
+    return guests;
   }
 
-  /*
-   * Get the player who sent this invitation.
-   * 
-   * @return The player who sent this invitation.
-   */
-  public Player getInviter() {
-    return inviter;
+  public void setGuests(Set<Player> selected) {
+    guests = selected;
   }
 
-  /*
-   * Set the player who is sending this invitation.
-   * 
-   * @param The player who is sending this invitation.
-   */
-  public void setInviter(Player inviter) {
-    this.inviter = inviter;
+  public int getGameId() {
+    return gameId;
   }
 
-  /*
-   * Get the player who this invitation is targetted to.
-   * 
-   * @return The player to whom the invitation is targetted.
-   */
-  public Player getInvitee() {
-    return invitee;
+  public void setGameId(int gameId) {
+    this.gameId = gameId;
   }
 
-  /*
-   * Set the player who is receiving this invitation.
-   * 
-   * @param The player to whom this invitation is targetting.
-   */
-  public void setInvitee(Player invitee) {
-    this.invitee = invitee;
+  public Player getTarget() {
+    return target;
   }
 
-  /*
-   * Check if this invitation has been accepted. This flag is defaulted to false if there has not
-   * yet been a response.
-   * 
-   * @return Return true iff the invitee has accepted this invitation.
-   */
-  public boolean isAccepted() {
-    return accepted;
-  }
-
-  /*
-   * Set whether or not this invitation has been accepted by the invitee.
-   * 
-   * @param accepted Should be true iff the invitee accepts this invitation.
-   */
-  public void setAccepted(boolean accepted) {
-    this.accepted = accepted;
+  public void setTarget(Player target) {
+    this.target = target;
   }
 
 }
