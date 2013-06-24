@@ -16,7 +16,7 @@ import demo.client.shared.model.BoardModel;
 /*
  * A controller class for a Block Drop game. Handles game loop and user input.
  */
-public class BoardController implements KeyPressHandler {
+class BoardController implements KeyPressHandler {
 
   private static final int KEY_SPACE_BAR = 32;
   /* A Block Drop board model. */
@@ -66,7 +66,7 @@ public class BoardController implements KeyPressHandler {
   /*
    * Create a BoardController instance.
    */
-  public BoardController() {
+  BoardController() {
     // Initiate BoardModel.
     model = new BoardModel();
     activeBlock = Block.getBlockInstance(model.getActiveBlock());
@@ -86,7 +86,7 @@ public class BoardController implements KeyPressHandler {
    * 
    * @param boardPage The BoardPage to be controlled.
    */
-  public void setPage(BoardPage boardPage) {
+  void setPage(BoardPage boardPage) {
     this.boardPage = boardPage;
   }
 
@@ -94,7 +94,7 @@ public class BoardController implements KeyPressHandler {
    * Handle user input, and update the game state and view. This method is is called every loopTime
    * milliseconds.
    */
-  public void update() {
+  void update() {
     boolean moved = false;
 
     // Check for rows to clear. Rows will stay in model until fully dealt with.
@@ -222,7 +222,7 @@ public class BoardController implements KeyPressHandler {
   /*
    * Start a game of Block Drop.
    */
-  public void startGame() {
+  void startGame() {
     // Add this as a handler for keyboard events.
     boardPage.addHandlerToMainCanvas(this);
 

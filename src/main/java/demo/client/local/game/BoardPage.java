@@ -25,22 +25,8 @@ public class BoardPage extends Composite {
 
   public static final String CANVAS_WRAPPER_ID = "mainCanvas-wrapper";
 
-  /* The height of the board in squares. */
-  public static final int HEIGHT = 15;
-  /* The width of the board in squares. */
-  public static final int WIDTH = 10;
-  /* Canvas coordinate-space height (in pixels). */
-  public static final int MAIN_COORD_HEIGHT = 900;
-  /* Canvas coordinate-space width (in pixels). */
-  public static final int MAIN_COORD_WIDTH = 600;
-  /* The dimension of each square in pixels. */
-  public static final int SIZE = 60;
   /* The background colour of the Block Drop board. */
   public static final String BOARD_COLOUR = "rgb(255,255,255)";
-
-  public static final int NEXT_COORD_HEIGHT = 300;
-
-  private static final int NEXT_COORD_WIDTH = 300;
 
   /* A mainCanvas for drawing a Block Drop game. */
   @DataField("canvas")
@@ -53,7 +39,7 @@ public class BoardPage extends Composite {
   private ListWidget<ScoreTracker, ScorePanel> scoreDisplay;
   private ScorePanel panel;
 
-  public ScoreTracker getScoreModel() {
+  ScoreTracker getScoreModel() {
     return panel.getModel();
   }
 
@@ -67,10 +53,10 @@ public class BoardPage extends Composite {
     System.out.println("Initiating BoardModel");
 
     // Initialize canvases.
-    mainCanvas.setCoordinateSpaceHeight(MAIN_COORD_HEIGHT);
-    mainCanvas.setCoordinateSpaceWidth(MAIN_COORD_WIDTH);
-    nextPieceCanvas.setCoordinateSpaceHeight(NEXT_COORD_HEIGHT);
-    nextPieceCanvas.setCoordinateSpaceWidth(NEXT_COORD_WIDTH);
+    mainCanvas.setCoordinateSpaceHeight(Size.MAIN_COORD_HEIGHT);
+    mainCanvas.setCoordinateSpaceWidth(Size.MAIN_COORD_WIDTH);
+    nextPieceCanvas.setCoordinateSpaceHeight(Size.NEXT_COORD_HEIGHT);
+    nextPieceCanvas.setCoordinateSpaceWidth(Size.NEXT_COORD_WIDTH);
 
     // Initialize controller.
     controller = new BoardController();
@@ -93,7 +79,7 @@ public class BoardPage extends Composite {
     }
   }
 
-  public void initScoreList(List<ScoreTracker> scoreList) {
+  void initScoreList(List<ScoreTracker> scoreList) {
     scoreDisplay.setItems(scoreList);
   }
 
@@ -115,7 +101,7 @@ public class BoardPage extends Composite {
    * 
    * @param activeBlock The block to undraw.
    */
-  public void undrawBlock(int x, int y, Block activeBlock) {
+  void undrawBlock(int x, int y, Block activeBlock) {
     mainCanvas.getContext2d().beginPath();
     activeBlock.getPath(x, y, mainCanvas.getContext2d());
     mainCanvas.getContext2d().closePath();
@@ -131,7 +117,7 @@ public class BoardPage extends Composite {
    * 
    * @param activeBlock The block to draw.
    */
-  public void drawBlock(int x, int y, Block activeBlock) {
+  void drawBlock(int x, int y, Block activeBlock) {
     activeBlock.draw(x, y, mainCanvas.getContext2d());
   }
 
@@ -140,25 +126,25 @@ public class BoardPage extends Composite {
    * 
    * @param handler A key press handler for the mainCanvas.
    */
-  public void addHandlerToMainCanvas(KeyPressHandler handler) {
+  void addHandlerToMainCanvas(KeyPressHandler handler) {
     mainCanvas.addKeyPressHandler(handler);
   }
 
-  public void drawBlockToNextCanvas(Block nextBlock) {
+  void drawBlockToNextCanvas(Block nextBlock) {
     // Clear everything.
     nextPieceCanvas.getContext2d().setFillStyle("lightgrey");
-    nextPieceCanvas.getContext2d().fillRect(0, 0, NEXT_COORD_WIDTH, MAIN_COORD_HEIGHT);
+    nextPieceCanvas.getContext2d().fillRect(0, 0, Size.NEXT_COORD_WIDTH, Size.MAIN_COORD_HEIGHT);
 
     // Draw title.
     nextPieceCanvas.getContext2d().setFillStyle("black");
     nextPieceCanvas.getContext2d().setFont("bold 20px sans-serif");
     nextPieceCanvas.getContext2d().fillText("Next Block", 10, 20);
 
-    nextBlock.draw(2 * Block.SIZE + nextBlock.getCentreColDiff() * Block.SIZE,
-            2 * Block.SIZE + nextBlock.getCentreRowDiff() * Block.SIZE, nextPieceCanvas.getContext2d());
+    nextBlock.draw(2 * Size.BLOCK_SIZE + nextBlock.getCentreColDiff() * Size.BLOCK_SIZE,
+            2 * Size.BLOCK_SIZE + nextBlock.getCentreRowDiff() * Size.BLOCK_SIZE, nextPieceCanvas.getContext2d());
   }
 
-  public List<ScoreTracker> getScoreList() {
+  List<ScoreTracker> getScoreList() {
     return scoreDisplay.getValue();
   }
 }

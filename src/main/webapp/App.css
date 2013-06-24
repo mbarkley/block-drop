@@ -24,26 +24,26 @@ body {
 	min-width: 1210px;
 }
 .panel {
-	height: 900px;
+	height: 780px;
 }
 .side-panel {
-	width: 300px;
+	width: 260px;
 	background-color: lightgrey;
 }
 .centre-panel {
-	width: 600px;
+	width: 520px;
 	
 	position: relative;
 }
 .next-piece {
-	width: 300px;
-	height: 300px;
+	width: 260px;
+	height: 260px;
 	position: absolute;
 }
 .score-list {
 	position: absolute;
-	top: 300px;
-	width: 300px;
+	top: 280px;
+	width: 100%;
 }
 /* BOARD.HTML STYLES END */
 

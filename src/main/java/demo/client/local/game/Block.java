@@ -6,10 +6,7 @@ import demo.client.shared.model.BlockModel;
 import demo.client.shared.model.SquareModel;
 
 /* A class for drawing Block Drop blocks on an HTML5 canvas. */
-public class Block {
-
-  /* The width and height of each square in this block (in pixels). */
-  public static final int SIZE = 60;
+class Block {
 
   /*
    * Get an appropriate subclass of Block based on which subclass of BlockModel is given.
@@ -18,7 +15,7 @@ public class Block {
    * 
    * @return An instance of Block or a subclass thereof.
    */
-  public static Block getBlockInstance(BlockModel activeBlock) {
+  static Block getBlockInstance(BlockModel activeBlock) {
     return new Block(activeBlock);
   }
 
@@ -28,7 +25,7 @@ public class Block {
   /*
    * Create a Block instance.
    */
-  public Block(BlockModel blockModel) {
+  Block(BlockModel blockModel) {
     model = blockModel;
   }
 
@@ -41,7 +38,7 @@ public class Block {
    * 
    * @param context2d The context on which to draw this block.
    */
-  public void draw(double x, double y, Context2d context2d) {
+  void draw(double x, double y, Context2d context2d) {
     Square square = new Square();
     // Get an iterator of square coordinates based around the given coordinate (x,y).
     for (SquareModel squareModel : model.getIterator()) {
@@ -57,7 +54,7 @@ public class Block {
    * 
    * @return True iff the given BlockModel is the same as the model of this Block instance.
    */
-  public boolean isModel(BlockModel activeBlock) {
+  boolean isModel(BlockModel activeBlock) {
     return model.equals(activeBlock);
   }
 
@@ -70,7 +67,7 @@ public class Block {
    * 
    * @param context2d The context on which to create this path.
    */
-  public void getPath(int x, int y, Context2d context2d) {
+  void getPath(int x, int y, Context2d context2d) {
     Square square = new Square();
     for (SquareModel squareModel : model.getIterator()) {
       square.addSquareToCanvasPath(x + indexToCoord(squareModel.getCol()), y + indexToCoord(squareModel.getRow()),
@@ -78,15 +75,15 @@ public class Block {
     }
   }
 
-  public void rotate() {
+  void rotate() {
     model.rotate();
   }
 
-  public double getCentreRowDiff() {
+  double getCentreRowDiff() {
     return model.getCentreRowDiff();
   }
 
-  public double getCentreColDiff() {
+  double getCentreColDiff() {
     return model.getCentreColDiff();
   }
 
@@ -99,7 +96,7 @@ public class Block {
    * @return The coordinate to pass to the Block.draw method for drawing a block in the correct
    * position.
    */
-  public static int indexToCoord(Integer index) {
-    return index * SIZE;
+  static int indexToCoord(Integer index) {
+    return index * Size.BLOCK_SIZE;
   }
 }

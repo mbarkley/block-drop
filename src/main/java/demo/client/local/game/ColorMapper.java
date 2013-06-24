@@ -12,7 +12,7 @@ import demo.client.shared.model.SquareBlockModel;
 import demo.client.shared.model.TBlockModel;
 import demo.client.shared.model.ZBlockModel;
 
-public class ColorMapper {
+class ColorMapper {
 
   private static final String BASIC_COLOUR = "white";
 
@@ -45,7 +45,7 @@ public class ColorMapper {
     colourMap.put(ZBlockModel.getCode(), Z_BLOCK_COLOUR);
   }
 
-  public static String codeToColour(int code) {
+  static String codeToColour(int code) {
     return colourMap.get(code);
   }
 
