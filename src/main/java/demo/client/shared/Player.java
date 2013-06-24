@@ -152,7 +152,7 @@ public class Player {
    * 
    * @return True iff this player and other refer to the same player (i.e. have the same id).
    */
-  public boolean equals(Player other) {
-    return other != null && this.getId() == other.getId();
+  public boolean equals(Object other) {
+    return other != null && other instanceof Player && this.getId() == ((Player) other).getId();
   }
 }

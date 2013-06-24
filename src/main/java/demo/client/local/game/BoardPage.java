@@ -5,14 +5,22 @@ import java.util.List;
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
 
+import org.jboss.errai.common.client.api.Assert;
 import org.jboss.errai.ui.client.widget.ListWidget;
 import org.jboss.errai.ui.nav.client.local.Page;
 import org.jboss.errai.ui.shared.api.annotations.DataField;
 import org.jboss.errai.ui.shared.api.annotations.Templated;
 
 import com.google.gwt.canvas.client.Canvas;
+import com.google.gwt.dom.client.DivElement;
+import com.google.gwt.dom.client.Document;
+import com.google.gwt.event.dom.client.KeyPressEvent;
 import com.google.gwt.event.dom.client.KeyPressHandler;
+import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.ui.Composite;
+import com.google.gwt.user.client.ui.HTML;
+import com.google.gwt.user.client.ui.RootPanel;
+import com.google.gwt.user.client.ui.Widget;
 
 import demo.client.shared.ScoreTracker;
 
@@ -127,7 +135,11 @@ public class BoardPage extends Composite {
    * @param handler A key press handler for the mainCanvas.
    */
   void addHandlerToMainCanvas(KeyPressHandler handler) {
-    mainCanvas.addKeyPressHandler(handler);
+    Assert.notNull("Could not get game-wrapper root panel.", RootPanel.get())
+    .addDomHandler(
+            handler,
+            KeyPressEvent.getType()
+            );
   }
 
   void drawBlockToNextCanvas(Block nextBlock) {
@@ -146,5 +158,15 @@ public class BoardPage extends Composite {
 
   List<ScoreTracker> getScoreList() {
     return scoreDisplay.getValue();
+  }
+
+  static void pause() {
+    DivElement element = ((DivElement) Document.get().getElementById("pause-overlay"));
+    element.setAttribute("style", "visibility: visible");
+  }
+
+  static void unpause() {
+    DivElement element = ((DivElement) Document.get().getElementById("pause-overlay"));
+    element.removeAttribute("style");
   }
 }

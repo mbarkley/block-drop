@@ -55,6 +55,8 @@ class BoardController implements KeyPressHandler {
   private boolean drop;
   /* True if the active block drop speed should be increased. */
   private boolean fast;
+  /* True if the game is paused. */
+  private boolean pause = false;
 
   private ClearState clearState = ClearState.START;
   private Block toBeCleared;
@@ -95,6 +97,13 @@ class BoardController implements KeyPressHandler {
    * milliseconds.
    */
   void update() {
+    if (pause) {
+      BoardPage.pause();
+      return;
+    } else {
+      BoardPage.unpause();
+    }
+    
     boolean moved = false;
 
     // Check for rows to clear. Rows will stay in model until fully dealt with.
@@ -237,13 +246,13 @@ class BoardController implements KeyPressHandler {
     // Start game loop.
     timer.scheduleRepeating(loopTime);
   }
-  
+
   private ScoreTracker createScoreTracker(Player player) {
     ScoreTracker score = new ScoreTracker();
     score.setId(player.getId());
     score.setName(player.getNick());
     score.setScore(0);
-    
+
     return score;
   }
 
@@ -273,36 +282,61 @@ class BoardController implements KeyPressHandler {
   }
 
   /*
-   * Alter the current state based on user input.
+   * Alter the current state based on user input. Return true if the input captured a relevant
+   * command.
    */
   private boolean keyPressHelper(int keyCode) {
-    // First handle relevant key presses.
     boolean relevantKey = true;
-    switch (keyCode) {
-    case KeyCodes.KEY_LEFT:
-      System.out.println("Left key pressed.");
-      colMove = -1;
-      break;
-    case KeyCodes.KEY_RIGHT:
-      System.out.println("Right key pressed.");
-      colMove = 1;
-      break;
-    case KeyCodes.KEY_UP:
-      System.out.println("Up key pressed.");
-      rotate = true;
-      break;
-    case KeyCodes.KEY_DOWN:
-      System.out.println("Down key pressed.");
-      fast = true;
-      break;
-    case KEY_SPACE_BAR:
-      System.out.println("Space bar pressed.");
-      drop = true;
-      break;
-    default:
-      System.out.println("Key code pressed: " + keyCode);
-      relevantKey = false;
-      break;
+    // Handle pause separately.
+    // Don't want to accept other input while paused.
+    if (!pause) {
+      switch (keyCode) {
+      case KeyCodes.KEY_LEFT:
+        System.out.println("Left key pressed.");
+        colMove = -1;
+        break;
+      case KeyCodes.KEY_RIGHT:
+        System.out.println("Right key pressed.");
+        colMove = 1;
+        break;
+      case KeyCodes.KEY_UP:
+        System.out.println("Up key pressed.");
+        rotate = true;
+        break;
+      case KeyCodes.KEY_DOWN:
+        System.out.println("Down key pressed.");
+        fast = true;
+        break;
+      case KEY_SPACE_BAR:
+        System.out.println("Space bar pressed.");
+        drop = true;
+        break;
+      case 'p':
+        System.out.println("Pause pressed.");
+        pause = !pause;
+        break;
+      default:
+        System.out.println("Key code pressed: " + keyCode);
+        relevantKey = false;
+        break;
+      }
+    }
+    else {
+      // If paused, capture and ignore commands other than pause.
+      switch (keyCode) {
+      case KeyCodes.KEY_LEFT:
+      case KeyCodes.KEY_RIGHT:
+      case KeyCodes.KEY_UP:
+      case KeyCodes.KEY_DOWN:
+      case KEY_SPACE_BAR:
+        break;
+      case 'p':
+        System.out.println("Pause pressed.");
+        pause = !pause;
+        break;
+      default:
+        relevantKey = false;
+      }
     }
 
     return relevantKey;

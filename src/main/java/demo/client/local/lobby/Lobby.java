@@ -1,5 +1,8 @@
 package demo.client.local.lobby;
 
+import java.util.HashSet;
+import java.util.Set;
+
 import javax.annotation.PostConstruct;
 import javax.enterprise.event.Event;
 import javax.enterprise.event.Observes;
@@ -7,11 +10,7 @@ import javax.inject.Inject;
 
 import org.jboss.errai.bus.client.ErraiBus;
 import org.jboss.errai.bus.client.api.base.MessageBuilder;
-import org.jboss.errai.bus.client.api.messaging.Message;
 import org.jboss.errai.bus.client.api.messaging.MessageBus;
-import org.jboss.errai.bus.client.api.messaging.MessageCallback;
-import org.jboss.errai.bus.client.api.messaging.RequestDispatcher;
-import org.jboss.errai.common.client.protocols.MessageParts;
 import org.jboss.errai.ui.client.widget.ListWidget;
 import org.jboss.errai.ui.nav.client.local.DefaultPage;
 import org.jboss.errai.ui.nav.client.local.Page;
@@ -19,9 +18,12 @@ import org.jboss.errai.ui.nav.client.local.TransitionTo;
 import org.jboss.errai.ui.shared.api.annotations.DataField;
 import org.jboss.errai.ui.shared.api.annotations.Templated;
 
-import com.google.gwt.user.client.Window;
+import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.HorizontalPanel;
+import com.google.gwt.user.client.ui.Widget;
 
 import demo.client.local.game.BoardPage;
 import demo.client.shared.GameRoom;
@@ -34,55 +36,11 @@ import demo.client.shared.RegisterRequest;
 /*
  * A class displaying a page for a game lobby.
  */
-@Page(role=DefaultPage.class)
+@Page(role = DefaultPage.class)
 @Templated
 public class Lobby extends Composite {
 
-  /*
-   * A class for handling lobby updates and invitation from the server.
-   */
-  private final class LobbyMessageCallback implements MessageCallback {
-    /*
-     * (non-Javadoc)
-     * 
-     * @see
-     * org.jboss.errai.bus.client.api.messaging.MessageCallback#callback(org.jboss.errai.bus.client
-     * .api.messaging.Message)
-     */
-    @Override
-    public void callback(Message message) {
-      if (message.getCommandType().equals("invitation"))
-        invitationCallback(message);
-      else if (message.getCommandType().equals("start-game"))
-        startGameCallback(message);
-    }
-
-    /*
-     * Start a game with another player after a successfully accepted invitation.
-     */
-    private void startGameCallback(Message message) {
-      Client.getInstance().setGame(message.get(GameRoom.class, MessageParts.Value));
-      // For debugging.
-      System.out.println(Client.getInstance().getNickname() + ": Before board transition.");
-      boardTransition.go();
-      // For debugging.
-      System.out.println(Client.getInstance().getNickname() + ": After board transition.");
-    }
-
-    /*
-     * Prompt the user to respond to an invitation from another client.
-     */
-    private void invitationCallback(Message message) {
-      Invitation invitation = message.get(Invitation.class, MessageParts.Value);
-
-      invitation.setAccepted(Window.confirm("You have been invited to play a game by "
-              + invitation.getInviter().getNick() + ". Would you like to accept?"));
-
-      // The server handles the invitation, whether or not it was accepted.
-      MessageBuilder.createMessage().toSubject("Relay").command("invitation-response").withValue(invitation)
-              .noErrorHandling().sendNowWith(dispatcher);
-    }
-  }
+  private static Lobby instance;
 
   /* For the Errai NavigationUI. */
   @Inject
@@ -98,8 +56,6 @@ public class Lobby extends Composite {
   private Event<Invitation> gameInvitation;
   /* For receiving messages from the server. */
   private MessageBus messageBus = ErraiBus.get();
-  /* For sending messages to the server. */
-  private RequestDispatcher dispatcher = ErraiBus.getDispatcher();
 
   @Inject
   @DataField("player-button-panel")
@@ -114,10 +70,13 @@ public class Lobby extends Composite {
   @DataField("game-list")
   private ListWidget<GameRoom, GamePanel> gameList;
 
+  private Set<Player> selected = new HashSet<Player>();
+
   /*
    * Create an instance of a lobby page.
    */
   public Lobby() {
+    instance = this;
   }
 
   /*
@@ -126,6 +85,20 @@ public class Lobby extends Composite {
   @PostConstruct
   public void postConstruct() {
     Client.getInstance().maybeInit();
+
+    Button newGameButton = new Button("New Game");
+    newGameButton.addClickHandler(new ClickHandler() {
+
+      @Override
+      public void onClick(ClickEvent event) {
+        // TODO: Handle starting game properly.
+
+        MessageBuilder.createMessage("Client" + Client.getInstance().getPlayer().getId()).command("start-game")
+                .noErrorHandling().sendNowWith(messageBus);
+      }
+    });
+
+    playerButtonPanel.add(newGameButton);
     joinLobby();
   }
 
@@ -176,5 +149,24 @@ public class Lobby extends Composite {
     Client.getInstance().setPlayer(player);
 
     requestLobbyUpdate();
+  }
+
+  public static Lobby getInstance() {
+    return instance;
+  }
+
+  public void toggleSelected(Player model) {
+    if (selected.contains(model)) {
+      System.out.println("Player " + model.getNick() + " deselected.");
+      selected.remove(model);
+    }
+    else {
+      System.out.println("Player " + model.getNick() + " selected.");
+      selected.add(model);
+    }
+  }
+
+  void goToBoard() {
+    boardTransition.go();
   }
 }

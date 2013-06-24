@@ -9,6 +9,7 @@ import org.jboss.errai.ui.shared.api.annotations.Bound;
 import org.jboss.errai.ui.shared.api.annotations.DataField;
 import org.jboss.errai.ui.shared.api.annotations.Templated;
 
+import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.Label;
 
@@ -25,6 +26,11 @@ public class PlayerPanel extends Composite implements HasModel<Player> {
   @Inject
   @Bound(property = "nick")
   private Label name;
+  
+  public PlayerPanel() {
+    super();
+    addDomHandler(new PlayerPanelClickHandler(), ClickEvent.getType());
+  }
 
   @Override
   public Player getModel() {

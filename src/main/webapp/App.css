@@ -21,6 +21,7 @@ body {
 
 /* BOARD.HTML STYLES BEGIN */
 .display-wrapper {
+	position: relative;
 	min-width: 1210px;
 }
 .panel {
@@ -32,7 +33,6 @@ body {
 }
 .centre-panel {
 	width: 520px;
-	
 	position: relative;
 }
 .next-piece {
@@ -45,12 +45,35 @@ body {
 	top: 280px;
 	width: 100%;
 }
+.overlay {
+	position: absolute;
+	width: 1040px;
+	height: 780px;
+	background-color: rgba(0,0,0,0.2);
+	color: white;
+	font-size: 24px;
+	font-family: sans-serif;
+	text-align: center;
+	visibility: hidden;
+	z-index: 1;
+}
+.overlay > * {
+	position: relative;
+	top: 100px;
+}
 /* BOARD.HTML STYLES END */
 
 /* PlayerPanel.html styles begin. */
 
 .player-panel {
-	
+	background-color: grey;
+	cursor: pointer;
+	width: 100%;
+	padding: 5px 10px 5px;
+}
+
+.player-panel:HOVER {
+	background-color: lightgrey;
 }
 
 /* PlayerPanel.html styles end. */
