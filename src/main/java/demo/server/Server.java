@@ -14,7 +14,6 @@ import org.jboss.errai.bus.client.api.messaging.MessageBus;
 import org.jboss.errai.bus.client.api.messaging.MessageCallback;
 import org.jboss.errai.bus.client.api.messaging.RequestDispatcher;
 import org.jboss.errai.bus.server.annotations.Service;
-import org.jboss.errai.common.client.protocols.MessageParts;
 
 import demo.client.shared.Command;
 import demo.client.shared.GameRoom;
@@ -110,8 +109,10 @@ public class Server implements MessageCallback {
       player.setGameId(0);
     }
 
-    // Put the player in the lobby.
-    players.put(player.getId(), player);
+    // Put the player in the lobby if not already.
+    if (!players.containsKey(player.getId())) {
+      players.put(player.getId(), player);
+    }
 
     // For debugging.
     System.out.println("Server" + debugId + ": Player registered.");
@@ -154,7 +155,7 @@ public class Server implements MessageCallback {
   }
 
   private void addPlayer(Player target, int gameId) {
-    players.remove(target);
+    players.remove(target.getId());
     games.get(gameId).addPlayer(target);
     MessageBuilder.createMessage().toSubject("Client" + target.getId()).command(Command.JOIN_GAME)
             .withValue(games.get(gameId)).noErrorHandling().sendNowWith(dispatcher);
@@ -180,6 +181,7 @@ public class Server implements MessageCallback {
     switch (Command.valueOf(message.getCommandType())) {
     case JOIN_GAME:
       addToGame(message.getValue(Invitation.class));
+      sendLobbyList();
       break;
     case INVITATION:
       break;

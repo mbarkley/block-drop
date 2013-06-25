@@ -72,6 +72,10 @@ body {
 	padding: 5px 10px 5px;
 }
 
+.selected {
+	background-color: red;
+}
+
 .player-panel:HOVER {
 	background-color: lightgrey;
 }

@@ -1,6 +1,7 @@
 package demo.client.local.lobby;
 
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import javax.annotation.PostConstruct;
@@ -24,6 +25,7 @@ import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 
+import demo.client.local.Style;
 import demo.client.local.game.BoardPage;
 import demo.client.shared.Command;
 import demo.client.shared.GameRoom;
@@ -115,7 +117,9 @@ public class Lobby extends Composite {
    * Update the lobby list model and display with newest lobby update from the server.
    */
   public void updateLobby(@Observes LobbyUpdate update) {
-    playerList.setItems(update.getPlayers());
+    List<Player> players = update.getPlayers();
+    players.remove(Client.getInstance().getPlayer());
+    playerList.setItems(players);
     gameList.setItems(update.getGames());
   }
 
@@ -160,10 +164,12 @@ public class Lobby extends Composite {
     if (selected.contains(model)) {
       System.out.println("Player " + model.getNick() + " deselected.");
       selected.remove(model);
+      playerList.getWidget(model).removeStyleName(Style.SELECTED);
     }
     else {
       System.out.println("Player " + model.getNick() + " selected.");
       selected.add(model);
+      playerList.getWidget(model).addStyleName(Style.SELECTED);
     }
   }
 
