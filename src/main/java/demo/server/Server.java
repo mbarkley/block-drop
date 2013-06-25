@@ -152,6 +152,8 @@ public class Server implements MessageCallback {
       MessageBuilder.createMessage().toSubject("Client" + guest.getId()).command(Command.INVITATION)
               .withValue(targetedInvite).noErrorHandling().sendNowWith(dispatcher);
     }
+    
+    sendLobbyList();
   }
 
   private void addPlayer(Player target, int gameId) {

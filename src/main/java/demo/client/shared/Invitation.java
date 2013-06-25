@@ -24,13 +24,12 @@ public class Invitation {
   }
   
   public Invitation(Invitation original, Player newTarget) {
-    this();
     setHost(original.getHost());
     setGuests(original.getGuests());
     setGameId(original.getGameId());
     setTarget(newTarget);
   }
-  
+
   public Player getHost() {
     return host;
   }

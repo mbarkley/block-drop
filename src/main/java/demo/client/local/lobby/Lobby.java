@@ -72,7 +72,8 @@ public class Lobby extends Composite {
   @DataField("game-list")
   private ListWidget<GameRoom, GamePanel> gameList;
 
-  private Set<Player> selected = new HashSet<Player>();
+  private Set<Player> selectedPlayers = new HashSet<Player>();
+  private GameRoom selectedGame = null;
 
   /*
    * Create an instance of a lobby page.
@@ -96,12 +97,29 @@ public class Lobby extends Composite {
         // This player should always join a new game that he starts.
         Invitation invite = new Invitation();
         invite.setHost(Client.getInstance().getPlayer());
-        invite.setGuests(selected);
+        invite.setGuests(selectedPlayers);
         gameInvitation.fire(invite);
       }
     });
+    Button joinGameButton = new Button("Join Game");
+    joinGameButton.addClickHandler(new ClickHandler() {
+
+      @Override
+      public void onClick(ClickEvent event) {
+        if (selectedGame != null && gameList.getValue().contains(selectedGame)) {
+          Invitation invite = new Invitation();
+          // The target and gameId are the only information that the server will need.
+          invite.setGameId(selectedGame.getId());
+          invite.setTarget(Client.getInstance().getPlayer());
+          MessageBuilder.createMessage("Relay").command(Command.JOIN_GAME).withValue(invite).noErrorHandling()
+                  .sendNowWith(messageBus);
+        }
+      }
+
+    });
 
     playerButtonPanel.add(newGameButton);
+    gameButtonPanel.add(joinGameButton);
     joinLobby();
   }
 
@@ -147,7 +165,7 @@ public class Lobby extends Composite {
     if (!Client.getInstance().hasRegisteredPlayer()) {
       // For debugging.
       System.out.println(Client.getInstance().getNickname() + ": Subscribing to subject Client" + player.getId());
-      
+
       messageBus.subscribe("Client" + player.getId(), new LobbyMessageCallback());
     }
 
@@ -160,20 +178,33 @@ public class Lobby extends Composite {
     return instance;
   }
 
-  public void toggleSelected(Player model) {
-    if (selected.contains(model)) {
+  void togglePlayerSelection(Player model) {
+    if (selectedPlayers.contains(model)) {
       System.out.println("Player " + model.getNick() + " deselected.");
-      selected.remove(model);
+      selectedPlayers.remove(model);
       playerList.getWidget(model).removeStyleName(Style.SELECTED);
     }
     else {
-      System.out.println("Player " + model.getNick() + " selected.");
-      selected.add(model);
+      System.out.println("Player " + model.getNick() + " selectedPlayers.");
+      selectedPlayers.add(model);
       playerList.getWidget(model).addStyleName(Style.SELECTED);
     }
   }
 
   void goToBoard() {
     boardTransition.go();
+  }
+
+  void toggleGameSelection(GameRoom model) {
+    if (model.equals(selectedGame)) {
+      gameList.getWidget(model).removeStyleName(Style.SELECTED);
+      selectedGame = null;
+    }
+    else {
+      if (selectedGame != null)
+        gameList.getWidget(selectedGame).removeStyleName(Style.SELECTED);
+      gameList.getWidget(model).addStyleName(Style.SELECTED);
+      selectedGame = model;
+    }
   }
 }

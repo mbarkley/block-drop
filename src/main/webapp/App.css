@@ -63,9 +63,9 @@ body {
 }
 /* BOARD.HTML STYLES END */
 
-/* PlayerPanel.html styles begin. */
+/* panel styles begin. */
 
-.player-panel {
+.list-panel {
 	background-color: grey;
 	cursor: pointer;
 	width: 100%;
@@ -76,8 +76,8 @@ body {
 	background-color: red;
 }
 
-.player-panel:HOVER {
+.list-panel:HOVER {
 	background-color: lightgrey;
 }
 
-/* PlayerPanel.html styles end. */
+/* panel styles end. */
