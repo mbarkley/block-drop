@@ -86,7 +86,7 @@ public class Lobby extends Composite {
    * Construct the UI elements for the lobby.
    */
   @PostConstruct
-  public void postConstruct() {
+  private void postConstruct() {
     Client.getInstance().maybeInit();
 
     Button newGameButton = new Button("New Game");

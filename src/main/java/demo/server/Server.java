@@ -16,6 +16,7 @@ import org.jboss.errai.bus.client.api.messaging.RequestDispatcher;
 import org.jboss.errai.bus.server.annotations.Service;
 
 import demo.client.shared.Command;
+import demo.client.shared.ExitMessage;
 import demo.client.shared.GameRoom;
 import demo.client.shared.Invitation;
 import demo.client.shared.LobbyUpdate;
@@ -143,7 +144,7 @@ public class Server implements MessageCallback {
     room.setId(nextGameId());
     games.put(room.getId(), room);
     invitation.setGameId(room.getId());
-    addPlayer(invitation.getHost(), room.getId());
+    addPlayerToGame(invitation.getHost(), room.getId());
 
     for (Player guest : invitation.getGuests()) {
       System.out.println("Server" + debugId + ": Attempting to relay invitation to " + "Client" + guest.getId());
@@ -156,7 +157,7 @@ public class Server implements MessageCallback {
     sendLobbyList();
   }
 
-  private void addPlayer(Player target, int gameId) {
+  private void addPlayerToGame(Player target, int gameId) {
     players.remove(target.getId());
     games.get(gameId).addPlayer(target);
     MessageBuilder.createMessage().toSubject("Client" + target.getId()).command(Command.JOIN_GAME)
@@ -182,18 +183,26 @@ public class Server implements MessageCallback {
   public void callback(Message message) {
     switch (Command.valueOf(message.getCommandType())) {
     case JOIN_GAME:
-      addToGame(message.getValue(Invitation.class));
+      Invitation invitation = message.getValue(Invitation.class);
+      addPlayerToGame(invitation.getTarget(), invitation.getGameId());
+      sendLobbyList();
+      break;
+    case LEAVE_GAME:
+      ExitMessage exitMessage = message.getValue(ExitMessage.class);
+      removePlayerFromGame(exitMessage.getPlayer(), exitMessage.getGame().getId());
+      // Clean up empty games.
+      if (games.get(exitMessage.getGame().getId()).isEmpty())
+        games.remove(exitMessage.getGame().getId());
       sendLobbyList();
       break;
     case INVITATION:
       break;
     default:
       break;
-
     }
   }
 
-  private void addToGame(Invitation invitation) {
-    addPlayer(invitation.getTarget(), invitation.getGameId());
+  private void removePlayerFromGame(Player player, int gameId) {
+    games.get(gameId).removePlayer(player.getId());
   }
 }

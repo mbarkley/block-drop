@@ -5,9 +5,12 @@ import java.util.List;
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
 
+import org.jboss.errai.bus.client.api.base.MessageBuilder;
+import org.jboss.errai.bus.client.api.messaging.RequestDispatcher;
 import org.jboss.errai.common.client.api.Assert;
 import org.jboss.errai.ui.client.widget.ListWidget;
 import org.jboss.errai.ui.nav.client.local.Page;
+import org.jboss.errai.ui.nav.client.local.PageHidden;
 import org.jboss.errai.ui.nav.client.local.TransitionTo;
 import org.jboss.errai.ui.shared.api.annotations.DataField;
 import org.jboss.errai.ui.shared.api.annotations.Templated;
@@ -23,7 +26,10 @@ import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.RootPanel;
 import com.google.gwt.user.client.ui.Widget;
 
+import demo.client.local.lobby.Client;
 import demo.client.local.lobby.Lobby;
+import demo.client.shared.Command;
+import demo.client.shared.ExitMessage;
 import demo.client.shared.ScoreTracker;
 
 /*
@@ -48,7 +54,7 @@ public class BoardPage extends Composite {
   @DataField("score-list")
   private ListWidget<ScoreTracker, ScorePanel> scoreDisplay;
   private ScorePanel panel;
-  
+
   @Inject
   private TransitionTo<Lobby> lobbyTransition;
 
@@ -58,6 +64,9 @@ public class BoardPage extends Composite {
 
   /* A controller for this view. */
   private BoardController controller;
+
+  @Inject
+  private RequestDispatcher dispatcher;
 
   /*
    * Create a BoardPage for displaying a Block Drop game.
@@ -87,8 +96,7 @@ public class BoardPage extends Composite {
 
       try {
         controller.startGame();
-      }
-      catch (NullPointerException e) {
+      } catch (NullPointerException e) {
         // Null pointer likely means the user needs to register a Player object in the lobby.
         lobbyTransition.go();
       }
@@ -96,6 +104,16 @@ public class BoardPage extends Composite {
     else {
       // TODO: Display message to user that HTML5 Canvas is required.
     }
+  }
+
+  @PageHidden
+  private void leaveGame() {
+    ExitMessage exitMessage = new ExitMessage();
+    exitMessage.setPlayer(Client.getInstance().getPlayer());
+    exitMessage.setGame(Client.getInstance().getGameRoom());
+    Client.getInstance().setGameRoom(null);
+    MessageBuilder.createMessage("Relay").command(Command.LEAVE_GAME).withValue(exitMessage).noErrorHandling()
+            .sendNowWith(dispatcher);
   }
 
   void initScoreList(List<ScoreTracker> scoreList) {
@@ -146,11 +164,8 @@ public class BoardPage extends Composite {
    * @param handler A key press handler for the mainCanvas.
    */
   void addHandlerToMainCanvas(KeyPressHandler handler) {
-    Assert.notNull("Could not get game-wrapper root panel.", RootPanel.get())
-    .addDomHandler(
-            handler,
-            KeyPressEvent.getType()
-            );
+    Assert.notNull("Could not get game-wrapper root panel.", RootPanel.get()).addDomHandler(handler,
+            KeyPressEvent.getType());
   }
 
   void drawBlockToNextCanvas(Block nextBlock) {
@@ -163,8 +178,8 @@ public class BoardPage extends Composite {
     nextPieceCanvas.getContext2d().setFont("bold 20px sans-serif");
     nextPieceCanvas.getContext2d().fillText("Next Block", 10, 20);
 
-    nextBlock.draw(2 * Size.BLOCK_SIZE + nextBlock.getCentreColDiff() * Size.BLOCK_SIZE,
-            2 * Size.BLOCK_SIZE + nextBlock.getCentreRowDiff() * Size.BLOCK_SIZE, nextPieceCanvas.getContext2d());
+    nextBlock.draw(2 * Size.BLOCK_SIZE + nextBlock.getCentreColDiff() * Size.BLOCK_SIZE, 2 * Size.BLOCK_SIZE
+            + nextBlock.getCentreRowDiff() * Size.BLOCK_SIZE, nextPieceCanvas.getContext2d());
   }
 
   List<ScoreTracker> getScoreList() {

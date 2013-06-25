@@ -128,7 +128,7 @@ public class Client {
    * 
    * @return The game object representing the game this client is currently in.
    */
-  public GameRoom getGame() {
+  public GameRoom getGameRoom() {
     return game;
   }
 

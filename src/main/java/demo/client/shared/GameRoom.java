@@ -48,4 +48,8 @@ public class GameRoom {
   public boolean equals(Object other) {
     return other != null && other instanceof GameRoom && ((GameRoom) other).getId() == this.getId();
   }
+
+  public boolean isEmpty() {
+    return players.size() == 0;
+  }
 }
