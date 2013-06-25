@@ -8,6 +8,7 @@ import javax.inject.Inject;
 import org.jboss.errai.common.client.api.Assert;
 import org.jboss.errai.ui.client.widget.ListWidget;
 import org.jboss.errai.ui.nav.client.local.Page;
+import org.jboss.errai.ui.nav.client.local.TransitionTo;
 import org.jboss.errai.ui.shared.api.annotations.DataField;
 import org.jboss.errai.ui.shared.api.annotations.Templated;
 
@@ -22,6 +23,7 @@ import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.RootPanel;
 import com.google.gwt.user.client.ui.Widget;
 
+import demo.client.local.lobby.Lobby;
 import demo.client.shared.ScoreTracker;
 
 /*
@@ -46,6 +48,9 @@ public class BoardPage extends Composite {
   @DataField("score-list")
   private ListWidget<ScoreTracker, ScorePanel> scoreDisplay;
   private ScorePanel panel;
+  
+  @Inject
+  private TransitionTo<Lobby> lobbyTransition;
 
   ScoreTracker getScoreModel() {
     return panel.getModel();
@@ -80,7 +85,13 @@ public class BoardPage extends Composite {
       System.out.println("Canvas successfully created.");
       controller.setPage(this);
 
-      controller.startGame();
+      try {
+        controller.startGame();
+      }
+      catch (NullPointerException e) {
+        // Null pointer likely means the user needs to register a Player object in the lobby.
+        lobbyTransition.go();
+      }
     }
     else {
       // TODO: Display message to user that HTML5 Canvas is required.
