@@ -137,7 +137,7 @@ public class Server implements MessageCallback {
    */
   public void handleInvitation(@Observes Invitation invitation) {
     // For debugging.
-    System.out.println("Server" + debugId + ": Invitation received from " + invitation.getHost().getNick());
+    System.out.println("Server" + debugId + ": Invitation received from " + invitation.getHost().getName());
 
     // Make game room
     GameRoom room = new GameRoom();

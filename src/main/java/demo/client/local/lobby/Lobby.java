@@ -180,12 +180,12 @@ public class Lobby extends Composite {
 
   void togglePlayerSelection(Player model) {
     if (selectedPlayers.contains(model)) {
-      System.out.println("Player " + model.getNick() + " deselected.");
+      System.out.println("Player " + model.getName() + " deselected.");
       selectedPlayers.remove(model);
       playerList.getWidget(model).removeStyleName(Style.SELECTED);
     }
     else {
-      System.out.println("Player " + model.getNick() + " selectedPlayers.");
+      System.out.println("Player " + model.getName() + " selectedPlayers.");
       selectedPlayers.add(model);
       playerList.getWidget(model).addStyleName(Style.SELECTED);
     }

@@ -22,7 +22,7 @@ public class ScorePanel extends Composite implements HasModel<ScoreTracker> {
   private DataBinder<ScoreTracker> scoreBinder;
 
   @DataField
-  @Bound
+  @Bound(property="player.name")
   @Inject
   private Label name;
 

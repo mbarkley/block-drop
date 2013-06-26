@@ -95,6 +95,7 @@ public class BoardPage extends Composite {
       try {
         controller.startGame();
       } catch (NullPointerException e) {
+        e.printStackTrace();
         // Null pointer likely means the user needs to register a Player object in the lobby.
         lobbyTransition.go();
       }

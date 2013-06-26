@@ -57,7 +57,7 @@ public class LobbyMessageCallback implements MessageCallback {
    * Prompt the user to respond to an invitation from another client.
    */
   private void invitationCallback(Invitation invitation) {
-    boolean accepted = Window.confirm("You have been invited to play a game by " + invitation.getHost().getNick()
+    boolean accepted = Window.confirm("You have been invited to play a game by " + invitation.getHost().getName()
             + ". Would you like to accept?");
 
     if (accepted) {

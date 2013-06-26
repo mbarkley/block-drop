@@ -24,7 +24,7 @@ public class PlayerPanel extends Composite implements HasModel<Player> {
 
   @DataField
   @Inject
-  @Bound(property = "nick")
+  @Bound
   private Label name;
   
   public PlayerPanel() {

@@ -20,7 +20,7 @@ public class Player {
    */
   private int id;
   /* The nickname of this player to be displayed to other users. */
-  private String nick;
+  private String name;
   /* The id of the game this player is in, or 0 if the player is in the lobby. */
   private int gameId;
 
@@ -35,7 +35,7 @@ public class Player {
   /*
    * Create a player with a non-default nickname.
    * 
-   * @param nick The nickname of the player.
+   * @param name The nickname of the player.
    */
   public Player(String nick) {
     this(0, nick, 0);
@@ -47,7 +47,7 @@ public class Player {
    * @param id This player's id. Should be positive, or 0 if this player has not yet received an id
    * from the server.
    * 
-   * @param nick The nickname of this player.
+   * @param name The nickname of this player.
    */
   public Player(int id, String nick) {
     this(id, nick, 0);
@@ -59,14 +59,14 @@ public class Player {
    * @param id This player's id. Should be positive, or 0 if this player has not yet received an id
    * from the server.
    * 
-   * @param nick The nickname of this player.
+   * @param name The nickname of this player.
    * 
    * @param gameId The id of the game the user is in. Should be a positive integer or 0 if the user
    * is not in any game.
    */
   public Player(int id, String nick, int gameId) {
     this.id = id;
-    this.nick = nick;
+    this.name = nick;
     this.gameId = gameId;
   }
 
@@ -113,17 +113,17 @@ public class Player {
    * 
    * @return The nickname of the player.
    */
-  public String getNick() {
-    return nick;
+  public String getName() {
+    return name;
   }
 
   /*
    * Set the player's nickname.
    * 
-   * @param nick The nickname of the player.
+   * @param name The nickname of the player.
    */
-  public void setNick(String nick) {
-    this.nick = nick;
+  public void setName(String nick) {
+    this.name = nick;
   }
 
   /*

@@ -281,9 +281,7 @@ class BoardController implements KeyDownHandler, KeyUpHandler {
 
   private ScoreTracker createScoreTracker(Player player) {
     ScoreTracker score = new ScoreTracker();
-    score.setId(player.getId());
-    score.setName(player.getNick());
-    score.setScore(0);
+    score.setPlayer(player);
 
     return score;
   }

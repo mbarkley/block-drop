@@ -34,7 +34,7 @@ public class RegisterRequest {
    * @return The nickname of the player to be registered.
    */
   public String getNickname() {
-    return player.getNick();
+    return player.getName();
   }
 
   /*

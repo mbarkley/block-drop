@@ -9,8 +9,7 @@ import org.jboss.errai.databinding.client.api.Bindable;
 public class ScoreTracker {
 
   private long score;
-  private String name;
-  private int id;
+  private Player player;
 
   public static final int BASE_ROW_SCORE = 10;
   private static final int[] COMBO_FACTOR = new int[] { 1, 2, 5, 10 };
@@ -21,8 +20,6 @@ public class ScoreTracker {
 
   public ScoreTracker() {
     score = 0;
-    name = "default";
-    id = 0;
   }
 
   public long getScore() {
@@ -47,18 +44,18 @@ public class ScoreTracker {
   }
 
   public int getId() {
-    return id;
-  }
-
-  public void setId(int id) {
-    this.id = id;
+    return player != null ? player.getId() : 0;
   }
 
   public String getName() {
-    return name;
+    return player != null ? player.getName() : "";
   }
 
-  public void setName(String name) {
-    this.name = name;
+  public Player getPlayer() {
+    return player;
+  }
+
+  public void setPlayer(Player player) {
+    this.player = player;
   }
 }
