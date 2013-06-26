@@ -18,13 +18,11 @@ import org.jboss.errai.ui.shared.api.annotations.Templated;
 import com.google.gwt.canvas.client.Canvas;
 import com.google.gwt.dom.client.DivElement;
 import com.google.gwt.dom.client.Document;
-import com.google.gwt.event.dom.client.KeyPressEvent;
-import com.google.gwt.event.dom.client.KeyPressHandler;
-import com.google.gwt.user.client.DOM;
+import com.google.gwt.event.dom.client.DomEvent.Type;
+import com.google.gwt.event.dom.client.KeyDownEvent;
+import com.google.gwt.event.shared.EventHandler;
 import com.google.gwt.user.client.ui.Composite;
-import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.RootPanel;
-import com.google.gwt.user.client.ui.Widget;
 
 import demo.client.local.lobby.Client;
 import demo.client.local.lobby.Lobby;
@@ -163,9 +161,9 @@ public class BoardPage extends Composite {
    * 
    * @param handler A key press handler for the mainCanvas.
    */
-  void addHandlerToMainCanvas(KeyPressHandler handler) {
+  <H extends EventHandler> void addHandlerToMainCanvas(H handler, Type<H> type) {
     Assert.notNull("Could not get game-wrapper root panel.", RootPanel.get()).addDomHandler(handler,
-            KeyPressEvent.getType());
+            type);
   }
 
   void drawBlockToNextCanvas(Block nextBlock) {

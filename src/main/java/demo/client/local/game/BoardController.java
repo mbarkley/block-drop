@@ -3,8 +3,10 @@ package demo.client.local.game;
 import java.util.List;
 
 import com.google.gwt.event.dom.client.KeyCodes;
-import com.google.gwt.event.dom.client.KeyPressEvent;
-import com.google.gwt.event.dom.client.KeyPressHandler;
+import com.google.gwt.event.dom.client.KeyDownEvent;
+import com.google.gwt.event.dom.client.KeyDownHandler;
+import com.google.gwt.event.dom.client.KeyUpEvent;
+import com.google.gwt.event.dom.client.KeyUpHandler;
 import com.google.gwt.user.client.Timer;
 
 import demo.client.local.lobby.Client;
@@ -16,7 +18,7 @@ import demo.client.shared.model.BoardModel;
 /*
  * A controller class for a Block Drop game. Handles game loop and user input.
  */
-class BoardController implements KeyPressHandler {
+class BoardController implements KeyDownHandler, KeyUpHandler {
 
   private static final int KEY_SPACE_BAR = 32;
   /* A Block Drop board model. */
@@ -50,13 +52,14 @@ class BoardController implements KeyPressHandler {
    */
   private int colMove = 0;
   /* True if the active block should rotate this loop iteration. */
-  private boolean rotate;
+  private boolean[] rotate = new boolean[3];
   /* True if the active block should drop to the bottom of the screen. */
   private boolean drop;
   /* True if the active block drop speed should be increased. */
   private boolean fast;
   /* True if the game is paused. */
   private boolean pause = false;
+  private boolean[] moveTrack = new boolean[3];
 
   private ClearState clearState = ClearState.START;
   private Block toBeCleared;
@@ -100,10 +103,11 @@ class BoardController implements KeyPressHandler {
     if (pause) {
       BoardPage.pause();
       return;
-    } else {
+    }
+    else {
       BoardPage.unpause();
     }
-    
+
     boolean moved = false;
 
     // Check for rows to clear. Rows will stay in model until fully dealt with.
@@ -135,8 +139,10 @@ class BoardController implements KeyPressHandler {
       }
       // Reset for next loop.
       drop = false;
-      rotate = false;
-      this.colMove = 0;
+      if (rotate())
+        incrementRotate();
+      if (horizontalMove())
+        incrementMovePacer();
       this.rowMove = 0;
       loopCounter = loopCounter == dropIncrement ? 0 : loopCounter + 1;
     }
@@ -196,17 +202,14 @@ class BoardController implements KeyPressHandler {
     if (drop) {
       colMove = 0;
       rowMove = model.getDrop();
-      rotate = false;
     }
     else {
-      // Rotate the block model if the user hit rotate.
-      if (rotate) {
+      if (rotate()) {
         model.rotateActiveBlock();
       }
       // Check if the user wants to increase the speed at which the block drops
       if (fast) {
         rowMove = 1;
-        fast = false;
         // Otherwise maintain the normal speed.
       }
       else {
@@ -216,9 +219,9 @@ class BoardController implements KeyPressHandler {
     }
 
     // Attempt to move model.
-    boolean moved = model.moveActiveBlock(rowMove, colMove);
+    boolean moved = horizontalMove() ? model.moveActiveBlock(rowMove, colMove) : model.moveActiveBlock(rowMove, 0);
     // If that didn't work, ignore the colMove (so that the block may still drop).
-    if (!moved)
+    if (!moved && horizontalMove())
       moved = model.moveActiveBlock(rowMove, 0);
 
     // Redraw block in (possibly) new position.
@@ -228,12 +231,41 @@ class BoardController implements KeyPressHandler {
     return moved;
   }
 
+  private boolean horizontalMove() {
+    return pacingHelper(moveTrack);
+  }
+
+  private boolean rotate() {
+    return pacingHelper(rotate);
+  }
+  
+  private boolean pacingHelper(boolean[] track) {
+    int i;
+    for (i = 0; i < track.length; i++) {
+      if (!track[i]) {
+        break;
+      }
+    }
+    return i == track.length || i == 1;
+  }
+
+  private void clearRotation() {
+    clearHelper(rotate);
+  }
+  
+  private void clearHelper(boolean[] track) {
+    for (int i = 0; i < track.length; i++) {
+      track[i] = false;
+    }
+  }
+
   /*
    * Start a game of Block Drop.
    */
   void startGame() {
     // Add this as a handler for keyboard events.
-    boardPage.addHandlerToMainCanvas(this);
+    boardPage.addHandlerToMainCanvas(this, KeyUpEvent.getType());
+    boardPage.addHandlerToMainCanvas(this, KeyDownEvent.getType());
 
     // Initiate score tracker.
     ScoreTracker score = createScoreTracker(Client.getInstance().getPlayer());
@@ -264,28 +296,68 @@ class BoardController implements KeyPressHandler {
    * KeyPressEvent)
    */
   @Override
-  public void onKeyPress(KeyPressEvent event) {
+  public void onKeyDown(KeyDownEvent event) {
 
-    /*
-     * Some key presses return char codes whereas others return key codes.
-     */
-    int keyCode = event.getCharCode() == 0 ? event.getNativeEvent().getKeyCode() : event.getCharCode();
+    int keyCode = event.getNativeKeyCode();
 
     /*
      * If the user pressed a key used by this game, stop the event from bubbling up to prevent
-     * scrolling or other undesrible events.
+     * scrolling or other undesirable events.
      */
-    if (keyPressHelper(keyCode)) {
+    if (keyDownHelper(keyCode)) {
       event.stopPropagation();
       event.preventDefault();
     }
+  }
+
+  @Override
+  public void onKeyUp(KeyUpEvent event) {
+
+    int keyCode = event.getNativeKeyCode();
+
+    /*
+     * If the user pressed a key used by this game, stop the event from bubbling up to prevent
+     * scrolling or other undesirable events.
+     */
+    if (keyUpHelper(keyCode)) {
+      event.stopPropagation();
+      event.preventDefault();
+    }
+  }
+
+  private boolean keyUpHelper(int keyCode) {
+    boolean relevantKey = true;
+
+    // Only arrow keys must be dealt with on key release.
+    switch (keyCode) {
+    case KeyCodes.KEY_LEFT:
+    case KeyCodes.KEY_RIGHT:
+      colMove = 0;
+      clearMovePacer();
+      break;
+    case KeyCodes.KEY_UP:
+      clearRotation();
+      break;
+    case KeyCodes.KEY_DOWN:
+      fast = false;
+      break;
+    default:
+      relevantKey = false;
+      break;
+    }
+
+    return relevantKey;
+  }
+
+  private void clearMovePacer() {
+    clearHelper(moveTrack);
   }
 
   /*
    * Alter the current state based on user input. Return true if the input captured a relevant
    * command.
    */
-  private boolean keyPressHelper(int keyCode) {
+  private boolean keyDownHelper(int keyCode) {
     boolean relevantKey = true;
     // Handle pause separately.
     // Don't want to accept other input while paused.
@@ -294,14 +366,16 @@ class BoardController implements KeyPressHandler {
       case KeyCodes.KEY_LEFT:
         System.out.println("Left key pressed.");
         colMove = -1;
+        incrementMovePacer();
         break;
       case KeyCodes.KEY_RIGHT:
         System.out.println("Right key pressed.");
         colMove = 1;
+        incrementMovePacer();
         break;
       case KeyCodes.KEY_UP:
         System.out.println("Up key pressed.");
-        rotate = true;
+        incrementRotate();
         break;
       case KeyCodes.KEY_DOWN:
         System.out.println("Down key pressed.");
@@ -311,7 +385,7 @@ class BoardController implements KeyPressHandler {
         System.out.println("Space bar pressed.");
         drop = true;
         break;
-      case 'p':
+      case 80: // Ordinal of lower case p
         System.out.println("Pause pressed.");
         pause = !pause;
         break;
@@ -330,7 +404,7 @@ class BoardController implements KeyPressHandler {
       case KeyCodes.KEY_DOWN:
       case KEY_SPACE_BAR:
         break;
-      case 'p':
+      case 80: // Ordinal of lower case p
         System.out.println("Pause pressed.");
         pause = !pause;
         break;
@@ -340,5 +414,24 @@ class BoardController implements KeyPressHandler {
     }
 
     return relevantKey;
+  }
+
+  private void incrementMovePacer() {
+    incrementHelper(moveTrack);
+  }
+
+  private void incrementRotate() {
+    incrementHelper(rotate);
+  }
+  
+  private void incrementHelper(boolean[] tracker) {
+    int i = 0;
+    while (i < tracker.length && tracker[i]) {
+      i++;
+    }
+
+    if (i != tracker.length) {
+      tracker[i] = true;
+    }
   }
 }
