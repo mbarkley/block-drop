@@ -12,7 +12,8 @@ public class GameRoom {
 
   private int id;
   private Map<Integer, Player> players;
-
+  private Map<Integer, ScoreTracker> scoreTrackers;
+  
   public Map<Integer, Player> getPlayers() {
     return players;
   }
@@ -23,10 +24,15 @@ public class GameRoom {
 
   public GameRoom() {
     players = new HashMap<Integer, Player>();
+    scoreTrackers = new HashMap<Integer, ScoreTracker>();
   }
 
   public void addPlayer(Player player) {
     players.put(player.getId(), player);
+    ScoreTracker scoreTracker = new ScoreTracker();
+    scoreTracker.setPlayer(player);
+    scoreTracker.setGameId(getId());
+    scoreTrackers.put(player.getId(), scoreTracker);
   }
 
   public Player getPlayer(int id) {
@@ -51,5 +57,21 @@ public class GameRoom {
 
   public boolean isEmpty() {
     return players.size() == 0;
+  }
+
+  public Map<Integer, ScoreTracker> getScoreTrackers() {
+    return scoreTrackers;
+  }
+
+  public void setScoreTrackers(Map<Integer, ScoreTracker> scoreTrackers) {
+    this.scoreTrackers = scoreTrackers;
+  }
+
+  public ScoreTracker getScoreTracker(Player player) {
+    return scoreTrackers.get(player.getId());
+  }
+
+  public void updateScoreTracker(ScoreTracker value) {
+    getScoreTracker(value.getPlayer()).setScore(value.getScore());
   }
 }

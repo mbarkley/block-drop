@@ -23,6 +23,7 @@ import demo.client.shared.LobbyUpdate;
 import demo.client.shared.LobbyUpdateRequest;
 import demo.client.shared.Player;
 import demo.client.shared.RegisterRequest;
+import demo.client.shared.ScoreTracker;
 
 /*
  * A class for facilitating games between clients over a network.
@@ -153,7 +154,7 @@ public class Server implements MessageCallback {
       MessageBuilder.createMessage().toSubject("Client" + guest.getId()).command(Command.INVITATION)
               .withValue(targetedInvite).noErrorHandling().sendNowWith(dispatcher);
     }
-    
+
     sendLobbyList();
   }
 
@@ -162,6 +163,7 @@ public class Server implements MessageCallback {
     games.get(gameId).addPlayer(target);
     MessageBuilder.createMessage().toSubject("Client" + target.getId()).command(Command.JOIN_GAME)
             .withValue(games.get(gameId)).noErrorHandling().sendNowWith(dispatcher);
+    updateScore(games.get(gameId).getScoreTracker(target));
   }
 
   /*
@@ -195,11 +197,21 @@ public class Server implements MessageCallback {
         games.remove(exitMessage.getGame().getId());
       sendLobbyList();
       break;
+    case UPDATE_SCORE:
+      updateScore(message.getValue(ScoreTracker.class));
+      break;
     case INVITATION:
       break;
     default:
       break;
     }
+  }
+
+  private void updateScore(ScoreTracker value) {
+    GameRoom room = games.get(value.getGameId());
+    room.updateScoreTracker(value);
+    MessageBuilder.createMessage("Game" + value.getGameId()).command(Command.UPDATE_SCORE).withValue(value)
+            .noErrorHandling().sendNowWith(dispatcher);
   }
 
   private void removePlayerFromGame(Player player, int gameId) {

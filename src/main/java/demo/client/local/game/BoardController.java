@@ -1,6 +1,15 @@
 package demo.client.local.game;
 
+import java.util.Collections;
 import java.util.List;
+
+import javax.inject.Inject;
+
+import org.jboss.errai.bus.client.ErraiBus;
+import org.jboss.errai.bus.client.api.base.MessageBuilder;
+import org.jboss.errai.bus.client.api.messaging.Message;
+import org.jboss.errai.bus.client.api.messaging.MessageBus;
+import org.jboss.errai.bus.client.api.messaging.MessageCallback;
 
 import com.google.gwt.event.dom.client.KeyCodes;
 import com.google.gwt.event.dom.client.KeyDownEvent;
@@ -10,7 +19,8 @@ import com.google.gwt.event.dom.client.KeyUpHandler;
 import com.google.gwt.user.client.Timer;
 
 import demo.client.local.lobby.Client;
-import demo.client.shared.Player;
+import demo.client.shared.Command;
+import demo.client.shared.GameRoom;
 import demo.client.shared.ScoreTracker;
 import demo.client.shared.model.BlockOverflow;
 import demo.client.shared.model.BoardModel;
@@ -27,8 +37,6 @@ class BoardController implements KeyDownHandler, KeyUpHandler {
   private Block activeBlock;
   /* A block model. */
   private Block nextBlock;
-  /* The players score in the game. */
-  private List<ScoreTracker> scoreList;
 
   /* A timer for running the game loop. */
   private Timer timer;
@@ -67,6 +75,9 @@ class BoardController implements KeyDownHandler, KeyUpHandler {
 
   /* The BoardPage on which this Block Drop game is displayed. */
   private BoardPage boardPage;
+  
+  @Inject
+  private MessageBus messageBus = ErraiBus.get();
 
   /*
    * Create a BoardController instance.
@@ -181,12 +192,34 @@ class BoardController implements KeyDownHandler, KeyUpHandler {
   }
 
   private void updateScore(int numFullRows) {
-    getScoreTracker().updateScore(numFullRows);
+    ScoreTracker scoreTracker = getScoreTracker();
+    scoreTracker.updateScore(numFullRows);
+    boardPage.getScoreList().remove(scoreTracker);
+    insertScoreInOrder(scoreTracker);
+    MessageBuilder.createMessage("Relay").command(Command.UPDATE_SCORE).withValue(scoreTracker).noErrorHandling()
+            .sendNowWith(messageBus);
+  }
+
+  private void insertScoreInOrder(ScoreTracker scoreTracker) {
+    List<ScoreTracker> scoreList = boardPage.getScoreList();
+    int i;
+    for (i = 0; i < scoreList.size(); i++) {
+      if (scoreTracker.compareTo(scoreList.get(i)) >= 0) {
+        break;
+      }
+    }
+    
+    scoreList.add(i, scoreTracker);
   }
 
   private ScoreTracker getScoreTracker() {
-    // TODO Implement properly.
-    return boardPage.getScoreList().get(0);
+    List<ScoreTracker> trackers = boardPage.getScoreList();
+    for (ScoreTracker t : trackers) {
+      if (t.getPlayer().equals(Client.getInstance().getPlayer())) {
+        return t;
+      }
+    }
+    return null;
   }
 
   /*
@@ -238,7 +271,7 @@ class BoardController implements KeyDownHandler, KeyUpHandler {
   private boolean rotate() {
     return pacingHelper(rotate);
   }
-  
+
   private boolean pacingHelper(boolean[] track) {
     int i;
     for (i = 0; i < track.length; i++) {
@@ -252,7 +285,7 @@ class BoardController implements KeyDownHandler, KeyUpHandler {
   private void clearRotation() {
     clearHelper(rotate);
   }
-  
+
   private void clearHelper(boolean[] track) {
     for (int i = 0; i < track.length; i++) {
       track[i] = false;
@@ -268,22 +301,32 @@ class BoardController implements KeyDownHandler, KeyUpHandler {
     boardPage.addHandlerToMainCanvas(this, KeyDownEvent.getType());
 
     // Initiate score tracker.
-    ScoreTracker score = createScoreTracker(Client.getInstance().getPlayer());
-    scoreList = boardPage.getScoreList();
-    scoreList.add(score);
-
-    // TODO: Actually deal with this list.
-    boardPage.initScoreList(scoreList);
+    GameRoom room = Client.getInstance().getGameRoom();
+    List<ScoreTracker> scoreList = boardPage.getScoreList();
+    scoreList.addAll(room.getScoreTrackers().values());
+    Collections.sort(scoreList);
+    
+    // Subscribe to game channel
+    messageBus.subscribe("Game"+room.getId(), new MessageCallback() {
+      
+      @Override
+      public void callback(Message message) {
+        Command command = Command.valueOf(message.getCommandType());
+        switch(command) {
+        case UPDATE_SCORE:
+          ScoreTracker scoreTracker = message.getValue(ScoreTracker.class);
+          if (scoreTracker.getId() != Client.getInstance().getPlayer().getId()) {
+            boardPage.getScoreList().remove(scoreTracker);
+            insertScoreInOrder(scoreTracker);
+          }
+ default:
+          break;
+        }
+      }
+    });
 
     // Start game loop.
     timer.scheduleRepeating(loopTime);
-  }
-
-  private ScoreTracker createScoreTracker(Player player) {
-    ScoreTracker score = new ScoreTracker();
-    score.setPlayer(player);
-
-    return score;
   }
 
   /*
@@ -421,7 +464,7 @@ class BoardController implements KeyDownHandler, KeyUpHandler {
   private void incrementRotate() {
     incrementHelper(rotate);
   }
-  
+
   private void incrementHelper(boolean[] tracker) {
     int i = 0;
     while (i < tracker.length && tracker[i]) {

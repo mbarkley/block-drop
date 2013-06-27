@@ -11,6 +11,7 @@ import org.jboss.errai.common.client.api.Assert;
 import org.jboss.errai.ui.client.widget.ListWidget;
 import org.jboss.errai.ui.nav.client.local.Page;
 import org.jboss.errai.ui.nav.client.local.PageHidden;
+import org.jboss.errai.ui.nav.client.local.PageShowing;
 import org.jboss.errai.ui.nav.client.local.TransitionTo;
 import org.jboss.errai.ui.shared.api.annotations.DataField;
 import org.jboss.errai.ui.shared.api.annotations.Templated;
@@ -19,7 +20,6 @@ import com.google.gwt.canvas.client.Canvas;
 import com.google.gwt.dom.client.DivElement;
 import com.google.gwt.dom.client.Document;
 import com.google.gwt.event.dom.client.DomEvent.Type;
-import com.google.gwt.event.dom.client.KeyDownEvent;
 import com.google.gwt.event.shared.EventHandler;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.RootPanel;
@@ -51,14 +51,9 @@ public class BoardPage extends Composite {
   @Inject
   @DataField("score-list")
   private ListWidget<ScoreTracker, ScorePanel> scoreDisplay;
-  private ScorePanel panel;
 
   @Inject
   private TransitionTo<Lobby> lobbyTransition;
-
-  ScoreTracker getScoreModel() {
-    return panel.getModel();
-  }
 
   /* A controller for this view. */
   private BoardController controller;
@@ -91,17 +86,20 @@ public class BoardPage extends Composite {
     if (mainCanvas != null) {
       System.out.println("Canvas successfully created.");
       controller.setPage(this);
-
-      try {
-        controller.startGame();
-      } catch (NullPointerException e) {
-        e.printStackTrace();
-        // Null pointer likely means the user needs to register a Player object in the lobby.
-        lobbyTransition.go();
-      }
     }
     else {
       // TODO: Display message to user that HTML5 Canvas is required.
+    }
+  }
+  
+  @PageShowing
+  private void startGame() {
+    try {
+      controller.startGame();
+    } catch (NullPointerException e) {
+      e.printStackTrace();
+      // Null pointer likely means the user needs to register a Player object in the lobby.
+      lobbyTransition.go();
     }
   }
 
@@ -113,10 +111,6 @@ public class BoardPage extends Composite {
     Client.getInstance().setGameRoom(null);
     MessageBuilder.createMessage("Relay").command(Command.LEAVE_GAME).withValue(exitMessage).noErrorHandling()
             .sendNowWith(dispatcher);
-  }
-
-  void initScoreList(List<ScoreTracker> scoreList) {
-    scoreDisplay.setItems(scoreList);
   }
 
   /*
