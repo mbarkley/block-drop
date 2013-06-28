@@ -16,6 +16,7 @@ import com.google.gwt.event.dom.client.KeyDownEvent;
 import com.google.gwt.event.dom.client.KeyDownHandler;
 import com.google.gwt.event.dom.client.KeyUpEvent;
 import com.google.gwt.event.dom.client.KeyUpHandler;
+import com.google.gwt.event.shared.EventHandler;
 import com.google.gwt.user.client.Timer;
 
 import demo.client.local.lobby.Client;
@@ -28,9 +29,8 @@ import demo.client.shared.model.BoardModel;
 /*
  * A controller class for a Block Drop game. Handles game loop and user input.
  */
-class BoardController implements KeyDownHandler, KeyUpHandler {
+class BoardController {
 
-  private static final int KEY_SPACE_BAR = 32;
   /* A Block Drop board model. */
   private BoardModel model;
   /* A block model. */
@@ -282,7 +282,7 @@ class BoardController implements KeyDownHandler, KeyUpHandler {
     return i == track.length || i == 1;
   }
 
-  private void clearRotation() {
+  void clearRotation() {
     clearHelper(rotate);
   }
 
@@ -296,30 +296,30 @@ class BoardController implements KeyDownHandler, KeyUpHandler {
    * Start a game of Block Drop.
    */
   void startGame() {
-    // Add this as a handler for keyboard events.
-    boardPage.addHandlerToMainCanvas(this, KeyUpEvent.getType());
-    boardPage.addHandlerToMainCanvas(this, KeyDownEvent.getType());
+    EventHandler handler = new BoardKeyHandler(this);
+    boardPage.addHandlerToMainCanvas((KeyUpHandler) handler, KeyUpEvent.getType());
+    boardPage.addHandlerToMainCanvas((KeyDownHandler) handler, KeyDownEvent.getType());
 
     // Initiate score tracker.
     GameRoom room = Client.getInstance().getGameRoom();
     List<ScoreTracker> scoreList = boardPage.getScoreList();
     scoreList.addAll(room.getScoreTrackers().values());
     Collections.sort(scoreList);
-    
+
     // Subscribe to game channel
-    messageBus.subscribe("Game"+room.getId(), new MessageCallback() {
-      
+    messageBus.subscribe("Game" + room.getId(), new MessageCallback() {
+
       @Override
       public void callback(Message message) {
         Command command = Command.valueOf(message.getCommandType());
-        switch(command) {
+        switch (command) {
         case UPDATE_SCORE:
           ScoreTracker scoreTracker = message.getValue(ScoreTracker.class);
           if (scoreTracker.getId() != Client.getInstance().getPlayer().getId()) {
             boardPage.getScoreList().remove(scoreTracker);
             insertScoreInOrder(scoreTracker);
           }
- default:
+        default:
           break;
         }
       }
@@ -329,139 +329,11 @@ class BoardController implements KeyDownHandler, KeyUpHandler {
     timer.scheduleRepeating(loopTime);
   }
 
-  /*
-   * (non-Javadoc)
-   * 
-   * @see
-   * com.google.gwt.event.dom.client.KeyPressHandler#onKeyPress(com.google.gwt.event.dom.client.
-   * KeyPressEvent)
-   */
-  @Override
-  public void onKeyDown(KeyDownEvent event) {
-
-    int keyCode = event.getNativeKeyCode();
-
-    /*
-     * If the user pressed a key used by this game, stop the event from bubbling up to prevent
-     * scrolling or other undesirable events.
-     */
-    if (keyDownHelper(keyCode)) {
-      event.stopPropagation();
-      event.preventDefault();
-    }
-  }
-
-  @Override
-  public void onKeyUp(KeyUpEvent event) {
-
-    int keyCode = event.getNativeKeyCode();
-
-    /*
-     * If the user pressed a key used by this game, stop the event from bubbling up to prevent
-     * scrolling or other undesirable events.
-     */
-    if (keyUpHelper(keyCode)) {
-      event.stopPropagation();
-      event.preventDefault();
-    }
-  }
-
-  private boolean keyUpHelper(int keyCode) {
-    boolean relevantKey = true;
-
-    // Only arrow keys must be dealt with on key release.
-    switch (keyCode) {
-    case KeyCodes.KEY_LEFT:
-    case KeyCodes.KEY_RIGHT:
-      colMove = 0;
-      clearMovePacer();
-      break;
-    case KeyCodes.KEY_UP:
-      clearRotation();
-      break;
-    case KeyCodes.KEY_DOWN:
-      fast = false;
-      break;
-    default:
-      relevantKey = false;
-      break;
-    }
-
-    return relevantKey;
-  }
-
-  private void clearMovePacer() {
-    clearHelper(moveTrack);
-  }
-
-  /*
-   * Alter the current state based on user input. Return true if the input captured a relevant
-   * command.
-   */
-  private boolean keyDownHelper(int keyCode) {
-    boolean relevantKey = true;
-    // Handle pause separately.
-    // Don't want to accept other input while paused.
-    if (!pause) {
-      switch (keyCode) {
-      case KeyCodes.KEY_LEFT:
-        System.out.println("Left key pressed.");
-        colMove = -1;
-        incrementMovePacer();
-        break;
-      case KeyCodes.KEY_RIGHT:
-        System.out.println("Right key pressed.");
-        colMove = 1;
-        incrementMovePacer();
-        break;
-      case KeyCodes.KEY_UP:
-        System.out.println("Up key pressed.");
-        incrementRotate();
-        break;
-      case KeyCodes.KEY_DOWN:
-        System.out.println("Down key pressed.");
-        fast = true;
-        break;
-      case KEY_SPACE_BAR:
-        System.out.println("Space bar pressed.");
-        drop = true;
-        break;
-      case 80: // Ordinal of lower case p
-        System.out.println("Pause pressed.");
-        pause = !pause;
-        break;
-      default:
-        System.out.println("Key code pressed: " + keyCode);
-        relevantKey = false;
-        break;
-      }
-    }
-    else {
-      // If paused, capture and ignore commands other than pause.
-      switch (keyCode) {
-      case KeyCodes.KEY_LEFT:
-      case KeyCodes.KEY_RIGHT:
-      case KeyCodes.KEY_UP:
-      case KeyCodes.KEY_DOWN:
-      case KEY_SPACE_BAR:
-        break;
-      case 80: // Ordinal of lower case p
-        System.out.println("Pause pressed.");
-        pause = !pause;
-        break;
-      default:
-        relevantKey = false;
-      }
-    }
-
-    return relevantKey;
-  }
-
   private void incrementMovePacer() {
     incrementHelper(moveTrack);
   }
 
-  private void incrementRotate() {
+  void incrementRotate() {
     incrementHelper(rotate);
   }
 
@@ -474,5 +346,33 @@ class BoardController implements KeyDownHandler, KeyUpHandler {
     if (i != tracker.length) {
       tracker[i] = true;
     }
+  }
+
+  private void clearMovePacer() {
+    clearHelper(moveTrack);
+  }
+  
+  void setColMove(int i) {
+    colMove = i;
+    if (i != 0)
+      incrementMovePacer();
+    else
+      clearMovePacer();
+  }
+
+  public void setFast(boolean fast) {
+    this.fast = fast;
+  }
+
+  boolean isPaused() {
+    return pause;
+  }
+
+  void setDrop(boolean b) {
+    drop = b;
+  }
+
+  void setPaused(boolean b) {
+    pause = b;
   }
 }

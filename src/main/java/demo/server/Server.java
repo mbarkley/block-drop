@@ -74,7 +74,7 @@ public class Server implements MessageCallback {
    */
   public Server() {
     debugId = nextDebugId();
-    System.out.println("Server" + debugId + ": TTTServer object is constructed.");
+    System.out.println("Server" + debugId + ": Server object is constructed.");
   }
 
   /*
