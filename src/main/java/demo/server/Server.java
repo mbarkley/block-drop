@@ -23,6 +23,7 @@ import demo.client.shared.LobbyUpdate;
 import demo.client.shared.LobbyUpdateRequest;
 import demo.client.shared.Player;
 import demo.client.shared.RegisterRequest;
+import demo.client.shared.ScoreEvent;
 import demo.client.shared.ScoreTracker;
 
 /*
@@ -158,12 +159,14 @@ public class Server implements MessageCallback {
     sendLobbyList();
   }
 
-  private void addPlayerToGame(Player target, int gameId) {
-    players.remove(target.getId());
-    games.get(gameId).addPlayer(target);
-    MessageBuilder.createMessage().toSubject("Client" + target.getId()).command(Command.JOIN_GAME)
+  private void addPlayerToGame(Player player, int gameId) {
+    players.remove(player.getId());
+    games.get(gameId).addPlayer(player);
+    MessageBuilder.createMessage().toSubject("Client" + player.getId()).command(Command.JOIN_GAME)
             .withValue(games.get(gameId)).noErrorHandling().sendNowWith(dispatcher);
-    updateScore(games.get(gameId).getScoreTracker(target));
+    ScoreTracker scoreTracker = games.get(gameId).getScoreTracker(player);
+    updateScoreLocal(scoreTracker);
+    updateScoreRemote(new ScoreEvent(scoreTracker));
   }
 
   /*
@@ -198,7 +201,9 @@ public class Server implements MessageCallback {
       sendLobbyList();
       break;
     case UPDATE_SCORE:
-      updateScore(message.getValue(ScoreTracker.class));
+      ScoreEvent event = message.getValue(ScoreEvent.class);
+      updateScoreLocal(event.getScoreTracker());
+      updateScoreRemote(event);
       break;
     case INVITATION:
       break;
@@ -207,11 +212,14 @@ public class Server implements MessageCallback {
     }
   }
 
-  private void updateScore(ScoreTracker value) {
+  private void updateScoreRemote(ScoreEvent event) {
+    MessageBuilder.createMessage("Game" + event.getScoreTracker().getGameId()).command(Command.UPDATE_SCORE)
+            .withValue(event).noErrorHandling().sendNowWith(dispatcher);
+  }
+
+  private void updateScoreLocal(ScoreTracker value) {
     GameRoom room = games.get(value.getGameId());
     room.updateScoreTracker(value);
-    MessageBuilder.createMessage("Game" + value.getGameId()).command(Command.UPDATE_SCORE).withValue(value)
-            .noErrorHandling().sendNowWith(dispatcher);
   }
 
   private void removePlayerFromGame(Player player, int gameId) {

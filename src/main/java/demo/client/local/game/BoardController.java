@@ -21,6 +21,7 @@ import com.google.gwt.user.client.Timer;
 import demo.client.local.lobby.Client;
 import demo.client.shared.Command;
 import demo.client.shared.GameRoom;
+import demo.client.shared.ScoreEvent;
 import demo.client.shared.ScoreTracker;
 import demo.client.shared.model.BlockOverflow;
 import demo.client.shared.model.BoardModel;
@@ -124,8 +125,8 @@ class BoardController {
     int numFullRows = model.numFullRows();
     if (numFullRows > 0) {
       clearRows(numFullRows);
-      // Only drop a new block if we are not clearing rows currently.
     }
+    // Only drop a new block if we are not clearing rows currently.
     else {
       // Reset the active block if necessary.
       if (!activeBlock.isModel(model.getActiveBlock())) {
@@ -195,7 +196,8 @@ class BoardController {
     ScoreTracker scoreTracker = getScoreTracker();
     scoreTracker.updateScore(numFullRows);
     updateAndSortScore(scoreTracker);
-    MessageBuilder.createMessage("Relay").command(Command.UPDATE_SCORE).withValue(scoreTracker).noErrorHandling()
+    ScoreEvent event = new ScoreEvent(scoreTracker, null);
+    MessageBuilder.createMessage("Relay").command(Command.UPDATE_SCORE).withValue(event).noErrorHandling()
             .sendNowWith(messageBus);
   }
 
@@ -311,7 +313,8 @@ class BoardController {
         Command command = Command.valueOf(message.getCommandType());
         switch (command) {
         case UPDATE_SCORE:
-          ScoreTracker scoreTracker = message.getValue(ScoreTracker.class);
+          ScoreEvent event = message.getValue(ScoreEvent.class);
+          ScoreTracker scoreTracker = event.getScoreTracker();
           if (scoreTracker.getId() != Client.getInstance().getPlayer().getId()) {
             updateAndSortScore(scoreTracker);
           }
