@@ -165,7 +165,7 @@ class BoardController {
       case START:
         // Get blocks to be cleared.
         toBeCleared = new Block(model.getFullRows());
-        bgBlock = new Block(model.getAboveFullRows());
+        bgBlock = new Block(model.getNonFullRows());
         break;
       case FIRST_UNDRAW:
       case SECOND_UNDRAW:
@@ -180,9 +180,10 @@ class BoardController {
         break;
       case DROPPING:
         boardPage.undrawBlock(0, 0, bgBlock);
-        // Redraw background blocks that were above cleared rows lower.
-        boardPage.drawBlock(0, Block.indexToCoord(numFullRows), bgBlock);
         model.clearFullRows();
+        bgBlock = new Block(model.getNonFullRows());
+        // Redraw background blocks that were above cleared rows.
+        boardPage.drawBlock(0, 0, bgBlock);
         // Update the score.
         updateScore(numFullRows);
         break;

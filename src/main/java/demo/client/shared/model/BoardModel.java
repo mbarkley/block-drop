@@ -286,24 +286,18 @@ public class BoardModel {
   }
 
   /*
-   * Get a model of the blocks which have settled on this BoardModel above any full rows.
+   * Get a list of models of the blocks which have settled on this BoardModel above any full rows.
    */
-  public BackgroundBlockModel getAboveFullRows() {
+  public BackgroundBlockModel getNonFullRows() {
     BackgroundBlockModel retVal = new BackgroundBlockModel();
 
-    // Start at top row of board and work way down.
     for (int i = 0; i < ROW_NUM; i++) {
-      // As long as rows are not full, add squares to the model.
       if (!board[i].isFull()) {
         for (int j = 0; j < COL_NUM; j++) {
           if (board[i].getSquareValue(j) != NO_TILE) {
             retVal.addSquare(new SquareModel(i, j, board[i].getSquareValue(j)));
           }
         }
-        // When we find a full row, we're done.
-      }
-      else {
-        break;
       }
     }
 
@@ -337,21 +331,10 @@ public class BoardModel {
   public BlockModel getFullRows() {
     BlockModel retVal = new BackgroundBlockModel();
 
-    outerloop: for (int i = 0; i < ROW_NUM; i++) {
-      // Loop until we find a full row.
+    for (int i = 0; i < ROW_NUM; i++) {
       if (board[i].isFull()) {
-        // Then loop through the consecutive full rows.
-        for (int j = 0; i + j < ROW_NUM; j++) {
-          // Add all squares in the row, if full.
-          if (board[i + j].isFull()) {
-            for (int k = 0; k < COL_NUM; k++) {
-              retVal.addSquare(new SquareModel(i + j, k, board[i + j].getSquareValue(k)));
-            }
-            // Once we find a non-full row again, we're done.
-          }
-          else {
-            break outerloop;
-          }
+        for (int j = 0; j < COL_NUM; j++) {
+          retVal.addSquare(new SquareModel(i, j, board[i].getSquareValue(j)));
         }
       }
     }
