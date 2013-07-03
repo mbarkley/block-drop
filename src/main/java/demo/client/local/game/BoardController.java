@@ -11,7 +11,6 @@ import org.jboss.errai.bus.client.api.messaging.Message;
 import org.jboss.errai.bus.client.api.messaging.MessageBus;
 import org.jboss.errai.bus.client.api.messaging.MessageCallback;
 
-import com.google.gwt.event.dom.client.KeyCodes;
 import com.google.gwt.event.dom.client.KeyDownEvent;
 import com.google.gwt.event.dom.client.KeyDownHandler;
 import com.google.gwt.event.dom.client.KeyUpEvent;
@@ -75,7 +74,7 @@ class BoardController {
 
   /* The BoardPage on which this Block Drop game is displayed. */
   private BoardPage boardPage;
-  
+
   @Inject
   private MessageBus messageBus = ErraiBus.get();
 
@@ -194,22 +193,19 @@ class BoardController {
   private void updateScore(int numFullRows) {
     ScoreTracker scoreTracker = getScoreTracker();
     scoreTracker.updateScore(numFullRows);
-    boardPage.getScoreList().remove(scoreTracker);
-    insertScoreInOrder(scoreTracker);
+    updateAndSortScore(scoreTracker);
     MessageBuilder.createMessage("Relay").command(Command.UPDATE_SCORE).withValue(scoreTracker).noErrorHandling()
             .sendNowWith(messageBus);
   }
 
-  private void insertScoreInOrder(ScoreTracker scoreTracker) {
-    List<ScoreTracker> scoreList = boardPage.getScoreList();
-    int i;
-    for (i = 0; i < scoreList.size(); i++) {
-      if (scoreTracker.compareTo(scoreList.get(i)) >= 0) {
-        break;
-      }
+  private void updateAndSortScore(ScoreTracker scoreTracker) {
+    List<ScoreTracker> modelList = boardPage.getScoreList();
+    if (modelList.contains(scoreTracker)) {
+      // Remove out-of-date score from list (different instance)
+      modelList.remove(scoreTracker);
     }
-    
-    scoreList.add(i, scoreTracker);
+    modelList.add(scoreTracker);
+    Collections.sort(boardPage.getScoreList(), Collections.reverseOrder());
   }
 
   private ScoreTracker getScoreTracker() {
@@ -316,8 +312,7 @@ class BoardController {
         case UPDATE_SCORE:
           ScoreTracker scoreTracker = message.getValue(ScoreTracker.class);
           if (scoreTracker.getId() != Client.getInstance().getPlayer().getId()) {
-            boardPage.getScoreList().remove(scoreTracker);
-            insertScoreInOrder(scoreTracker);
+            updateAndSortScore(scoreTracker);
           }
         default:
           break;
@@ -351,7 +346,7 @@ class BoardController {
   private void clearMovePacer() {
     clearHelper(moveTrack);
   }
-  
+
   void setColMove(int i) {
     colMove = i;
     if (i != 0)
