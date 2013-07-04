@@ -56,7 +56,7 @@ public class BoardPage extends Composite {
   private TransitionTo<Lobby> lobbyTransition;
 
   /* A controller for this view. */
-  private BoardController controller;
+  private BoardPageController controller;
 
   @Inject
   private RequestDispatcher dispatcher;
@@ -74,7 +74,7 @@ public class BoardPage extends Composite {
     nextPieceCanvas.setCoordinateSpaceWidth(Size.NEXT_COORD_WIDTH);
 
     // Initialize controller.
-    controller = new BoardController();
+    controller = new BoardPageController();
   }
 
   /*
@@ -91,7 +91,7 @@ public class BoardPage extends Composite {
       // TODO: Display message to user that HTML5 Canvas is required.
     }
   }
-  
+
   @PageShowing
   private void startGame() {
     try {
@@ -157,8 +157,7 @@ public class BoardPage extends Composite {
    * @param handler A key press handler for the mainCanvas.
    */
   <H extends EventHandler> void addHandlerToMainCanvas(H handler, Type<H> type) {
-    Assert.notNull("Could not get game-wrapper root panel.", RootPanel.get()).addDomHandler(handler,
-            type);
+    Assert.notNull("Could not get game-wrapper root panel.", RootPanel.get()).addDomHandler(handler, type);
   }
 
   void drawBlockToNextCanvas(Block nextBlock) {
@@ -179,12 +178,12 @@ public class BoardPage extends Composite {
     return scoreDisplay.getValue();
   }
 
-  static void pause() {
+  void pause() {
     DivElement element = ((DivElement) Document.get().getElementById("pause-overlay"));
     element.setAttribute("style", "visibility: visible");
   }
 
-  static void unpause() {
+  void unpause() {
     DivElement element = ((DivElement) Document.get().getElementById("pause-overlay"));
     element.removeAttribute("style");
   }

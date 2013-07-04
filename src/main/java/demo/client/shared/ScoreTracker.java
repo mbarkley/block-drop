@@ -13,6 +13,8 @@ public class ScoreTracker implements Comparable<ScoreTracker> {
   private long score;
   private Player player;
   private int gameId;
+  /* Number of rows cleared on last update. */
+  private int rowsClearedLast;
 
   public static final int BASE_ROW_SCORE = 10;
   private static final int[] COMBO_FACTOR = new int[] { 1, 2, 5, 10 };
@@ -40,6 +42,7 @@ public class ScoreTracker implements Comparable<ScoreTracker> {
    */
   public void updateScore(int numClearedRows) {
     score += calculateScore(numClearedRows);
+    rowsClearedLast = numClearedRows;
   }
 
   private long calculateScore(int numClearedRows) {
@@ -78,5 +81,13 @@ public class ScoreTracker implements Comparable<ScoreTracker> {
   
   public void setGameId(int gameId) {
     this.gameId = gameId;
+  }
+
+  public int getRowsClearedLast() {
+    return rowsClearedLast;
+  }
+
+  public void setRowsClearedLast(int rowsClearedLast) {
+    this.rowsClearedLast = rowsClearedLast;
   }
 }
