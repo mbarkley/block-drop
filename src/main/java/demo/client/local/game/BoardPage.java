@@ -1,7 +1,5 @@
 package demo.client.local.game;
 
-import java.util.List;
-
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
 
@@ -20,6 +18,10 @@ import com.google.gwt.canvas.client.Canvas;
 import com.google.gwt.dom.client.DivElement;
 import com.google.gwt.dom.client.Document;
 import com.google.gwt.event.dom.client.DomEvent.Type;
+import com.google.gwt.event.dom.client.KeyDownEvent;
+import com.google.gwt.event.dom.client.KeyDownHandler;
+import com.google.gwt.event.dom.client.KeyUpEvent;
+import com.google.gwt.event.dom.client.KeyUpHandler;
 import com.google.gwt.event.shared.EventHandler;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.RootPanel;
@@ -35,16 +37,14 @@ import demo.client.shared.ScoreTracker;
  */
 @Page
 @Templated("Board.html")
-public class BoardPage extends Composite {
+public class BoardPage extends Composite implements ControllableBoardDisplay {
 
   public static final String CANVAS_WRAPPER_ID = "mainCanvas-wrapper";
-
-  /* The background colour of the Block Drop board. */
-  public static final String BOARD_COLOUR = "rgb(255,255,255)";
 
   /* A mainCanvas for drawing a Block Drop game. */
   @DataField("canvas")
   private Canvas mainCanvas = Canvas.createIfSupported();
+  private BoardCanvas canvasWrapper;
   /* A mainCanvas for drawing the next piece in the Block Drop game. */
   @DataField("next-piece")
   private Canvas nextPieceCanvas = Canvas.createIfSupported();
@@ -55,8 +55,9 @@ public class BoardPage extends Composite {
   @Inject
   private TransitionTo<Lobby> lobbyTransition;
 
-  /* A controller for this view. */
-  private BoardPageController controller;
+  /* A secondaryController for this view. */
+  private SecondaryDisplayController secondaryController;
+  private BoardController controller;
 
   @Inject
   private RequestDispatcher dispatcher;
@@ -73,19 +74,20 @@ public class BoardPage extends Composite {
     nextPieceCanvas.setCoordinateSpaceHeight(Size.NEXT_COORD_HEIGHT);
     nextPieceCanvas.setCoordinateSpaceWidth(Size.NEXT_COORD_WIDTH);
 
-    // Initialize controller.
-    controller = new BoardPageController();
+    canvasWrapper = new BoardCanvas(mainCanvas);
+
   }
 
   /*
    * Perform additional setup for the Board UI after this object has been constructed.
    */
   @PostConstruct
-  private void constructUI() {
+  private void setup() {
+    secondaryController = new SecondaryDisplayController(scoreDisplay, nextPieceCanvas);
+    controller = new BoardController(this, secondaryController);
     // Check that mainCanvas was supported.
     if (mainCanvas != null) {
       System.out.println("Canvas successfully created.");
-      controller.setPage(this);
     }
     else {
       // TODO: Display message to user that HTML5 Canvas is required.
@@ -93,8 +95,11 @@ public class BoardPage extends Composite {
   }
 
   @PageShowing
-  private void startGame() {
+  private void start() {
     try {
+      EventHandler handler = new BoardKeyHandler(controller);
+      addHandlerToMainCanvas((KeyUpHandler) handler, KeyUpEvent.getType());
+      addHandlerToMainCanvas((KeyDownHandler) handler, KeyDownEvent.getType());
       controller.startGame();
     } catch (NullPointerException e) {
       e.printStackTrace();
@@ -114,14 +119,6 @@ public class BoardPage extends Composite {
   }
 
   /*
-   * Fill the current path on this page's mainCanvas with the board background colour.
-   */
-  private void drawBackground() {
-    mainCanvas.getContext2d().setFillStyle(BOARD_COLOUR);
-    mainCanvas.getContext2d().fill();
-  }
-
-  /*
    * Undraw the given block from this page's mainCanvas. Note: Any path on the mainCanvas will be
    * lost after invoking this method.
    * 
@@ -131,11 +128,15 @@ public class BoardPage extends Composite {
    * 
    * @param activeBlock The block to undraw.
    */
-  void undrawBlock(int x, int y, Block activeBlock) {
-    mainCanvas.getContext2d().beginPath();
-    activeBlock.getPath(x, y, mainCanvas.getContext2d());
-    mainCanvas.getContext2d().closePath();
-    drawBackground();
+  /*
+   * (non-Javadoc)
+   * 
+   * @see demo.client.local.game.ControllableBoardDisplay#undrawBlock(int, int,
+   * demo.client.local.game.Block)
+   */
+  @Override
+  public void undrawBlock(int x, int y, Block activeBlock) {
+    canvasWrapper.undrawBlock(x, y, activeBlock);
   }
 
   /*
@@ -147,8 +148,15 @@ public class BoardPage extends Composite {
    * 
    * @param activeBlock The block to draw.
    */
-  void drawBlock(int x, int y, Block activeBlock) {
-    activeBlock.draw(x, y, mainCanvas.getContext2d());
+  /*
+   * (non-Javadoc)
+   * 
+   * @see demo.client.local.game.ControllableBoardDisplay#drawBlock(int, int,
+   * demo.client.local.game.Block)
+   */
+  @Override
+  public void drawBlock(int x, int y, Block activeBlock) {
+    canvasWrapper.drawBlock(x, y, activeBlock);
   }
 
   /*
@@ -160,30 +168,24 @@ public class BoardPage extends Composite {
     Assert.notNull("Could not get game-wrapper root panel.", RootPanel.get()).addDomHandler(handler, type);
   }
 
-  void drawBlockToNextCanvas(Block nextBlock) {
-    // Clear everything.
-    nextPieceCanvas.getContext2d().setFillStyle("lightgrey");
-    nextPieceCanvas.getContext2d().fillRect(0, 0, Size.NEXT_COORD_WIDTH, Size.MAIN_COORD_HEIGHT);
-
-    // Draw title.
-    nextPieceCanvas.getContext2d().setFillStyle("black");
-    nextPieceCanvas.getContext2d().setFont("bold 20px sans-serif");
-    nextPieceCanvas.getContext2d().fillText("Next Block", 10, 20);
-
-    nextBlock.draw(2 * Size.BLOCK_SIZE + nextBlock.getCentreColDiff() * Size.BLOCK_SIZE, 2 * Size.BLOCK_SIZE
-            + nextBlock.getCentreRowDiff() * Size.BLOCK_SIZE, nextPieceCanvas.getContext2d());
-  }
-
-  List<ScoreTracker> getScoreList() {
-    return scoreDisplay.getValue();
-  }
-
-  void pause() {
+  /*
+   * (non-Javadoc)
+   * 
+   * @see demo.client.local.game.ControllableBoardDisplay#pause()
+   */
+  @Override
+  public void pause() {
     DivElement element = ((DivElement) Document.get().getElementById("pause-overlay"));
     element.setAttribute("style", "visibility: visible");
   }
 
-  void unpause() {
+  /*
+   * (non-Javadoc)
+   * 
+   * @see demo.client.local.game.ControllableBoardDisplay#unpause()
+   */
+  @Override
+  public void unpause() {
     DivElement element = ((DivElement) Document.get().getElementById("pause-overlay"));
     element.removeAttribute("style");
   }

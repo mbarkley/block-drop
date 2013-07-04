@@ -7,7 +7,8 @@ import demo.client.shared.model.BoardModel;
 
 public class BoardController {
 
-  private BoardPageController pageController;
+  private ControllableBoardDisplay boardDisplay;
+  private SecondaryDisplayController secondaryController;
 
   /* A Block Drop board model. */
   private BoardModel model;
@@ -51,8 +52,9 @@ public class BoardController {
   private Block toBeCleared;
   private Block bgBlock;
 
-  public BoardController(BoardPageController pageController) {
-    this.pageController = pageController;
+  public BoardController(ControllableBoardDisplay boardDisplay, SecondaryDisplayController secondaryController) {
+    this.boardDisplay = boardDisplay;
+    this.secondaryController = secondaryController;
 
     // Initiate BoardModel.
     model = new BoardModel();
@@ -68,7 +70,10 @@ public class BoardController {
     };
   }
 
-  void start() {
+  /*
+   * Start a game of Block Drop.
+   */
+  public void startGame() {
     timer.scheduleRepeating(loopTime);
   }
 
@@ -78,11 +83,11 @@ public class BoardController {
    */
   void update() {
     if (pause) {
-      pageController.pause();
+      boardDisplay.pause();
       return;
     }
     else {
-      pageController.unpause();
+      boardDisplay.unpause();
     }
 
     boolean moved = false;
@@ -98,7 +103,7 @@ public class BoardController {
       if (!activeBlock.isModel(model.getActiveBlock())) {
         activeBlock = Block.getBlockInstance(model.getActiveBlock());
         nextBlock = Block.getBlockInstance(model.getNextBlock());
-        pageController.drawBlockToNextCanvas(nextBlock);
+        secondaryController.drawBlockToNextCanvas(nextBlock);
       }
       // Update the position of the active block and record movement.
       moved = activeBlockUpdate();
@@ -138,21 +143,21 @@ public class BoardController {
       case SECOND_UNDRAW:
       case THIRD_UNDRAW:
       case LAST_UNDRAW:
-        pageController.undrawBlock(0, 0, toBeCleared);
+        boardDisplay.undrawBlock(0, 0, toBeCleared);
         break;
       case FIRST_REDRAW:
       case SECOND_REDRAW:
       case THIRD_REDRAW:
-        pageController.drawBlock(0, 0, toBeCleared);
+        boardDisplay.drawBlock(0, 0, toBeCleared);
         break;
       case DROPPING:
-        pageController.undrawBlock(0, 0, bgBlock);
+        boardDisplay.undrawBlock(0, 0, bgBlock);
         model.clearFullRows();
         bgBlock = new Block(model.getNonFullRows());
         // Redraw background blocks that were above cleared rows.
-        pageController.drawBlock(0, 0, bgBlock);
+        boardDisplay.drawBlock(0, 0, bgBlock);
         // Update the score.
-        pageController.updateScore(numFullRows);
+        secondaryController.updateScore(numFullRows);
         break;
       }
     clearState = clearState.getNextState();
@@ -164,7 +169,7 @@ public class BoardController {
    * @return True iff the active block moved during this call.
    */
   private boolean activeBlockUpdate() {
-    pageController.undrawBlock(Block.indexToCoord(model.getActiveBlockCol()),
+    boardDisplay.undrawBlock(Block.indexToCoord(model.getActiveBlockCol()),
             Block.indexToCoord(model.getActiveBlockRow()), activeBlock);
 
     // If the user wishes to drop the block, do nothing else.
@@ -194,7 +199,7 @@ public class BoardController {
       moved = model.moveActiveBlock(rowMove, 0);
 
     // Redraw block in (possibly) new position.
-    pageController.drawBlock(Block.indexToCoord(model.getActiveBlockCol()),
+    boardDisplay.drawBlock(Block.indexToCoord(model.getActiveBlockCol()),
             Block.indexToCoord(model.getActiveBlockRow()), activeBlock);
 
     return moved;
