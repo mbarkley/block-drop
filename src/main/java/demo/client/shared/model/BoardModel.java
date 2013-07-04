@@ -30,6 +30,10 @@ public class BoardModel {
   private int activeBlockRow;
   /* The column position of the active block on this board. */
   private int activeBlockColumn;
+  private boolean fast = false;
+  private boolean drop;
+  private int pendingRowMove = 0;
+  private int pendingColMove = 0;
 
   /*
    * Create a BoardModel.
@@ -237,23 +241,22 @@ public class BoardModel {
   /*
    * Move the active block.
    * 
-   * @param rowMove The number of rows to move the active block (positive is down).
-   * 
-   * @param colMove The number of columns to move the active block (positive is right).
+   * @param colFlag False if column movement should be ignored.
    * 
    * @return True iff the block was successfully moved.
    */
-  public boolean moveActiveBlock(int rowMove, int colMove) {
+  public boolean moveActiveBlock(boolean colFlag) {
     // Check if we can move active block.
-    boolean isMovable = isValidPosition(activeBlockRow + rowMove, activeBlockColumn + colMove);
+    int colMove = colFlag ? pendingColMove : 0;
+    boolean isMovable = isValidPosition(activeBlockRow + pendingRowMove, activeBlockColumn + colMove);
 
     // If movable, move the active block.
     if (isMovable) {
       // Higher index is lower on board.
-      activeBlockRow += rowMove;
+      activeBlockRow += pendingRowMove;
       activeBlockColumn += colMove;
       // Return true only if there was actual movement.
-      return rowMove != 0 || colMove != 0;
+      return pendingRowMove != 0 || pendingColMove != 0;
     }
     else {
       return false;
@@ -277,7 +280,7 @@ public class BoardModel {
   /*
    * Get the greatest distance directly downward that the active block can travel.
    */
-  public int getDrop() {
+  public int getDropDistance() {
     int i = 0;
     while (isValidPosition(activeBlockRow + i, activeBlockColumn))
       i += 1;
@@ -349,5 +352,37 @@ public class BoardModel {
    */
   public BlockModel getNextBlock() {
     return nextBlock;
+  }
+
+  public boolean isFast() {
+    return fast;
+  }
+
+  public void setFast(boolean fast) {
+    this.fast = fast;
+  }
+
+  public int getPendingRowMove() {
+    return pendingRowMove;
+  }
+
+  public void setPendingRowMove(int i) {
+    pendingRowMove = i;
+  }
+
+  public int getPendingColMove() {
+    return pendingColMove;
+  }
+
+  public void setPendingColMove(int i) {
+    pendingColMove = i;
+  }
+
+  public void setDrop(boolean b) {
+    drop = b;
+  }
+
+  public boolean isDropping() {
+    return drop;
   }
 }

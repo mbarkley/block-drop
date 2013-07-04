@@ -28,22 +28,8 @@ public class BoardController {
   /* A counter of elapsed iterations since a block last dropped. */
   private int loopCounter = 0;
 
-  /*
-   * The amount of rows (positive is down) the active block on the board should move this loop
-   * iteration.
-   */
-  private int rowMove = 0;
-  /*
-   * The amount of columns (positive is right) the active block on the board should move this loop
-   * iteration.
-   */
-  private int colMove = 0;
   /* True if the active block should rotate this loop iteration. */
   private boolean[] rotate = new boolean[3];
-  /* True if the active block should drop to the bottom of the screen. */
-  private boolean drop;
-  /* True if the active block drop speed should be increased. */
-  private boolean fast;
   /* True if the game is paused. */
   private boolean pause = false;
   private boolean[] moveTrack = new boolean[3];
@@ -110,7 +96,7 @@ public class BoardController {
 
       try {
         // If the block could not drop, start a new block.
-        if (!moved && rowMove > 0) {
+        if (!moved && model.getPendingRowMove() > 0) {
           model.initNextBlock();
         }
       } catch (BlockOverflow e) {
@@ -120,12 +106,12 @@ public class BoardController {
         timer.cancel();
       }
       // Reset for next loop.
-      drop = false;
+      model.setDrop(false);
       if (rotate())
         incrementRotate();
       if (horizontalMove())
         incrementMovePacer();
-      this.rowMove = 0;
+      model.setPendingRowMove(0);
       loopCounter = loopCounter == dropIncrement ? 0 : loopCounter + 1;
     }
 
@@ -173,30 +159,30 @@ public class BoardController {
             Block.indexToCoord(model.getActiveBlockRow()), activeBlock);
 
     // If the user wishes to drop the block, do nothing else.
-    if (drop) {
-      colMove = 0;
-      rowMove = model.getDrop();
+    if (model.isDropping()) {
+      setColMove(0);
+      model.setPendingRowMove(model.getDropDistance());
     }
     else {
       if (rotate()) {
         model.rotateActiveBlock();
       }
       // Check if the user wants to increase the speed at which the block drops
-      if (fast) {
-        rowMove = 1;
+      if (model.isFast()) {
+        model.setPendingRowMove(1);
         // Otherwise maintain the normal speed.
       }
       else {
-        // Drop by one row every if counter hits dropIncrement.
-        rowMove = loopCounter == dropIncrement ? 1 : 0;
+        // Drop by one row every time counter hits dropIncrement.
+        model.setPendingRowMove(loopCounter == dropIncrement ? 1 : 0);
       }
     }
 
     // Attempt to move model.
-    boolean moved = horizontalMove() ? model.moveActiveBlock(rowMove, colMove) : model.moveActiveBlock(rowMove, 0);
+    boolean moved = horizontalMove() ? model.moveActiveBlock(true) : model.moveActiveBlock(false);
     // If that didn't work, ignore the colMove (so that the block may still drop).
     if (!moved && horizontalMove())
-      moved = model.moveActiveBlock(rowMove, 0);
+      moved = model.moveActiveBlock(false);
 
     // Redraw block in (possibly) new position.
     boardDisplay.drawBlock(Block.indexToCoord(model.getActiveBlockCol()),
@@ -257,7 +243,7 @@ public class BoardController {
   }
 
   void setColMove(int i) {
-    colMove = i;
+    model.setPendingColMove(i);
     if (i != 0)
       incrementMovePacer();
     else
@@ -269,7 +255,7 @@ public class BoardController {
   }
 
   void setDrop(boolean b) {
-    drop = b;
+    model.setDrop(b);
   }
 
   void setPaused(boolean b) {
@@ -277,6 +263,6 @@ public class BoardController {
   }
 
   void setFast(boolean fast) {
-    this.fast = fast;
+    model.setFast(fast);
   }
 }

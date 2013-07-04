@@ -51,7 +51,7 @@ public class BoardKeyHandler implements KeyDownHandler, KeyUpHandler {
       event.preventDefault();
     }
   }
-  
+
   private boolean keyUpHelper(int keyCode) {
     boolean relevantKey = true;
 
@@ -135,5 +135,5 @@ public class BoardKeyHandler implements KeyDownHandler, KeyUpHandler {
 
     return relevantKey;
   }
-  
+
 }
