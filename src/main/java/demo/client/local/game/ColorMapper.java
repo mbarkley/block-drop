@@ -43,6 +43,7 @@ class ColorMapper {
     colourMap.put(SquareBlockModel.getCode(), SQUARE_BLOCK_COLOUR);
     colourMap.put(TBlockModel.getCode(), T_BLOCK_COLOUR);
     colourMap.put(ZBlockModel.getCode(), Z_BLOCK_COLOUR);
+    colourMap.put(1337, "grey");
   }
 
   static String codeToColour(int code) {

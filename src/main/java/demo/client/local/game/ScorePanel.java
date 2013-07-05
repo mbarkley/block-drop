@@ -12,6 +12,7 @@ import org.jboss.errai.ui.shared.api.annotations.Templated;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.Label;
 
+import demo.client.local.Style;
 import demo.client.shared.ScoreTracker;
 
 @Templated
@@ -30,6 +31,10 @@ public class ScorePanel extends Composite implements HasModel<ScoreTracker> {
   @Bound
   @Inject
   private Label score;
+  
+  public void setSelected(boolean value) {
+    setStyleName(Style.SELECTED, value);
+  }
 
   public void setScore(long score) {
     this.score.setText((new Long(score)).toString());

@@ -14,9 +14,11 @@ import org.jboss.errai.ui.client.widget.ListWidget;
 
 import com.google.gwt.canvas.client.Canvas;
 
+import demo.client.local.Style;
 import demo.client.local.lobby.Client;
 import demo.client.shared.Command;
 import demo.client.shared.GameRoom;
+import demo.client.shared.Player;
 import demo.client.shared.ScoreEvent;
 import demo.client.shared.ScoreTracker;
 
@@ -30,47 +32,66 @@ class SecondaryDisplayController {
 
   @Inject
   private MessageBus messageBus = ErraiBus.get();
-  
+
   public SecondaryDisplayController(ListWidget<ScoreTracker, ScorePanel> scoreList, Canvas nextCanvas) {
     this.scoreList = scoreList;
     this.nextCanvas = nextCanvas;
-    
+
     // Initiate score tracker.
     GameRoom room = Client.getInstance().getGameRoom();
     List<ScoreTracker> scoreTrackers = scoreList.getValue();
     scoreTrackers.addAll(room.getScoreTrackers().values());
     Collections.sort(scoreTrackers);
 
-    // Subscribe to game channel
-    messageBus.subscribe("Game" + room.getId(), new MessageCallback() {
+    getScoreTracker().select();
+    scoreList.getWidget(getScoreTracker()).setSelected(true);
+  }
 
-      @Override
-      public void callback(Message message) {
-        Command command = Command.valueOf(message.getCommandType());
-        switch (command) {
-        case UPDATE_SCORE:
-          ScoreEvent event = message.getValue(ScoreEvent.class);
-          ScoreTracker scoreTracker = event.getScoreTracker();
-          if (scoreTracker.getId() != Client.getInstance().getPlayer().getId()) {
-            updateAndSortScore(scoreTracker);
-          }
-        default:
-          break;
-        }
+  public void selectNextPlayer() {
+    ScoreTracker current = getSelectedTracker();
+    if (current != null) {
+      int index = scoreList.getValue().indexOf(current);
+      int next = (index + 1) % scoreList.getValue().size();
+      scoreList.getValue().get(index).deselect();
+      scoreList.getWidget(index).setSelected(false);
+      scoreList.getValue().get(next).select();
+      scoreList.getWidget(next).setSelected(true);
+    }
+  }
+
+  public void selectLastPlayer() {
+    ScoreTracker current = getSelectedTracker();
+    if (current != null) {
+      int index = scoreList.getValue().indexOf(current);
+      int last = (index - 1 + scoreList.getValue().size()) % scoreList.getValue().size();
+      scoreList.getValue().get(index).deselect();
+      scoreList.getWidget(index).setSelected(false);
+      scoreList.getWidget(last).setSelected(true);
+      scoreList.getValue().get(last).select();
+    }
+  }
+
+  private ScoreTracker getSelectedTracker() {
+    for (ScoreTracker tracker : scoreList.getValue()) {
+      if (tracker.isSelected()) {
+        return tracker;
       }
-    });
+    }
+    return null;
   }
 
   public void updateScore(int numFullRows) {
     ScoreTracker scoreTracker = getScoreTracker();
     scoreTracker.updateScore(numFullRows);
     updateAndSortScore(scoreTracker);
-    ScoreEvent event = new ScoreEvent(scoreTracker, null);
+    ScoreTracker selected = getSelectedTracker();
+    Player target = getScoreTracker().equals(selected) ? null : selected.getPlayer();
+    ScoreEvent event = new ScoreEvent(scoreTracker, target);
     MessageBuilder.createMessage("Relay").command(Command.UPDATE_SCORE).withValue(event).noErrorHandling()
             .sendNowWith(messageBus);
   }
 
-  private void updateAndSortScore(ScoreTracker scoreTracker) {
+  void updateAndSortScore(ScoreTracker scoreTracker) {
     List<ScoreTracker> modelList = scoreList.getValue();
     if (modelList.contains(scoreTracker)) {
       // Remove out-of-date score from list (different instance)
@@ -78,6 +99,9 @@ class SecondaryDisplayController {
     }
     modelList.add(scoreTracker);
     Collections.sort(scoreList.getValue(), Collections.reverseOrder());
+    for (int i = 0; i < modelList.size(); i++) {
+      scoreList.getWidget(i).setSelected(modelList.get(i).isSelected());
+    }
   }
 
   private ScoreTracker getScoreTracker() {

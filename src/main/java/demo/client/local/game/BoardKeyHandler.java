@@ -9,10 +9,12 @@ import com.google.gwt.event.dom.client.KeyUpHandler;
 public class BoardKeyHandler implements KeyDownHandler, KeyUpHandler {
 
   private BoardController controller;
+  private SecondaryDisplayController secondaryController;
   private static final int KEY_SPACE_BAR = 32;
 
   BoardKeyHandler(BoardController boardController) {
     controller = boardController;
+    secondaryController = controller.getSecondaryController();
   }
 
   /*
@@ -109,6 +111,12 @@ public class BoardKeyHandler implements KeyDownHandler, KeyUpHandler {
         System.out.println("Pause pressed.");
         controller.setPaused(true);
         break;
+      case 78: // Ordinal of lower case n
+        secondaryController.selectNextPlayer();
+        break;
+      case 66: // Ordinal of lower case b
+        secondaryController.selectLastPlayer();
+        break;
       default:
         System.out.println("Key code pressed: " + keyCode);
         relevantKey = false;
@@ -123,6 +131,12 @@ public class BoardKeyHandler implements KeyDownHandler, KeyUpHandler {
       case KeyCodes.KEY_UP:
       case KeyCodes.KEY_DOWN:
       case KEY_SPACE_BAR:
+        break;
+      case 78: // Ordinal of lower case n
+        secondaryController.selectNextPlayer();
+        break;
+      case 66: // Ordinal of lower case b
+        secondaryController.selectLastPlayer();
         break;
       case 80: // Ordinal of lower case p
         System.out.println("Pause pressed.");

@@ -15,6 +15,7 @@ public class ScoreTracker implements Comparable<ScoreTracker> {
   private int gameId;
   /* Number of rows cleared on last update. */
   private int rowsClearedLast;
+  private boolean selected = false;
 
   public static final int BASE_ROW_SCORE = 10;
   private static final int[] COMBO_FACTOR = new int[] { 1, 2, 5, 10 };
@@ -69,7 +70,7 @@ public class ScoreTracker implements Comparable<ScoreTracker> {
   public int compareTo(ScoreTracker arg0) {
     return (int) (getScore() - arg0.getScore());
   }
-  
+
   @Override
   public boolean equals(Object other) {
     return other != null && other instanceof ScoreTracker && getId() == ((ScoreTracker) other).getId();
@@ -78,7 +79,7 @@ public class ScoreTracker implements Comparable<ScoreTracker> {
   public int getGameId() {
     return gameId;
   }
-  
+
   public void setGameId(int gameId) {
     this.gameId = gameId;
   }
@@ -89,5 +90,17 @@ public class ScoreTracker implements Comparable<ScoreTracker> {
 
   public void setRowsClearedLast(int rowsClearedLast) {
     this.rowsClearedLast = rowsClearedLast;
+  }
+
+  public boolean isSelected() {
+    return selected;
+  }
+
+  public void select() {
+    selected = true;
+  }
+
+  public void deselect() {
+    selected = false;
   }
 }

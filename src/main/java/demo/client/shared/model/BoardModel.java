@@ -34,6 +34,7 @@ public class BoardModel {
   private boolean drop;
   private int pendingRowMove = 0;
   private int pendingColMove = 0;
+  private int rowsToAdd = 0;
 
   /*
    * Create a BoardModel.
@@ -384,5 +385,42 @@ public class BoardModel {
 
   public boolean isDropping() {
     return drop;
+  }
+
+  public void setRowsToAdd(int rowsClearedLast) {
+    rowsToAdd = rowsClearedLast;
+  }
+
+  public int getRowsToAdd() {
+    return rowsToAdd;
+  }
+
+  /* Sabotage! */
+  public void addRows() {
+    Row[] newBoard = new Row[ROW_NUM];
+    for (int i = ROW_NUM - 1, j = i - rowsToAdd; j >= 0; i--, j--) {
+      newBoard[j] = board[i];
+    }
+    for (int i = ROW_NUM - rowsToAdd; i < ROW_NUM; i++) {
+      newBoard[i] = generateSabotageRow();
+    }
+    board = newBoard;
+    rowsToAdd = 0;
+  }
+
+  private Row generateSabotageRow() {
+    Row row = new Row(COL_NUM);
+    int empty = Random.nextInt(COL_NUM);
+
+    for (int i = 0; i < COL_NUM; i++) {
+      if (i != empty) {
+        row.setSquare(i, 1337);
+      }
+      else {
+        row.setSquare(i, NO_TILE);
+      }
+    }
+
+    return row;
   }
 }

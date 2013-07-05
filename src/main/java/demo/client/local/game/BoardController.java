@@ -2,6 +2,7 @@ package demo.client.local.game;
 
 import com.google.gwt.user.client.Timer;
 
+import demo.client.shared.model.BackgroundBlockModel;
 import demo.client.shared.model.BlockOverflow;
 import demo.client.shared.model.BoardModel;
 
@@ -83,6 +84,9 @@ public class BoardController {
     if (numFullRows > 0) {
       clearRows(numFullRows);
     }
+    else if (model.getRowsToAdd() > 0) {
+      addRowsToBottom();
+    }
     // Only drop a new block if we are not clearing rows currently.
     else {
       // Reset the active block if necessary.
@@ -115,6 +119,21 @@ public class BoardController {
       loopCounter = loopCounter == dropIncrement ? 0 : loopCounter + 1;
     }
 
+  }
+
+  private void addRowsToBottom() {
+    // This method should always be called when there are no full rows.
+    BackgroundBlockModel bgModel = model.getNonFullRows();
+    Block bg = new Block(bgModel);
+    boardDisplay.undrawBlock(0, 0, bg);
+    boardDisplay.undrawBlock(Block.indexToCoord(model.getActiveBlockCol()),
+            Block.indexToCoord(model.getActiveBlockRow()), activeBlock);
+    model.addRows();
+    bgModel = model.getNonFullRows();
+    bg = new Block(bgModel);
+    boardDisplay.drawBlock(0, 0, bg);
+    boardDisplay.drawBlock(Block.indexToCoord(model.getActiveBlockCol()),
+            Block.indexToCoord(model.getActiveBlockRow()), activeBlock);
   }
 
   private void clearRows(int numFullRows) {
@@ -264,5 +283,13 @@ public class BoardController {
 
   void setFast(boolean fast) {
     model.setFast(fast);
+  }
+
+  public SecondaryDisplayController getSecondaryController() {
+    return secondaryController;
+  }
+
+  public void addRows(int rowsClearedLast) {
+    model.setRowsToAdd(rowsClearedLast);
   }
 }

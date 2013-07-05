@@ -4,6 +4,7 @@ import javax.annotation.PostConstruct;
 import javax.inject.Inject;
 
 import org.jboss.errai.bus.client.api.base.MessageBuilder;
+import org.jboss.errai.bus.client.api.messaging.MessageBus;
 import org.jboss.errai.bus.client.api.messaging.RequestDispatcher;
 import org.jboss.errai.common.client.api.Assert;
 import org.jboss.errai.ui.client.widget.ListWidget;
@@ -58,9 +59,12 @@ public class BoardPage extends Composite implements ControllableBoardDisplay {
   /* A secondaryController for this view. */
   private SecondaryDisplayController secondaryController;
   private BoardController controller;
+  private BoardCallback boardCallback;
 
   @Inject
   private RequestDispatcher dispatcher;
+  @Inject
+  private MessageBus messageBus;
 
   /*
    * Create a BoardPage for displaying a Block Drop game.
@@ -85,6 +89,9 @@ public class BoardPage extends Composite implements ControllableBoardDisplay {
   private void setup() {
     secondaryController = new SecondaryDisplayController(scoreDisplay, nextPieceCanvas);
     controller = new BoardController(this, secondaryController);
+    boardCallback = new BoardCallback(controller, secondaryController);
+    // Subscribe to game channel
+    messageBus.subscribe("Game" + Client.getInstance().getGameRoom().getId(), boardCallback);
     // Check that mainCanvas was supported.
     if (mainCanvas != null) {
       System.out.println("Canvas successfully created.");

@@ -43,7 +43,7 @@ body {
 .score-list {
 	position: absolute;
 	top: 280px;
-	width: 100%;
+	width: 260px;
 }
 .overlay {
 	position: absolute;
@@ -72,12 +72,27 @@ body {
 	padding: 5px 10px 5px;
 }
 
-.selected {
+.list-panel.selected {
 	background-color: red;
 }
 
 .list-panel:HOVER {
 	background-color: lightgrey;
+}
+
+.score-panel {
+	font-family: sans-serif;
+	padding-left: 5px;
+	width: 260px;
+}
+
+.score-panel > .score {
+	padding: 5px;
+	display: inline;
+}
+
+.score-panel.selected {
+	background-color: green;
 }
 
 /* panel styles end. */
