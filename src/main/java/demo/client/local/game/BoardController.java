@@ -10,6 +10,7 @@ public class BoardController {
 
   private ControllableBoardDisplay boardDisplay;
   private SecondaryDisplayController secondaryController;
+  private BoardMessageBus messageBus;
 
   /* A Block Drop board model. */
   private BoardModel model;
@@ -39,9 +40,11 @@ public class BoardController {
   private Block toBeCleared;
   private Block bgBlock;
 
-  public BoardController(ControllableBoardDisplay boardDisplay, SecondaryDisplayController secondaryController) {
+  public BoardController(ControllableBoardDisplay boardDisplay, SecondaryDisplayController secondaryController,
+          BoardMessageBus messageBus) {
     this.boardDisplay = boardDisplay;
     this.secondaryController = secondaryController;
+    this.messageBus = messageBus;
 
     // Initiate BoardModel.
     model = new BoardModel();
@@ -163,6 +166,7 @@ public class BoardController {
         boardDisplay.drawBlock(0, 0, bgBlock);
         // Update the score.
         secondaryController.updateScore(numFullRows);
+        messageBus.sendScoreUpdate(secondaryController.getScoreTracker(), secondaryController.getTarget());
         break;
       }
     clearState = clearState.getNextState();

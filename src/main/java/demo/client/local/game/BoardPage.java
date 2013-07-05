@@ -88,7 +88,7 @@ public class BoardPage extends Composite implements ControllableBoardDisplay {
   @PostConstruct
   private void setup() {
     secondaryController = new SecondaryDisplayController(scoreDisplay, nextPieceCanvas);
-    controller = new BoardController(this, secondaryController);
+    controller = new BoardController(this, secondaryController, new BoardMessageBus());
     boardCallback = new BoardCallback(controller, secondaryController);
     // Subscribe to game channel
     messageBus.subscribe("Game" + Client.getInstance().getGameRoom().getId(), boardCallback);

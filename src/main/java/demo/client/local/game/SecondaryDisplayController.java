@@ -84,11 +84,6 @@ class SecondaryDisplayController {
     ScoreTracker scoreTracker = getScoreTracker();
     scoreTracker.updateScore(numFullRows);
     updateAndSortScore(scoreTracker);
-    ScoreTracker selected = getSelectedTracker();
-    Player target = getScoreTracker().equals(selected) ? null : selected.getPlayer();
-    ScoreEvent event = new ScoreEvent(scoreTracker, target);
-    MessageBuilder.createMessage("Relay").command(Command.UPDATE_SCORE).withValue(event).noErrorHandling()
-            .sendNowWith(messageBus);
   }
 
   void updateAndSortScore(ScoreTracker scoreTracker) {
@@ -104,7 +99,7 @@ class SecondaryDisplayController {
     }
   }
 
-  private ScoreTracker getScoreTracker() {
+  public ScoreTracker getScoreTracker() {
     List<ScoreTracker> trackers = scoreList.getValue();
     for (ScoreTracker t : trackers) {
       if (t.getPlayer().equals(Client.getInstance().getPlayer())) {
@@ -126,5 +121,10 @@ class SecondaryDisplayController {
 
     nextBlock.draw(2 * Size.BLOCK_SIZE + nextBlock.getCentreColDiff() * Size.BLOCK_SIZE, 2 * Size.BLOCK_SIZE
             + nextBlock.getCentreRowDiff() * Size.BLOCK_SIZE, nextCanvas.getContext2d());
+  }
+
+  public Player getTarget() {
+    Player target = getSelectedTracker().getPlayer();
+    return getScoreTracker().getPlayer().equals(target) ? null : target;
   }
 }
