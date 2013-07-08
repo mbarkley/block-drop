@@ -1,10 +1,13 @@
 package demo.client.shared.model;
 
+import org.jboss.errai.common.client.api.annotations.Portable;
+
 import com.google.gwt.user.client.Random;
 
 /*
  * A model of the Block Drop board.
  */
+@Portable
 public class BoardModel {
 
   /* The value representing a vacant spot on the board. */
@@ -76,7 +79,7 @@ public class BoardModel {
    * Generate the next BlockModel to be used as the active block on this board.
    */
   private BlockModel generateNextBlock() {
-    int decider = Random.nextInt(7);
+    int decider = Random.nextInt(7); // TODO Fix random issue
 
     BlockModel retVal;
 

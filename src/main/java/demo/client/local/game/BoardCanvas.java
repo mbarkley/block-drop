@@ -2,7 +2,7 @@ package demo.client.local.game;
 
 import com.google.gwt.canvas.client.Canvas;
 
-public class BoardCanvas {
+public class BoardCanvas implements ControllableBoardDisplay {
 
   /* The background colour of the Block Drop board. */
   public static final String BOARD_COLOUR = "rgb(255,255,255)";
@@ -49,6 +49,16 @@ public class BoardCanvas {
    */
   public void drawBlock(int x, int y, Block activeBlock) {
     activeBlock.draw(x, y, canvas.getContext2d());
+  }
+
+  @Override
+  public void pause() {
+    throw new UnsupportedOperationException();
+  }
+
+  @Override
+  public void unpause() {
+    throw new UnsupportedOperationException();
   }
 
 }

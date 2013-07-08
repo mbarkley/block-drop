@@ -25,6 +25,7 @@ import demo.client.shared.Player;
 import demo.client.shared.RegisterRequest;
 import demo.client.shared.ScoreEvent;
 import demo.client.shared.ScoreTracker;
+import demo.client.shared.model.MoveEvent;
 
 /*
  * A class for facilitating games between clients over a network.
@@ -201,15 +202,26 @@ public class Server implements MessageCallback {
       sendLobbyList();
       break;
     case UPDATE_SCORE:
-      ScoreEvent event = message.getValue(ScoreEvent.class);
-      updateScoreLocal(event.getScoreTracker());
-      updateScoreRemote(event);
+      ScoreEvent scoreEvent = message.getValue(ScoreEvent.class);
+      updateScoreLocal(scoreEvent.getScoreTracker());
+      updateScoreRemote(scoreEvent);
+      break;
+    case MOVE_UPDATE:
+      System.out.println("move update received");
+      MoveEvent moveEvent = message.getValue(MoveEvent.class);
+      broadcastMove(moveEvent);
+      System.out.println("move update relayed");
       break;
     case INVITATION:
       break;
     default:
       break;
     }
+  }
+
+  private void broadcastMove(MoveEvent moveEvent) {
+    MessageBuilder.createMessage("Game" + moveEvent.getGameId()).command(Command.MOVE_UPDATE).withValue(moveEvent)
+            .noErrorHandling().sendNowWith(messageBus);
   }
 
   private void updateScoreRemote(ScoreEvent event) {

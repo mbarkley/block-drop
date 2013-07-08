@@ -2,6 +2,7 @@ package demo.client.local.game;
 
 import com.google.gwt.user.client.Timer;
 
+import demo.client.local.lobby.Client;
 import demo.client.shared.model.BackgroundBlockModel;
 import demo.client.shared.model.BlockOverflow;
 import demo.client.shared.model.BoardModel;
@@ -89,6 +90,7 @@ public class BoardController {
     }
     else if (model.getRowsToAdd() > 0) {
       addRowsToBottom();
+      messageBus.sendMoveUpdate(model, Client.getInstance().getPlayer());
     }
     // Only drop a new block if we are not clearing rows currently.
     else {
@@ -120,8 +122,9 @@ public class BoardController {
         incrementMovePacer();
       model.setPendingRowMove(0);
       loopCounter = loopCounter == dropIncrement ? 0 : loopCounter + 1;
+      if (moved)
+        messageBus.sendMoveUpdate(model, Client.getInstance().getPlayer());
     }
-
   }
 
   private void addRowsToBottom() {

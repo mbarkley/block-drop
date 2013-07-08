@@ -1,12 +1,16 @@
 package demo.client.shared.model;
 
+import org.jboss.errai.common.client.api.annotations.Portable;
+import org.jboss.errai.marshalling.client.api.annotations.MapsTo;
+
+@Portable
 public class SquareModel {
 
   private int rowOffset;
   private int colOffset;
   private int code;
 
-  public SquareModel(int rowIndex, int colIndex, int code) {
+  public SquareModel(@MapsTo("rowOffset") int rowIndex, @MapsTo("colOffset") int colIndex, @MapsTo("code") int code) {
     this.rowOffset = rowIndex;
     this.colOffset = colIndex;
     this.code = code;

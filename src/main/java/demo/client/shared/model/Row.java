@@ -1,15 +1,28 @@
 package demo.client.shared.model;
 
+import org.jboss.errai.common.client.api.annotations.Portable;
+
 /*
  * A single row in the Block Drop board.
  */
+@Portable
 public class Row {
 
   /* The spots in this row. Indices go left to right. */
   private int[] squares;
 
   /* The width of this row. */
-  public final int WIDTH;
+  private int width;
+
+  public int getWidth() {
+    return width;
+  }
+
+  public void setWidth(int width) {
+    this.width = width;
+  }
+  
+  public Row() {}
 
   /*
    * Create a row of width size.
@@ -17,9 +30,9 @@ public class Row {
    * @param size The width of this row.
    */
   public Row(int size) {
-    WIDTH = size;
+    width = size;
     // Values are initialized to value 0 (which is unoccupied).
-    squares = new int[WIDTH];
+    squares = new int[width];
   }
 
   /*
@@ -54,7 +67,7 @@ public class Row {
    * @return True iff this row is entirely occupied.
    */
   public boolean isFull() {
-    for (int i = 0; i < WIDTH; i++)
+    for (int i = 0; i < width; i++)
       if (squares[i] == 0)
         return false;
 

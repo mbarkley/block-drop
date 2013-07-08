@@ -3,9 +3,12 @@ package demo.client.shared.model;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.jboss.errai.common.client.api.annotations.Portable;
+
 /*
  * The base class for a falling block in a Block Drop BoardModel.
  */
+@Portable
 public class BlockModel {
 
   public static final int BASIC_CODE = 1;
