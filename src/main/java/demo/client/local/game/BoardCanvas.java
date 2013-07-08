@@ -2,6 +2,8 @@ package demo.client.local.game;
 
 import com.google.gwt.canvas.client.Canvas;
 
+import demo.client.local.game.Size.SizeCategory;
+
 public class BoardCanvas implements ControllableBoardDisplay {
 
   /* The background colour of the Block Drop board. */
@@ -9,8 +11,11 @@ public class BoardCanvas implements ControllableBoardDisplay {
 
   private Canvas canvas;
 
-  public BoardCanvas(Canvas canvas) {
+  private SizeCategory sizeCategory;
+
+  public BoardCanvas(Canvas canvas, SizeCategory sizeCategory) {
     this.canvas = canvas;
+    this.sizeCategory = sizeCategory;
   }
 
   /*
@@ -59,6 +64,17 @@ public class BoardCanvas implements ControllableBoardDisplay {
   @Override
   public void unpause() {
     throw new UnsupportedOperationException();
+  }
+
+  @Override
+  public void clearBoard() {
+    canvas.getContext2d().setFillStyle(BOARD_COLOUR);
+    canvas.getContext2d().fillRect(0, 0, canvas.getCoordinateSpaceWidth(), canvas.getCoordinateSpaceHeight());
+  }
+
+  @Override
+  public SizeCategory getSizeCategory() {
+    return sizeCategory;
   }
 
 }

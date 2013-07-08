@@ -9,16 +9,16 @@ import demo.client.shared.model.BoardModel;
 
 public class BoardController {
 
-  private ControllableBoardDisplay boardDisplay;
+  protected ControllableBoardDisplay boardDisplay;
   private SecondaryDisplayController secondaryController;
   private BoardMessageBus messageBus;
 
   /* A Block Drop board model. */
-  private BoardModel model;
+  protected BoardModel model;
   /* A block model. */
-  private Block activeBlock;
+  protected Block activeBlock;
   /* A block model. */
-  private Block nextBlock;
+  protected Block nextBlock;
 
   /* A timer for running the game loop. */
   private Timer timer;
@@ -49,8 +49,8 @@ public class BoardController {
 
     // Initiate BoardModel.
     model = new BoardModel();
-    activeBlock = Block.getBlockInstance(model.getActiveBlock());
-    nextBlock = Block.getBlockInstance(model.getNextBlock());
+    activeBlock = new Block(model.getActiveBlock(), boardDisplay.getSizeCategory());
+    nextBlock = new Block(model.getNextBlock(), boardDisplay.getSizeCategory());
 
     // Create a timer to run the game loop.
     timer = new Timer() {
@@ -59,6 +59,14 @@ public class BoardController {
         update();
       }
     };
+  }
+  
+  protected void reset() {
+    activeBlock = new Block(model.getActiveBlock(), boardDisplay.getSizeCategory());
+    nextBlock = new Block(model.getNextBlock(), boardDisplay.getSizeCategory());
+    clearState = ClearState.START;
+    toBeCleared = new Block(model.getFullRows(), boardDisplay.getSizeCategory());
+    bgBlock = new Block(model.getNonFullRows(), boardDisplay.getSizeCategory());
   }
 
   /*
@@ -86,6 +94,8 @@ public class BoardController {
     // Check for rows to clear. Rows will stay in model until fully dealt with.
     int numFullRows = model.numFullRows();
     if (numFullRows > 0) {
+      if (clearState.equals(ClearState.START))
+        messageBus.sendMoveUpdate(model, Client.getInstance().getPlayer());
       clearRows(numFullRows);
     }
     else if (model.getRowsToAdd() > 0) {
@@ -96,8 +106,8 @@ public class BoardController {
     else {
       // Reset the active block if necessary.
       if (!activeBlock.isModel(model.getActiveBlock())) {
-        activeBlock = Block.getBlockInstance(model.getActiveBlock());
-        nextBlock = Block.getBlockInstance(model.getNextBlock());
+        activeBlock = new Block(model.getActiveBlock(), boardDisplay.getSizeCategory());
+        nextBlock = new Block(model.getNextBlock(), boardDisplay.getSizeCategory());
         secondaryController.drawBlockToNextCanvas(nextBlock);
       }
       // Update the position of the active block and record movement.
@@ -130,25 +140,25 @@ public class BoardController {
   private void addRowsToBottom() {
     // This method should always be called when there are no full rows.
     BackgroundBlockModel bgModel = model.getNonFullRows();
-    Block bg = new Block(bgModel);
+    Block bg = new Block(bgModel, boardDisplay.getSizeCategory());
     boardDisplay.undrawBlock(0, 0, bg);
-    boardDisplay.undrawBlock(Block.indexToCoord(model.getActiveBlockCol()),
-            Block.indexToCoord(model.getActiveBlockRow()), activeBlock);
+    boardDisplay.undrawBlock(Block.indexToCoord(model.getActiveBlockCol(), boardDisplay.getSizeCategory()),
+            Block.indexToCoord(model.getActiveBlockRow(), boardDisplay.getSizeCategory()), activeBlock);
     model.addRows();
     bgModel = model.getNonFullRows();
-    bg = new Block(bgModel);
+    bg = new Block(bgModel, boardDisplay.getSizeCategory());
     boardDisplay.drawBlock(0, 0, bg);
-    boardDisplay.drawBlock(Block.indexToCoord(model.getActiveBlockCol()),
-            Block.indexToCoord(model.getActiveBlockRow()), activeBlock);
+    boardDisplay.drawBlock(Block.indexToCoord(model.getActiveBlockCol(), boardDisplay.getSizeCategory()),
+            Block.indexToCoord(model.getActiveBlockRow(), boardDisplay.getSizeCategory()), activeBlock);
   }
 
-  private void clearRows(int numFullRows) {
+  protected void clearRows(int numFullRows) {
     if (clearState.getCounter() == 0)
       switch (clearState) {
       case START:
         // Get blocks to be cleared.
-        toBeCleared = new Block(model.getFullRows());
-        bgBlock = new Block(model.getNonFullRows());
+        toBeCleared = new Block(model.getFullRows(), boardDisplay.getSizeCategory());
+        bgBlock = new Block(model.getNonFullRows(), boardDisplay.getSizeCategory());
         break;
       case FIRST_UNDRAW:
       case SECOND_UNDRAW:
@@ -164,7 +174,7 @@ public class BoardController {
       case DROPPING:
         boardDisplay.undrawBlock(0, 0, bgBlock);
         model.clearFullRows();
-        bgBlock = new Block(model.getNonFullRows());
+        bgBlock = new Block(model.getNonFullRows(), boardDisplay.getSizeCategory());
         // Redraw background blocks that were above cleared rows.
         boardDisplay.drawBlock(0, 0, bgBlock);
         // Update the score.
@@ -180,9 +190,9 @@ public class BoardController {
    * 
    * @return True iff the active block moved during this call.
    */
-  private boolean activeBlockUpdate() {
-    boardDisplay.undrawBlock(Block.indexToCoord(model.getActiveBlockCol()),
-            Block.indexToCoord(model.getActiveBlockRow()), activeBlock);
+  protected boolean activeBlockUpdate() {
+    boardDisplay.undrawBlock(Block.indexToCoord(model.getActiveBlockCol(), boardDisplay.getSizeCategory()),
+            Block.indexToCoord(model.getActiveBlockRow(), boardDisplay.getSizeCategory()), activeBlock);
 
     // If the user wishes to drop the block, do nothing else.
     if (model.isDropping()) {
@@ -211,8 +221,8 @@ public class BoardController {
       moved = model.moveActiveBlock(false);
 
     // Redraw block in (possibly) new position.
-    boardDisplay.drawBlock(Block.indexToCoord(model.getActiveBlockCol()),
-            Block.indexToCoord(model.getActiveBlockRow()), activeBlock);
+    boardDisplay.drawBlock(Block.indexToCoord(model.getActiveBlockCol(), boardDisplay.getSizeCategory()),
+            Block.indexToCoord(model.getActiveBlockRow(), boardDisplay.getSizeCategory()), activeBlock);
 
     return moved;
   }

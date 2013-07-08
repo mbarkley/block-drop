@@ -1,5 +1,7 @@
 package demo.client.local.game;
 
+import demo.client.local.game.Size.SizeCategory;
+
 public interface ControllableBoardDisplay {
 
   /*
@@ -28,4 +30,8 @@ public interface ControllableBoardDisplay {
   public void pause();
 
   public void unpause();
+
+  public void clearBoard();
+  
+  public SizeCategory getSizeCategory();
 }

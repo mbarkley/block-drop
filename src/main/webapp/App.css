@@ -40,6 +40,11 @@ body {
 	height: 260px;
 	position: absolute;
 }
+.opp-canvas {
+	width: 260px;
+	height: 390px;
+	position: absolute;
+}
 .score-list {
 	position: absolute;
 	top: 280px;

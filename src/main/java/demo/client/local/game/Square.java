@@ -2,6 +2,8 @@ package demo.client.local.game;
 
 import com.google.gwt.canvas.dom.client.Context2d;
 
+import demo.client.local.game.Size.SizeCategory;
+
 /*
  * A class for drawing individual squares in a Block Drop block.
  */
@@ -16,12 +18,13 @@ class Square {
   private String interiorColour;
   /* The colour of the block outline. */
   private String outlineColour;
+  private Size size;
 
   /*
    * Create a Square instance with default colours.
    */
   Square() {
-    this(INTERIOR_DEFAULT, OUTLINE_DEFAULT);
+    this(INTERIOR_DEFAULT, OUTLINE_DEFAULT, SizeCategory.MAIN);
   }
 
   /*
@@ -30,7 +33,7 @@ class Square {
    * @param interiorColour The colour of the interior of this square.
    */
   Square(String interiorColour) {
-    this(interiorColour, OUTLINE_DEFAULT);
+    this(interiorColour, OUTLINE_DEFAULT, SizeCategory.MAIN);
   }
 
   /*
@@ -39,10 +42,17 @@ class Square {
    * @param interiorColour The colour of this Square's interior.
    * 
    * @param outlineColour The colour of this Square's outline.
+   * 
+   * @param sizeCategory The enumerated size of this square.
    */
-  Square(String interiorColour, String outlineColour) {
+  Square(String interiorColour, String outlineColour, SizeCategory sizeCategory) {
     this.interiorColour = interiorColour;
     this.outlineColour = outlineColour;
+    this.size = Size.getSize(sizeCategory);
+  }
+
+  public Square(SizeCategory sizeCategory) {
+    this(INTERIOR_DEFAULT, OUTLINE_DEFAULT, sizeCategory);
   }
 
   /*
@@ -68,7 +78,7 @@ class Square {
 
   /* Does not begin or close path. Can be used to select a whole line of squares. */
   void addSquareToCanvasPath(double x, double y, Context2d context2d) {
-    context2d.rect(x, y, Size.BLOCK_SIZE, Size.BLOCK_SIZE);
+    context2d.rect(x, y, size.BLOCK_SIZE, size.BLOCK_SIZE);
   }
 
   /*
@@ -82,7 +92,7 @@ class Square {
    */
   private void makeOuterRectPath(double x, double y, Context2d context2d) {
     context2d.beginPath();
-    context2d.rect(x, y, Size.BLOCK_SIZE, Size.BLOCK_SIZE);
+    context2d.rect(x, y, size.BLOCK_SIZE, size.BLOCK_SIZE);
     context2d.closePath();
   }
 
@@ -97,7 +107,7 @@ class Square {
    */
   private void makeInnerRectPath(double x, double y, Context2d context2d) {
     context2d.beginPath();
-    context2d.rect(x + 1, y + 1, Size.BLOCK_SIZE - 2, Size.BLOCK_SIZE - 2);
+    context2d.rect(x + 1, y + 1, size.BLOCK_SIZE - 2, size.BLOCK_SIZE - 2);
     context2d.closePath();
   }
 

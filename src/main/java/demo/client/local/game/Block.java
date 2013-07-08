@@ -2,31 +2,23 @@ package demo.client.local.game;
 
 import com.google.gwt.canvas.dom.client.Context2d;
 
+import demo.client.local.game.Size.SizeCategory;
 import demo.client.shared.model.BlockModel;
 import demo.client.shared.model.SquareModel;
 
 /* A class for drawing Block Drop blocks on an HTML5 canvas. */
 class Block {
 
-  /*
-   * Get an appropriate subclass of Block based on which subclass of BlockModel is given.
-   * 
-   * @param activeBlock An object that is an instance of BlockModel or a subclass thereof.
-   * 
-   * @return An instance of Block or a subclass thereof.
-   */
-  static Block getBlockInstance(BlockModel activeBlock) {
-    return new Block(activeBlock);
-  }
-
   /* The BlockModel associated with this instance. */
   private BlockModel model;
+  private SizeCategory sizeCategory;
 
   /*
    * Create a Block instance.
    */
-  Block(BlockModel blockModel) {
+  Block(BlockModel blockModel, SizeCategory sizeCategory) {
     model = blockModel;
+    this.sizeCategory = sizeCategory;
   }
 
   /*
@@ -39,11 +31,12 @@ class Block {
    * @param context2d The context on which to draw this block.
    */
   void draw(double x, double y, Context2d context2d) {
-    Square square = new Square();
+    Square square = new Square(sizeCategory);
     // Get an iterator of square coordinates based around the given coordinate (x,y).
     for (SquareModel squareModel : model.getIterator()) {
       square.setInteriorColour(ColorMapper.codeToColour(squareModel.getCode()));
-      square.draw(x + indexToCoord(squareModel.getCol()), y + indexToCoord(squareModel.getRow()), context2d);
+      square.draw(x + indexToCoord(squareModel.getCol(), sizeCategory), y
+              + indexToCoord(squareModel.getRow(), sizeCategory), context2d);
     }
   }
 
@@ -68,10 +61,10 @@ class Block {
    * @param context2d The context on which to create this path.
    */
   void getPath(int x, int y, Context2d context2d) {
-    Square square = new Square();
+    Square square = new Square(sizeCategory);
     for (SquareModel squareModel : model.getIterator()) {
-      square.addSquareToCanvasPath(x + indexToCoord(squareModel.getCol()), y + indexToCoord(squareModel.getRow()),
-              context2d);
+      square.addSquareToCanvasPath(x + indexToCoord(squareModel.getCol(), sizeCategory),
+              y + indexToCoord(squareModel.getRow(), sizeCategory), context2d);
     }
   }
 
@@ -96,7 +89,7 @@ class Block {
    * @return The coordinate to pass to the Block.draw method for drawing a block in the correct
    * position.
    */
-  static int indexToCoord(Integer index) {
-    return index * Size.BLOCK_SIZE;
+  static int indexToCoord(Integer index, SizeCategory sizeCategory) {
+    return index * Size.getSize(sizeCategory).BLOCK_SIZE;
   }
 }

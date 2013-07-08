@@ -22,14 +22,8 @@ public class BlockModel {
   /* A unique id for identifying this block. */
   private int id;
 
-  /*
-   * Create a basic BlockModel consisting of one square.
-   */
   public BlockModel() {
     this(generateId());
-
-    // A single square with no offset.
-    squares.add(new SquareModel(0, 0, BlockModel.getCode()));
   }
 
   /*

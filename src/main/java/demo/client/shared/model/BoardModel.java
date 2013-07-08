@@ -79,7 +79,7 @@ public class BoardModel {
    * Generate the next BlockModel to be used as the active block on this board.
    */
   private BlockModel generateNextBlock() {
-    int decider = Random.nextInt(7); // TODO Fix random issue
+    int decider = 0; //Random.nextInt(7); // TODO Fix random issue
 
     BlockModel retVal;
 
@@ -425,5 +425,25 @@ public class BoardModel {
     }
 
     return row;
+  }
+
+  public BlockModel getAllSquares() {
+    BlockModel retVal = new BlockModel();
+    
+    for (int i = 0; i < ROW_NUM; i++) {
+      for (int j = 0; j < COL_NUM; j++) {
+        if (board[i].getSquareValue(j) != NO_TILE) {
+          retVal.addSquare(new SquareModel(i, j, board[i].getSquareValue(j)));
+        }
+      }
+    }
+    for (SquareModel squareModel : activeBlock.getIterator()) {
+      int rowIndex = getActiveBlockRow() + squareModel.getRow();
+      int colIndex = getActiveBlockCol() + squareModel.getCol();
+      if (rowIndex >= 0 && rowIndex < ROW_NUM && colIndex >= 0 && colIndex < COL_NUM)
+        retVal.addSquare(new SquareModel(rowIndex, colIndex, squareModel.getCode()));
+    }
+    
+    return retVal;
   }
 }
