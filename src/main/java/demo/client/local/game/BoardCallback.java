@@ -9,12 +9,11 @@ import demo.client.local.lobby.Client;
 import demo.client.shared.Command;
 import demo.client.shared.ScoreEvent;
 import demo.client.shared.ScoreTracker;
-import demo.client.shared.model.MoveEvent;
 
 public class BoardCallback implements MessageCallback {
-  
+
   private MessageBus messageBus = ErraiBus.get();
-  
+
   private BoardController controller;
   private SecondaryDisplayController secondaryController;
 
@@ -35,16 +34,6 @@ public class BoardCallback implements MessageCallback {
         if (Client.getInstance().getPlayer().equals(event.getTarget())) {
           controller.addRows(scoreTracker.getRowsClearedLast());
         }
-      }
-      break;
-    case MOVE_UPDATE:
-      MoveEvent moveEvent = message.getValue(MoveEvent.class);
-      if (!moveEvent.getPlayer().equals(Client.getInstance().getPlayer())) {
-        System.out.println("move update has reached final destination");
-        
-      }
-      else {
-        System.out.println("received own move update");
       }
       break;
     default:

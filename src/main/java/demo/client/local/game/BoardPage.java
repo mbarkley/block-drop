@@ -1,15 +1,13 @@
 package demo.client.local.game;
 
-import java.util.HashMap;
 import java.util.Map;
+import java.util.TreeMap;
 
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
 
 import org.jboss.errai.bus.client.api.base.MessageBuilder;
-import org.jboss.errai.bus.client.api.messaging.Message;
 import org.jboss.errai.bus.client.api.messaging.MessageBus;
-import org.jboss.errai.bus.client.api.messaging.MessageCallback;
 import org.jboss.errai.bus.client.api.messaging.RequestDispatcher;
 import org.jboss.errai.common.client.api.Assert;
 import org.jboss.errai.ui.client.widget.ListWidget;
@@ -39,7 +37,6 @@ import demo.client.shared.Command;
 import demo.client.shared.ExitMessage;
 import demo.client.shared.Player;
 import demo.client.shared.ScoreTracker;
-import demo.client.shared.model.MoveEvent;
 
 /*
  * An Errai Navigation Page providing the UI for a Block Drop game.
@@ -60,11 +57,10 @@ public class BoardPage extends Composite implements ControllableBoardDisplay {
   @DataField("opp-canvas")
   private Canvas oppCanvas = Canvas.createIfSupported();
   private BoardCanvas oppCanvasWrapper;
-  
+
   @Inject
   @DataField("score-list")
   private ListWidget<ScoreTracker, ScorePanel> scoreDisplay;
-  private Map<Player, OppController> oppControllers;
 
   @Inject
   private TransitionTo<Lobby> lobbyTransition;
@@ -92,11 +88,9 @@ public class BoardPage extends Composite implements ControllableBoardDisplay {
     nextPieceCanvas.setCoordinateSpaceWidth(Size.NEXT_COORD_WIDTH);
     oppCanvas.setCoordinateSpaceHeight(Size.OPP_COORD_HEIGHT);
     oppCanvas.setCoordinateSpaceWidth(Size.OPP_COORD_WIDTH);
-    
+
     canvasWrapper = new BoardCanvas(mainCanvas, SizeCategory.MAIN);
     oppCanvasWrapper = new BoardCanvas(oppCanvas, SizeCategory.OPPONENT);
-    
-    oppControllers = new HashMap<Player, OppController>();
   }
 
   /*
@@ -109,26 +103,7 @@ public class BoardPage extends Composite implements ControllableBoardDisplay {
     boardCallback = new BoardCallback(controller, secondaryController);
     // Subscribe to game channel
     messageBus.subscribe("Game" + Client.getInstance().getGameRoom().getId(), boardCallback);
-    
-    final OppController oppController = new OppController(oppCanvasWrapper);
-    oppController.setActive(true);
-    oppControllers.put(Client.getInstance().getPlayer(), oppController);
-    
-    messageBus.subscribe("Game" + Client.getInstance().getGameRoom().getId(), new MessageCallback() {
-      
-      @Override
-      public void callback(Message message) {
-        Command command = Command.valueOf(message.getCommandType());
-        switch(command) {
-        case MOVE_UPDATE:
-          MoveEvent event = message.getValue(MoveEvent.class);
-          oppController.addState(event.getState());
-          break;
-        default:
-          break;
-        }
-      }
-    });
+
     // Check that mainCanvas was supported.
     if (mainCanvas != null) {
       System.out.println("Canvas successfully created.");
@@ -145,7 +120,8 @@ public class BoardPage extends Composite implements ControllableBoardDisplay {
       addHandlerToMainCanvas((KeyUpHandler) handler, KeyUpEvent.getType());
       addHandlerToMainCanvas((KeyDownHandler) handler, KeyDownEvent.getType());
       controller.startGame();
-      oppControllers.get(Client.getInstance().getPlayer()).startGame();
+
+      messageBus.subscribe("Game" + Client.getInstance().getGameRoom().getId(), new OppCallback(oppCanvasWrapper));
     } catch (NullPointerException e) {
       e.printStackTrace();
       // Null pointer likely means the user needs to register a Player object in the lobby.

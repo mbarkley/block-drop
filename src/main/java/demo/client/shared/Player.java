@@ -11,7 +11,7 @@ import org.jboss.errai.enterprise.client.cdi.api.Conversational;
 @Portable
 @Conversational
 @Bindable
-public class Player {
+public class Player implements Comparable<Player> {
 
   /*
    * The id of this player for identifying different instances representing the same player between
@@ -154,5 +154,10 @@ public class Player {
    */
   public boolean equals(Object other) {
     return other != null && other instanceof Player && this.getId() == ((Player) other).getId();
+  }
+
+  @Override
+  public int compareTo(Player o) {
+    return getId() - o.getId();
   }
 }

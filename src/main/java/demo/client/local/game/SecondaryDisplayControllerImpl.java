@@ -7,19 +7,15 @@ import javax.inject.Inject;
 
 import org.jboss.errai.bus.client.ErraiBus;
 import org.jboss.errai.bus.client.api.base.MessageBuilder;
-import org.jboss.errai.bus.client.api.messaging.Message;
 import org.jboss.errai.bus.client.api.messaging.MessageBus;
-import org.jboss.errai.bus.client.api.messaging.MessageCallback;
 import org.jboss.errai.ui.client.widget.ListWidget;
 
 import com.google.gwt.canvas.client.Canvas;
 
-import demo.client.local.Style;
 import demo.client.local.lobby.Client;
 import demo.client.shared.Command;
 import demo.client.shared.GameRoom;
 import demo.client.shared.Player;
-import demo.client.shared.ScoreEvent;
 import demo.client.shared.ScoreTracker;
 
 /*
@@ -47,7 +43,9 @@ class SecondaryDisplayControllerImpl implements SecondaryDisplayController {
     scoreList.getWidget(getScoreTracker()).setSelected(true);
   }
 
-  /* (non-Javadoc)
+  /*
+   * (non-Javadoc)
+   * 
    * @see demo.client.local.game.SecondaryDisplayController#selectNextPlayer()
    */
   @Override
@@ -60,10 +58,15 @@ class SecondaryDisplayControllerImpl implements SecondaryDisplayController {
       scoreList.getWidget(index).setSelected(false);
       scoreList.getValue().get(next).select();
       scoreList.getWidget(next).setSelected(true);
+      MessageBuilder.createMessage("Game" + Client.getInstance().getGameRoom().getId())
+              .command(Command.SWITCH_OPPONENT).withValue(getSelectedTracker().getPlayer()).noErrorHandling()
+              .sendNowWith(messageBus);
     }
   }
 
-  /* (non-Javadoc)
+  /*
+   * (non-Javadoc)
+   * 
    * @see demo.client.local.game.SecondaryDisplayController#selectLastPlayer()
    */
   @Override
@@ -76,6 +79,9 @@ class SecondaryDisplayControllerImpl implements SecondaryDisplayController {
       scoreList.getWidget(index).setSelected(false);
       scoreList.getWidget(last).setSelected(true);
       scoreList.getValue().get(last).select();
+      MessageBuilder.createMessage("Game" + Client.getInstance().getGameRoom().getId())
+      .command(Command.SWITCH_OPPONENT).withValue(getSelectedTracker().getPlayer()).noErrorHandling()
+      .sendNowWith(messageBus);
     }
   }
 
@@ -88,7 +94,9 @@ class SecondaryDisplayControllerImpl implements SecondaryDisplayController {
     return null;
   }
 
-  /* (non-Javadoc)
+  /*
+   * (non-Javadoc)
+   * 
    * @see demo.client.local.game.SecondaryDisplayController#updateScore(int)
    */
   @Override
@@ -98,8 +106,11 @@ class SecondaryDisplayControllerImpl implements SecondaryDisplayController {
     updateAndSortScore(scoreTracker);
   }
 
-  /* (non-Javadoc)
-   * @see demo.client.local.game.SecondaryDisplayController#updateAndSortScore(demo.client.shared.ScoreTracker)
+  /*
+   * (non-Javadoc)
+   * 
+   * @see demo.client.local.game.SecondaryDisplayController#updateAndSortScore(demo.client.shared.
+   * ScoreTracker)
    */
   @Override
   public void updateAndSortScore(ScoreTracker scoreTracker) {
@@ -115,7 +126,9 @@ class SecondaryDisplayControllerImpl implements SecondaryDisplayController {
     }
   }
 
-  /* (non-Javadoc)
+  /*
+   * (non-Javadoc)
+   * 
    * @see demo.client.local.game.SecondaryDisplayController#getScoreTracker()
    */
   @Override
@@ -129,8 +142,12 @@ class SecondaryDisplayControllerImpl implements SecondaryDisplayController {
     return null;
   }
 
-  /* (non-Javadoc)
-   * @see demo.client.local.game.SecondaryDisplayController#drawBlockToNextCanvas(demo.client.local.game.Block)
+  /*
+   * (non-Javadoc)
+   * 
+   * @see
+   * demo.client.local.game.SecondaryDisplayController#drawBlockToNextCanvas(demo.client.local.game
+   * .Block)
    */
   @Override
   public void drawBlockToNextCanvas(Block nextBlock) {
@@ -143,11 +160,13 @@ class SecondaryDisplayControllerImpl implements SecondaryDisplayController {
     nextCanvas.getContext2d().setFont("bold 20px sans-serif");
     nextCanvas.getContext2d().fillText("Next Block", 10, 20);
 
-    nextBlock.draw(2 * Size.MAIN_BLOCK_SIZE + nextBlock.getCentreColDiff() * Size.MAIN_BLOCK_SIZE, 2 * Size.MAIN_BLOCK_SIZE
-            + nextBlock.getCentreRowDiff() * Size.MAIN_BLOCK_SIZE, nextCanvas.getContext2d());
+    nextBlock.draw(2 * Size.MAIN_BLOCK_SIZE + nextBlock.getCentreColDiff() * Size.MAIN_BLOCK_SIZE, 2
+            * Size.MAIN_BLOCK_SIZE + nextBlock.getCentreRowDiff() * Size.MAIN_BLOCK_SIZE, nextCanvas.getContext2d());
   }
 
-  /* (non-Javadoc)
+  /*
+   * (non-Javadoc)
+   * 
    * @see demo.client.local.game.SecondaryDisplayController#getTarget()
    */
   @Override
