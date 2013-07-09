@@ -116,33 +116,37 @@ public class BoardPage extends Composite implements ControllableBoardDisplay {
 
   @PageShowing
   private void start() {
-    try {
+    if (Client.getInstance().getGameRoom() == null)
+      lobbyTransition.go();
+    else {
       setup();
       controller.startGame();
       // Subscribe to game channel
       messageBus.subscribe("Game" + Client.getInstance().getGameRoom().getId(), boardCallback);
       messageBus.subscribe("Game" + Client.getInstance().getGameRoom().getId(), new OppCallback(oppCanvasWrapper));
-    } catch (NullPointerException e) {
-      e.printStackTrace();
-      // Null pointer likely means the user needs to register a Player object in the lobby.
-      lobbyTransition.go();
     }
   }
 
   @PageHidden
   private void leaveGame() {
-    ExitMessage exitMessage = new ExitMessage();
-    exitMessage.setPlayer(Client.getInstance().getPlayer());
-    exitMessage.setGame(Client.getInstance().getGameRoom());
+    if (Client.getInstance().getGameRoom() != null) {
+      ExitMessage exitMessage = new ExitMessage();
+      exitMessage.setPlayer(Client.getInstance().getPlayer());
+      exitMessage.setGame(Client.getInstance().getGameRoom());
+      MessageBuilder.createMessage("Relay").command(Command.LEAVE_GAME).withValue(exitMessage).noErrorHandling()
+              .sendNowWith(dispatcher);
+    }
 
-    controller.destroy();
+    if (controller != null)
+      controller.destroy();
+
     removeHandlers();
 
-    MessageBuilder.createMessage("Relay").command(Command.LEAVE_GAME).withValue(exitMessage).noErrorHandling()
-            .sendNowWith(dispatcher);
-    messageBus.unsubscribeAll("Game" + Client.getInstance().getGameRoom().getId());
-
-    Client.getInstance().setGameRoom(null);
+    if (Client.getInstance() != null) {
+      if (Client.getInstance().getGameRoom() != null)
+        messageBus.unsubscribeAll("Game" + Client.getInstance().getGameRoom().getId());
+      Client.getInstance().setGameRoom(null);
+    }
   }
 
   private void removeHandlers() {
