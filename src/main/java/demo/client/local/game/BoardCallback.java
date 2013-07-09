@@ -1,18 +1,15 @@
 package demo.client.local.game;
 
-import org.jboss.errai.bus.client.ErraiBus;
 import org.jboss.errai.bus.client.api.messaging.Message;
-import org.jboss.errai.bus.client.api.messaging.MessageBus;
 import org.jboss.errai.bus.client.api.messaging.MessageCallback;
 
 import demo.client.local.lobby.Client;
 import demo.client.shared.Command;
+import demo.client.shared.Player;
 import demo.client.shared.ScoreEvent;
 import demo.client.shared.ScoreTracker;
 
 public class BoardCallback implements MessageCallback {
-
-  private MessageBus messageBus = ErraiBus.get();
 
   private BoardController controller;
   private SecondaryDisplayController secondaryController;
@@ -28,16 +25,29 @@ public class BoardCallback implements MessageCallback {
     switch (command) {
     case UPDATE_SCORE:
       ScoreEvent event = message.getValue(ScoreEvent.class);
-      ScoreTracker scoreTracker = event.getScoreTracker();
-      if (scoreTracker.getId() != Client.getInstance().getPlayer().getId()) {
-        secondaryController.updateAndSortScore(scoreTracker);
-        if (Client.getInstance().getPlayer().equals(event.getTarget())) {
-          controller.addRows(scoreTracker.getRowsClearedLast());
-        }
-      }
+      updateScore(event.getScoreTracker(), event.getTarget());
+      break;
+    case LEAVE_GAME:
+      Player player = message.getValue(Player.class);
+      if (!player.equals(Client.getInstance().getPlayer()))
+        removePlayer(player);
       break;
     default:
       break;
+    }
+  }
+  
+  private void removePlayer(Player player) {
+    Client.getInstance().getGameRoom().removePlayer(player.getId());
+    secondaryController.removeTracker(player);
+  }
+
+  private void updateScore(ScoreTracker scoreTracker, Player target) {
+    if (scoreTracker.getId() != Client.getInstance().getPlayer().getId()) {
+      secondaryController.updateAndSortScore(scoreTracker);
+      if (Client.getInstance().getPlayer().equals(target)) {
+        controller.addRows(scoreTracker.getRowsClearedLast());
+      }
     }
   }
 }

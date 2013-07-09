@@ -19,4 +19,6 @@ interface SecondaryDisplayController {
 
   public abstract Player getTarget();
 
+  public abstract void removeTracker(Player player);
+
 }

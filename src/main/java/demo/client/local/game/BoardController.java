@@ -309,4 +309,8 @@ public class BoardController {
   public void addRows(int rowsClearedLast) {
     model.setRowsToAdd(rowsClearedLast);
   }
+
+  public void destroy() {
+    timer.cancel();
+  }
 }

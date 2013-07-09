@@ -1,9 +1,8 @@
 package demo.client.local.game;
 
-import java.util.Map;
-import java.util.TreeMap;
+import java.util.ArrayList;
+import java.util.List;
 
-import javax.annotation.PostConstruct;
 import javax.inject.Inject;
 
 import org.jboss.errai.bus.client.api.base.MessageBuilder;
@@ -29,13 +28,13 @@ import com.google.gwt.event.dom.client.KeyUpHandler;
 import com.google.gwt.event.shared.EventHandler;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.RootPanel;
+import com.google.web.bindery.event.shared.HandlerRegistration;
 
 import demo.client.local.game.Size.SizeCategory;
 import demo.client.local.lobby.Client;
 import demo.client.local.lobby.Lobby;
 import demo.client.shared.Command;
 import demo.client.shared.ExitMessage;
-import demo.client.shared.Player;
 import demo.client.shared.ScoreTracker;
 
 /*
@@ -75,6 +74,8 @@ public class BoardPage extends Composite implements ControllableBoardDisplay {
   @Inject
   private MessageBus messageBus;
 
+  private List<HandlerRegistration> handlerRegs = new ArrayList<HandlerRegistration>();
+
   /*
    * Create a BoardPage for displaying a Block Drop game.
    */
@@ -96,14 +97,7 @@ public class BoardPage extends Composite implements ControllableBoardDisplay {
   /*
    * Perform additional setup for the Board UI after this object has been constructed.
    */
-  @PostConstruct
   private void setup() {
-    secondaryController = new SecondaryDisplayControllerImpl(scoreDisplay, nextPieceCanvas);
-    controller = new BoardController(this, secondaryController, new BoardMessageBusImpl());
-    boardCallback = new BoardCallback(controller, secondaryController);
-    // Subscribe to game channel
-    messageBus.subscribe("Game" + Client.getInstance().getGameRoom().getId(), boardCallback);
-
     // Check that mainCanvas was supported.
     if (mainCanvas != null) {
       System.out.println("Canvas successfully created.");
@@ -111,16 +105,22 @@ public class BoardPage extends Composite implements ControllableBoardDisplay {
     else {
       // TODO: Display message to user that HTML5 Canvas is required.
     }
+    secondaryController = new SecondaryDisplayControllerImpl(scoreDisplay, nextPieceCanvas);
+    controller = new BoardController(this, secondaryController, new BoardMessageBusImpl());
+    boardCallback = new BoardCallback(controller, secondaryController);
+
+    EventHandler handler = new BoardKeyHandler(controller);
+    addHandlerToMainCanvas((KeyUpHandler) handler, KeyUpEvent.getType());
+    addHandlerToMainCanvas((KeyDownHandler) handler, KeyDownEvent.getType());
   }
 
   @PageShowing
   private void start() {
     try {
-      EventHandler handler = new BoardKeyHandler(controller);
-      addHandlerToMainCanvas((KeyUpHandler) handler, KeyUpEvent.getType());
-      addHandlerToMainCanvas((KeyDownHandler) handler, KeyDownEvent.getType());
+      setup();
       controller.startGame();
-
+      // Subscribe to game channel
+      messageBus.subscribe("Game" + Client.getInstance().getGameRoom().getId(), boardCallback);
       messageBus.subscribe("Game" + Client.getInstance().getGameRoom().getId(), new OppCallback(oppCanvasWrapper));
     } catch (NullPointerException e) {
       e.printStackTrace();
@@ -134,9 +134,22 @@ public class BoardPage extends Composite implements ControllableBoardDisplay {
     ExitMessage exitMessage = new ExitMessage();
     exitMessage.setPlayer(Client.getInstance().getPlayer());
     exitMessage.setGame(Client.getInstance().getGameRoom());
-    Client.getInstance().setGameRoom(null);
+
+    controller.destroy();
+    removeHandlers();
+
     MessageBuilder.createMessage("Relay").command(Command.LEAVE_GAME).withValue(exitMessage).noErrorHandling()
             .sendNowWith(dispatcher);
+    messageBus.unsubscribeAll("Game" + Client.getInstance().getGameRoom().getId());
+
+    Client.getInstance().setGameRoom(null);
+  }
+
+  private void removeHandlers() {
+    for (HandlerRegistration handlerReg : handlerRegs) {
+      handlerReg.removeHandler();
+    }
+    handlerRegs.clear();
   }
 
   /*
@@ -186,7 +199,8 @@ public class BoardPage extends Composite implements ControllableBoardDisplay {
    * @param handler A key press handler for the mainCanvas.
    */
   <H extends EventHandler> void addHandlerToMainCanvas(H handler, Type<H> type) {
-    Assert.notNull("Could not get game-wrapper root panel.", RootPanel.get()).addDomHandler(handler, type);
+    handlerRegs.add(Assert.notNull("Could not get game-wrapper root panel.", RootPanel.get()).addDomHandler(handler,
+            type));
   }
 
   /*

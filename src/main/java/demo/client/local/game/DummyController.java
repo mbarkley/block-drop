@@ -29,4 +29,7 @@ public class DummyController implements SecondaryDisplayController {
   public Player getTarget() {
     return null;
   }
+
+  @Override
+  public void removeTracker(Player player) {}
 }

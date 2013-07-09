@@ -236,5 +236,7 @@ public class Server implements MessageCallback {
 
   private void removePlayerFromGame(Player player, int gameId) {
     games.get(gameId).removePlayer(player.getId());
+    MessageBuilder.createMessage("Game" + gameId).command(Command.LEAVE_GAME).withValue(player).noErrorHandling()
+            .sendNowWith(messageBus);
   }
 }

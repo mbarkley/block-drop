@@ -174,4 +174,21 @@ class SecondaryDisplayControllerImpl implements SecondaryDisplayController {
     Player target = getSelectedTracker().getPlayer();
     return getScoreTracker().getPlayer().equals(target) ? null : target;
   }
+
+  @Override
+  public void removeTracker(Player player) {
+    List<ScoreTracker> modelList = scoreList.getValue();
+    for (int i = 0; i < modelList.size(); i++) {
+      if (modelList.get(i).getPlayer().equals(player)) {
+        ScoreTracker removed = modelList.get(i);
+        if (removed.isSelected()) {
+          int j = (i + 1) % modelList.size();
+          modelList.get(j).select();
+          scoreList.getWidget(j).setSelected(true);
+        }
+        modelList.remove(i);
+        break;
+      }
+    }
+  }
 }
