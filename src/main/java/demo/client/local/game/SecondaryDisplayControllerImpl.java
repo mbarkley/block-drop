@@ -18,9 +18,6 @@ import demo.client.shared.GameRoom;
 import demo.client.shared.Player;
 import demo.client.shared.ScoreTracker;
 
-/*
- * A controller class for a Block Drop game. Handles game loop and user input.
- */
 class SecondaryDisplayControllerImpl implements SecondaryDisplayController {
 
   private ListWidget<ScoreTracker, ScorePanel> scoreList;
@@ -117,7 +114,10 @@ class SecondaryDisplayControllerImpl implements SecondaryDisplayController {
     List<ScoreTracker> modelList = scoreList.getValue();
     if (modelList.contains(scoreTracker)) {
       // Remove out-of-date score from list (different instance)
-      modelList.remove(scoreTracker);
+      ScoreTracker oldTracker = modelList.get(modelList.indexOf(scoreTracker));
+      modelList.remove(oldTracker);
+      if (oldTracker.isSelected())
+        scoreTracker.select();
     }
     modelList.add(scoreTracker);
     Collections.sort(scoreList.getValue(), Collections.reverseOrder());
