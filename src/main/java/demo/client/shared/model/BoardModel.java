@@ -1,8 +1,8 @@
 package demo.client.shared.model;
 
-import org.jboss.errai.common.client.api.annotations.Portable;
+import java.util.Random;
 
-import com.google.gwt.user.client.Random;
+import org.jboss.errai.common.client.api.annotations.Portable;
 
 /*
  * A model of the Block Drop board.
@@ -79,7 +79,7 @@ public class BoardModel {
    * Generate the next BlockModel to be used as the active block on this board.
    */
   private BlockModel generateNextBlock() {
-    int decider = 0; //Random.nextInt(7); // TODO Fix random issue
+    int decider = (new Random()).nextInt(7);
 
     BlockModel retVal;
 
@@ -413,7 +413,7 @@ public class BoardModel {
 
   private Row generateSabotageRow() {
     Row row = new Row(COL_NUM);
-    int empty = Random.nextInt(COL_NUM);
+    int empty = (new Random()).nextInt(COL_NUM);
 
     for (int i = 0; i < COL_NUM; i++) {
       if (i != empty) {
