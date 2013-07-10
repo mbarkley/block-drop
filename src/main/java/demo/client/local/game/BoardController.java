@@ -126,12 +126,17 @@ public class BoardController {
         boolean keepPlaying = Window.confirm("Game Over. Final Score: " + finalScore
                 + ". Would you like to continue playing with a " + ScoreTracker.LOSS_PENALTY + " point penalty?");
         if (keepPlaying) {
+          // Reset board model and controller
           model = new BoardModel();
           boardDisplay.clearBoard();
           reset();
+          
+          // Subtract score penalty and update score
           secondaryController.getScoreTracker().setScore(finalScore - ScoreTracker.LOSS_PENALTY);
           secondaryController.updateAndSortScore(secondaryController.getScoreTracker());
           messageBus.sendScoreUpdate(secondaryController.getScoreTracker(), null);
+          
+          // Show time
           startGame();
         }
         else {

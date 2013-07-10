@@ -7,6 +7,7 @@ import java.util.Map.Entry;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentSkipListMap;
 
 import javax.annotation.PostConstruct;
 import javax.enterprise.context.ApplicationScoped;
@@ -45,12 +46,16 @@ import demo.client.shared.model.MoveEvent;
 public class Server implements MessageCallback {
 
   private static final long LOBBY_TIMEOUT = 5000;
+  private static final long GAME_TIMEOUT = 5000;
+  
   /* A map of game ids to games that are currently in progress. */
   private Map<Integer, GameRoom> games = new ConcurrentHashMap<Integer, GameRoom>();
   /* A map of player ids to lobbyPlayers that are currently in the lobby. */
   private Map<Integer, Player> lobbyPlayers = new ConcurrentHashMap<Integer, Player>();
   /* Heart beat timestamps of players in lobby. */
   private Map<Integer, Long> lobbyHeartBeats = new ConcurrentHashMap<Integer, Long>();
+  /* Heart beat timestamps of players in games. */
+  private Map<Player, Long> gameHeartBeats = new ConcurrentSkipListMap<Player, Long>();
   /* This value is incremented to assign unique player ids. */
   private int curPlayerId = 1;
   /* This value is incremented to assign unique game ids. */
@@ -70,6 +75,7 @@ public class Server implements MessageCallback {
   private Event<LobbyUpdate> lobbyUpdate;
   
   private Timer lobbyTimer;
+  private Timer gameTimer;
 
   /* For debugging only. */
   private int debugId;
@@ -98,7 +104,26 @@ public class Server implements MessageCallback {
       public void run() {
         Server.this.cleanLobby();
       }
-    }, 0, 5000);
+    }, 0, LOBBY_TIMEOUT);
+    
+    gameTimer = new Timer();
+    gameTimer.schedule(new TimerTask() {
+      @Override
+      public void run() {
+        Server.this.cleanGameRooms();
+      }
+    }, 0, GAME_TIMEOUT);
+  }
+
+  protected void cleanGameRooms() {
+    long curTime = System.currentTimeMillis();
+    
+    for (Entry<Player, Long> heartBeat : gameHeartBeats.entrySet()) {
+      if (curTime - heartBeat.getValue() > GAME_TIMEOUT) {
+        removePlayerFromGame(heartBeat.getKey(), heartBeat.getKey().getGameId());
+      }
+    }
+    System.out.println("Server: GameRooms cleaned");
   }
 
   protected void cleanLobby() {
@@ -206,12 +231,14 @@ public class Server implements MessageCallback {
     lobbyPlayers.remove(player.getId());
     lobbyHeartBeats.remove(player.getId());
     games.get(gameId).addPlayer(player);
+    gameHeartBeats.put(player, System.currentTimeMillis());
     player.setGameId(gameId);
     MessageBuilder.createMessage().toSubject("Client" + player.getId()).command(Command.JOIN_GAME)
             .withValue(games.get(gameId)).noErrorHandling().sendNowWith(dispatcher);
     ScoreTracker scoreTracker = games.get(gameId).getScoreTracker(player);
     updateScoreLocal(scoreTracker);
     updateScoreRemote(new ScoreEvent(scoreTracker));
+    System.out.println("Server: " + player.getName() + " added to Game" + gameId);
   }
 
   /*
@@ -240,9 +267,6 @@ public class Server implements MessageCallback {
     case LEAVE_GAME:
       ExitMessage exitMessage = message.getValue(ExitMessage.class);
       removePlayerFromGame(exitMessage.getPlayer(), exitMessage.getGame().getId());
-      // Clean up empty games.
-      if (games.get(exitMessage.getGame().getId()).isEmpty())
-        games.remove(exitMessage.getGame().getId());
       sendLobbyList();
       break;
     case UPDATE_SCORE:
@@ -252,10 +276,14 @@ public class Server implements MessageCallback {
       break;
     case MOVE_UPDATE:
       MoveEvent moveEvent = message.getValue(MoveEvent.class);
+      updateGameRoomHeartBeat(moveEvent.getPlayer());
       broadcastMove(moveEvent);
       break;
+    case GAME_KEEP_ALIVE:
+      updateGameRoomHeartBeat(message.getValue(Player.class));
+      break;
     case LOBBY_KEEP_ALIVE:
-      updateHeartBeat(message.getValue(Player.class));
+      updateLobbyHeartBeat(message.getValue(Player.class));
       break;
     case INVITATION:
       break;
@@ -264,7 +292,11 @@ public class Server implements MessageCallback {
     }
   }
 
-  private void updateHeartBeat(Player player) {
+  private void updateGameRoomHeartBeat(Player player) {
+    gameHeartBeats.put(player, System.currentTimeMillis());
+  }
+
+  private void updateLobbyHeartBeat(Player player) {
     lobbyHeartBeats.put(player.getId(), System.currentTimeMillis());
   }
 
@@ -285,8 +317,14 @@ public class Server implements MessageCallback {
 
   private void removePlayerFromGame(Player player, int gameId) {
     games.get(gameId).removePlayer(player.getId());
+    if (games.get(gameId).isEmpty()) {
+      games.remove(gameId);
+      sendLobbyList();
+    }
+    gameHeartBeats.remove(player);
     player.setGameId(0);
     MessageBuilder.createMessage("Game" + gameId).command(Command.LEAVE_GAME).withValue(player).noErrorHandling()
             .sendNowWith(messageBus);
+    System.out.println("Server: " + player.getName() + " kicked for being idle");
   }
 }
