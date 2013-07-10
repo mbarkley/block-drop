@@ -157,6 +157,7 @@ public class Server implements MessageCallback {
     // Put the player in the lobby if not already.
     if (!lobbyPlayers.containsKey(player.getId())) {
       lobbyPlayers.put(player.getId(), player);
+      lobbyHeartBeats.put(player.getId(), System.currentTimeMillis());
     }
 
     // For debugging.
@@ -203,6 +204,7 @@ public class Server implements MessageCallback {
 
   private void addPlayerToGame(Player player, int gameId) {
     lobbyPlayers.remove(player.getId());
+    lobbyHeartBeats.remove(player.getId());
     games.get(gameId).addPlayer(player);
     player.setGameId(gameId);
     MessageBuilder.createMessage().toSubject("Client" + player.getId()).command(Command.JOIN_GAME)
