@@ -75,6 +75,8 @@ public class Lobby extends Composite {
   private Set<Player> selectedPlayers = new HashSet<Player>();
   private GameRoom selectedGame = null;
 
+  private LobbyHeartBeat heartBeat;
+
   /*
    * Create an instance of a lobby page.
    */
@@ -170,6 +172,13 @@ public class Lobby extends Composite {
     }
 
     Client.getInstance().setPlayer(player);
+    
+    // Reset or start LobbyHeartBeat
+    if (heartBeat != null)
+      heartBeat.cancel();
+    
+    heartBeat = new LobbyHeartBeat();
+    heartBeat.scheduleRepeating(5000);
 
     requestLobbyUpdate();
   }

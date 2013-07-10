@@ -3,12 +3,16 @@ package demo.client.local.lobby;
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 
+import org.jboss.errai.bus.client.api.base.MessageBuilder;
+import org.jboss.errai.bus.client.api.messaging.MessageBus;
 import org.jboss.errai.ioc.client.api.EntryPoint;
 import org.jboss.errai.ui.nav.client.local.Navigation;
 
+import com.google.gwt.user.client.Timer;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.RootPanel;
 
+import demo.client.shared.Command;
 import demo.client.shared.GameRoom;
 import demo.client.shared.Player;
 
@@ -30,7 +34,7 @@ public class Client {
   /* For the Errai NavigationUI. */
   @Inject
   private Navigation nav;
-
+  
   /* For debugging only. */
   private static int curDebugId = 1;
   /* For debugging only. */
@@ -52,8 +56,7 @@ public class Client {
   }
 
   /*
-   * Create a Client object. Client should be a singleton, but this is not enforced. This
-   * constructor should only be called once.
+   * Create a Client object.
    */
   public Client() {
     // For debugging.
@@ -86,7 +89,7 @@ public class Client {
     // Add nav to root panel.
     RootPanel.get().add(nav.getContentPanel());
   }
-
+  
   /*
    * Check if this client has registered a player object with the server.
    * 

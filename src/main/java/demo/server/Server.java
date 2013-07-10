@@ -1,8 +1,14 @@
 package demo.server;
 
-import java.util.HashMap;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Timer;
+import java.util.TimerTask;
+import java.util.concurrent.ConcurrentHashMap;
 
+import javax.annotation.PostConstruct;
 import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.event.Event;
 import javax.enterprise.event.Observes;
@@ -31,17 +37,20 @@ import demo.client.shared.model.MoveEvent;
  * A class for facilitating games between clients over a network.
  * 
  * This class responds to fires events to and catches events from clients, maintains
- * the list of games and players in the lobby, and also uses a message bus to act as
+ * the list of games and lobbyPlayers in the lobby, and also uses a message bus to act as
  * a relay between clients.
  */
 @ApplicationScoped
 @Service("Relay")
 public class Server implements MessageCallback {
 
+  private static final long LOBBY_TIMEOUT = 5000;
   /* A map of game ids to games that are currently in progress. */
-  private Map<Integer, GameRoom> games = new HashMap<Integer, GameRoom>();
-  /* A map of player ids to players that are currently in the lobby. */
-  private Map<Integer, Player> players = new HashMap<Integer, Player>();
+  private Map<Integer, GameRoom> games = new ConcurrentHashMap<Integer, GameRoom>();
+  /* A map of player ids to lobbyPlayers that are currently in the lobby. */
+  private Map<Integer, Player> lobbyPlayers = new ConcurrentHashMap<Integer, Player>();
+  /* Heart beat timestamps of players in lobby. */
+  private Map<Integer, Long> lobbyHeartBeats = new ConcurrentHashMap<Integer, Long>();
   /* This value is incremented to assign unique player ids. */
   private int curPlayerId = 1;
   /* This value is incremented to assign unique game ids. */
@@ -59,6 +68,8 @@ public class Server implements MessageCallback {
   /* Used for sending lobby updates to clients. */
   @Inject
   private Event<LobbyUpdate> lobbyUpdate;
+  
+  private Timer lobbyTimer;
 
   /* For debugging only. */
   private int debugId;
@@ -77,6 +88,36 @@ public class Server implements MessageCallback {
   public Server() {
     debugId = nextDebugId();
     System.out.println("Server" + debugId + ": Server object is constructed.");
+  }
+  
+  @PostConstruct
+  private void init() {
+    lobbyTimer = new Timer();
+    lobbyTimer.schedule(new TimerTask() {
+      @Override
+      public void run() {
+        Server.this.cleanLobby();
+      }
+    }, 0, 5000);
+  }
+
+  protected void cleanLobby() {
+    long curTime = System.currentTimeMillis();
+    List<Integer> removed = new ArrayList<Integer>();
+    
+    for (Entry<Integer, Long> heartBeat : lobbyHeartBeats.entrySet()) {
+      if (curTime - heartBeat.getValue() > LOBBY_TIMEOUT) {
+        lobbyPlayers.remove(heartBeat.getKey());
+        removed.add(heartBeat.getKey());
+      }
+    }
+    
+    lobbyHeartBeats.entrySet().removeAll(removed);
+    System.out.println("Server: Lobby cleaned");
+    
+    if (!removed.isEmpty()) {
+      sendLobbyList();
+    }
   }
 
   /*
@@ -114,8 +155,8 @@ public class Server implements MessageCallback {
     }
 
     // Put the player in the lobby if not already.
-    if (!players.containsKey(player.getId())) {
-      players.put(player.getId(), player);
+    if (!lobbyPlayers.containsKey(player.getId())) {
+      lobbyPlayers.put(player.getId(), player);
     }
 
     // For debugging.
@@ -161,8 +202,9 @@ public class Server implements MessageCallback {
   }
 
   private void addPlayerToGame(Player player, int gameId) {
-    players.remove(player.getId());
+    lobbyPlayers.remove(player.getId());
     games.get(gameId).addPlayer(player);
+    player.setGameId(gameId);
     MessageBuilder.createMessage().toSubject("Client" + player.getId()).command(Command.JOIN_GAME)
             .withValue(games.get(gameId)).noErrorHandling().sendNowWith(dispatcher);
     ScoreTracker scoreTracker = games.get(gameId).getScoreTracker(player);
@@ -175,7 +217,7 @@ public class Server implements MessageCallback {
    * lobby lists.
    */
   public void sendLobbyList() {
-    lobbyUpdate.fire(new LobbyUpdate(players, games));
+    lobbyUpdate.fire(new LobbyUpdate(lobbyPlayers, games));
     // For debugging.
     System.out.println("Server" + debugId + ": Lobby list sent.");
   }
@@ -207,16 +249,21 @@ public class Server implements MessageCallback {
       updateScoreRemote(scoreEvent);
       break;
     case MOVE_UPDATE:
-      System.out.println("move update received");
       MoveEvent moveEvent = message.getValue(MoveEvent.class);
       broadcastMove(moveEvent);
-      System.out.println("move update relayed");
+      break;
+    case KEEP_ALIVE:
+      updateHeartBeat(message.getValue(Player.class));
       break;
     case INVITATION:
       break;
     default:
       break;
     }
+  }
+
+  private void updateHeartBeat(Player player) {
+    lobbyHeartBeats.put(player.getId(), System.currentTimeMillis());
   }
 
   private void broadcastMove(MoveEvent moveEvent) {
@@ -236,6 +283,7 @@ public class Server implements MessageCallback {
 
   private void removePlayerFromGame(Player player, int gameId) {
     games.get(gameId).removePlayer(player.getId());
+    player.setGameId(0);
     MessageBuilder.createMessage("Game" + gameId).command(Command.LEAVE_GAME).withValue(player).noErrorHandling()
             .sendNowWith(messageBus);
   }
