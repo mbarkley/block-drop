@@ -22,8 +22,8 @@ public class BoardController {
   /* A block model. */
   protected Block nextBlock;
 
-  /* A timer for running the game loop. */
-  private Timer timer;
+  /* A lobbyTimer for running the game loop. */
+  private Timer lobbyTimer;
   /*
    * The number of iterations for a block to drop one square on the board. Must be a multiple of 4.
    */
@@ -43,6 +43,8 @@ public class BoardController {
   private Block toBeCleared;
   private Block bgBlock;
   
+  private GameHeartBeat gameTimer = new GameHeartBeat();
+  
   public BoardController(ControllableBoardDisplay boardDisplay, SecondaryDisplayController secondaryController,
           BoardMessageBus messageBus) {
     this.boardDisplay = boardDisplay;
@@ -54,8 +56,8 @@ public class BoardController {
     activeBlock = new Block(model.getActiveBlock(), boardDisplay.getSizeCategory());
     nextBlock = new Block(model.getNextBlock(), boardDisplay.getSizeCategory());
 
-    // Create a timer to run the game loop.
-    timer = new Timer() {
+    // Create a lobbyTimer to run the game loop.
+    lobbyTimer = new Timer() {
       @Override
       public void run() {
         update();
@@ -75,7 +77,7 @@ public class BoardController {
    * Start a game of Block Drop.
    */
   public void startGame() {
-    timer.scheduleRepeating(loopTime);
+    lobbyTimer.scheduleRepeating(loopTime);
   }
 
   /*
@@ -121,7 +123,7 @@ public class BoardController {
           model.initNextBlock();
         }
       } catch (BlockOverflow e) {
-        timer.cancel();
+        lobbyTimer.cancel();
         long finalScore = secondaryController.getScoreTracker().getScore();
         boolean keepPlaying = Window.confirm("Game Over. Final Score: " + finalScore
                 + ". Would you like to continue playing with a " + ScoreTracker.LOSS_PENALTY + " point penalty?");
@@ -315,6 +317,10 @@ public class BoardController {
 
   void setPaused(boolean b) {
     pause = b;
+    if (b && !gameTimer.isRepeating())
+      gameTimer.scheduleRepeating(2000);
+    else if (!b)
+      gameTimer.cancel();
   }
 
   void setFast(boolean fast) {
@@ -330,6 +336,6 @@ public class BoardController {
   }
 
   public void destroy() {
-    timer.cancel();
+    lobbyTimer.cancel();
   }
 }

@@ -294,6 +294,7 @@ public class Server implements MessageCallback {
 
   private void updateGameRoomHeartBeat(Player player) {
     gameHeartBeats.put(player, System.currentTimeMillis());
+    System.out.println("Server: " + player.getName() + " sent heartbeat");
   }
 
   private void updateLobbyHeartBeat(Player player) {
