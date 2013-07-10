@@ -19,6 +19,7 @@ public class ScoreTracker implements Comparable<ScoreTracker> {
 
   public static final int BASE_ROW_SCORE = 10;
   private static final int[] COMBO_FACTOR = new int[] { 1, 2, 5, 10 };
+  public static final long LOSS_PENALTY = 500;
 
   public static int calculateComboFactor(int numClearedRows) {
     return COMBO_FACTOR[numClearedRows - 1];

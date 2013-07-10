@@ -1,8 +1,10 @@
 package demo.client.local.game;
 
 import com.google.gwt.user.client.Timer;
+import com.google.gwt.user.client.Window;
 
 import demo.client.local.lobby.Client;
+import demo.client.shared.ScoreTracker;
 import demo.client.shared.model.BackgroundBlockModel;
 import demo.client.shared.model.BlockOverflow;
 import demo.client.shared.model.BoardModel;
@@ -40,7 +42,7 @@ public class BoardController {
   private ClearState clearState = ClearState.START;
   private Block toBeCleared;
   private Block bgBlock;
-
+  
   public BoardController(ControllableBoardDisplay boardDisplay, SecondaryDisplayController secondaryController,
           BoardMessageBus messageBus) {
     this.boardDisplay = boardDisplay;
@@ -60,7 +62,7 @@ public class BoardController {
       }
     };
   }
-  
+
   protected void reset() {
     activeBlock = new Block(model.getActiveBlock(), boardDisplay.getSizeCategory());
     nextBlock = new Block(model.getNextBlock(), boardDisplay.getSizeCategory());
@@ -119,10 +121,22 @@ public class BoardController {
           model.initNextBlock();
         }
       } catch (BlockOverflow e) {
-        // TODO: Handle game ending.
-        System.out.println("Game Over.");
-
         timer.cancel();
+        long finalScore = secondaryController.getScoreTracker().getScore();
+        boolean keepPlaying = Window.confirm("Game Over. Final Score: " + finalScore
+                + ". Would you like to continue playing with a " + ScoreTracker.LOSS_PENALTY + " point penalty?");
+        if (keepPlaying) {
+          model = new BoardModel();
+          boardDisplay.clearBoard();
+          reset();
+          secondaryController.getScoreTracker().setScore(finalScore - ScoreTracker.LOSS_PENALTY);
+          secondaryController.updateAndSortScore(secondaryController.getScoreTracker());
+          messageBus.sendScoreUpdate(secondaryController.getScoreTracker(), null);
+          startGame();
+        }
+        else {
+          BoardPage.getInstance().goToLobby();
+        }
       }
       // Reset for next loop.
       model.setDrop(false);

@@ -46,6 +46,8 @@ public class BoardPage extends Composite implements ControllableBoardDisplay {
 
   public static final String CANVAS_WRAPPER_ID = "mainCanvas-wrapper";
 
+  private static BoardPage instance;
+
   /* A mainCanvas for drawing a Block Drop game. */
   @DataField("canvas")
   private Canvas mainCanvas = Canvas.createIfSupported();
@@ -81,6 +83,7 @@ public class BoardPage extends Composite implements ControllableBoardDisplay {
    */
   public BoardPage() {
     System.out.println("Initiating BoardModel");
+    instance = this;
 
     // Initialize canvases.
     mainCanvas.setCoordinateSpaceHeight(Size.MAIN_COORD_HEIGHT);
@@ -237,5 +240,13 @@ public class BoardPage extends Composite implements ControllableBoardDisplay {
   @Override
   public SizeCategory getSizeCategory() {
     return canvasWrapper.getSizeCategory();
+  }
+
+  public static BoardPage getInstance() {
+    return instance;
+  }
+
+  public void goToLobby() {
+    lobbyTransition.go();
   }
 }

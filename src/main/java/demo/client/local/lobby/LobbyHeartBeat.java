@@ -14,7 +14,7 @@ public class LobbyHeartBeat extends Timer {
 
   @Override
   public void run() {
-    MessageBuilder.createMessage("Relay").command(Command.KEEP_ALIVE).withValue(Client.getInstance().getPlayer())
+    MessageBuilder.createMessage("Relay").command(Command.LOBBY_KEEP_ALIVE).withValue(Client.getInstance().getPlayer())
             .noErrorHandling().sendNowWith(messageBus);
     System.out.println("LobbyHeartBeat sent");
   }

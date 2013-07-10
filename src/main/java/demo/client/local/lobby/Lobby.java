@@ -15,6 +15,7 @@ import org.jboss.errai.bus.client.api.messaging.MessageBus;
 import org.jboss.errai.ui.client.widget.ListWidget;
 import org.jboss.errai.ui.nav.client.local.DefaultPage;
 import org.jboss.errai.ui.nav.client.local.Page;
+import org.jboss.errai.ui.nav.client.local.PageHidden;
 import org.jboss.errai.ui.nav.client.local.TransitionTo;
 import org.jboss.errai.ui.shared.api.annotations.DataField;
 import org.jboss.errai.ui.shared.api.annotations.Templated;
@@ -123,6 +124,11 @@ public class Lobby extends Composite {
     playerButtonPanel.add(newGameButton);
     gameButtonPanel.add(joinGameButton);
     joinLobby();
+  }
+  
+  @PageHidden
+  private void leaveLobby() {
+    heartBeat.cancel();
   }
 
   /*

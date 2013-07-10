@@ -254,7 +254,7 @@ public class Server implements MessageCallback {
       MoveEvent moveEvent = message.getValue(MoveEvent.class);
       broadcastMove(moveEvent);
       break;
-    case KEEP_ALIVE:
+    case LOBBY_KEEP_ALIVE:
       updateHeartBeat(message.getValue(Player.class));
       break;
     case INVITATION:
