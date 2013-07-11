@@ -66,6 +66,10 @@ public class BoardPage extends Composite implements ControllableBoardDisplay {
   @DataField("opp-canvas")
   private Canvas oppCanvas = Canvas.createIfSupported();
   private BoardCanvas oppCanvasWrapper;
+  
+  @Inject
+  @DataField("game-over-panel")
+  GameOverPanel gameOverPanel;
 
   @Inject
   @DataField("score-list")
@@ -119,6 +123,8 @@ public class BoardPage extends Composite implements ControllableBoardDisplay {
     secondaryController = new SecondaryDisplayControllerImpl(scoreDisplay, nextPieceCanvas);
     controller = new BoardController(this, secondaryController, new BoardMessageBusImpl());
     boardCallback = new BoardCallback(controller, secondaryController);
+    
+    gameOverPanel.setVisible(false);
 
     EventHandler handler = new BoardKeyHandler(controller);
     addHandlerToMainCanvas((KeyUpHandler) handler, KeyUpEvent.getType());
@@ -256,5 +262,14 @@ public class BoardPage extends Composite implements ControllableBoardDisplay {
 
   public void goToLobby() {
     lobbyTransition.go();
+  }
+
+  public BoardController getController() {
+    return controller;
+  }
+
+  @Override
+  public void gameOver() {
+    gameOverPanel.setVisible(true);
   }
 }

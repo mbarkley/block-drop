@@ -77,4 +77,9 @@ public class BoardCanvas implements ControllableBoardDisplay {
     return sizeCategory;
   }
 
+  @Override
+  public void gameOver() {
+    // TODO: Show something on canvas
+  }
+
 }

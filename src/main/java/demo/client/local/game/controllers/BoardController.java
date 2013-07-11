@@ -30,6 +30,8 @@ public class BoardController {
 
   /* A updateTimer for running the game loop. */
   private Timer updateTimer;
+  private GameHeartBeat heartBeatTimer = new GameHeartBeat();
+
   /*
    * The number of iterations for a block to drop one square on the board. Must be a multiple of 4.
    */
@@ -48,9 +50,7 @@ public class BoardController {
   private ClearState clearState = ClearState.START;
   private Block toBeCleared;
   private Block bgBlock;
-  
-  private GameHeartBeat gameTimer = new GameHeartBeat();
-  
+
   public BoardController(ControllableBoardDisplay boardDisplay, SecondaryDisplayController secondaryController,
           BoardMessageBus messageBus) {
     this.boardDisplay = boardDisplay;
@@ -126,27 +126,11 @@ public class BoardController {
         }
       } catch (BlockOverflow e) {
         updateTimer.cancel();
+
+        // Keep alive presence in game room
+        heartBeatTimer.scheduleRepeating(loopTime * dropIncrement);
         
-        long finalScore = secondaryController.getScoreTracker().getScore();
-        boolean keepPlaying = Window.confirm("Game Over. Final Score: " + finalScore
-                + ". Would you like to continue playing with a " + ScoreTracker.LOSS_PENALTY + " point penalty?");
-        if (keepPlaying) {
-          // Reset board model and controller
-          model = new BoardModel();
-          boardDisplay.clearBoard();
-          reset();
-          
-          // Subtract score penalty and update score
-          secondaryController.getScoreTracker().setScore(finalScore - ScoreTracker.LOSS_PENALTY);
-          secondaryController.updateAndSortScore(secondaryController.getScoreTracker());
-          messageBus.sendScoreUpdate(secondaryController.getScoreTracker(), null);
-          
-          // Show time
-          startGame();
-        }
-        else {
-          BoardPage.getInstance().goToLobby();
-        }
+        boardDisplay.gameOver();
       }
       // Reset for next loop.
       model.setDrop(false);
@@ -159,6 +143,23 @@ public class BoardController {
       if (moved)
         messageBus.sendMoveUpdate(model, Client.getInstance().getPlayer());
     }
+  }
+
+  public void restart() {
+    // Reset board model and controller
+    model = new BoardModel();
+    boardDisplay.clearBoard();
+    reset();
+
+    // Subtract score penalty and update score
+    secondaryController.getScoreTracker().setScore(
+            secondaryController.getScoreTracker().getScore() - ScoreTracker.LOSS_PENALTY);
+    secondaryController.updateAndSortScore(secondaryController.getScoreTracker());
+    messageBus.sendScoreUpdate(secondaryController.getScoreTracker(), null);
+
+    // Show time
+    startGame();
+    heartBeatTimer.cancel();
   }
 
   private void addRowsToBottom() {
@@ -320,11 +321,11 @@ public class BoardController {
 
   public void setPaused(boolean b) {
     if (b && !pause) {
-      gameTimer.scheduleRepeating(2000);
+      heartBeatTimer.scheduleRepeating(2000);
       boardDisplay.pause();
     }
     else if (!b && pause) {
-      gameTimer.cancel();
+      heartBeatTimer.cancel();
       boardDisplay.unpause();
     }
     pause = b;
@@ -344,5 +345,6 @@ public class BoardController {
 
   public void destroy() {
     updateTimer.cancel();
+    heartBeatTimer.cancel();
   }
 }

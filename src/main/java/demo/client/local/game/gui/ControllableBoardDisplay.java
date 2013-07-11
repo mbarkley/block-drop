@@ -34,4 +34,6 @@ public interface ControllableBoardDisplay {
   public void clearBoard();
   
   public SizeCategory getSizeCategory();
+
+  public void gameOver();
 }

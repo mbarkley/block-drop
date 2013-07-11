@@ -5,6 +5,9 @@ body {
 /* BASE PAGE STYLES END */
 
 /* GENERIC STYLES BEGIN */
+.inline {
+	display: inline;
+}
 .inline-block {
 	display: inline-block;
 }
