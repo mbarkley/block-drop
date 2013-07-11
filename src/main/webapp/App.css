@@ -103,4 +103,30 @@ body {
 	background-color: green;
 }
 
+.game-over-panel {
+	position: fixed;
+	z-index: 10;
+	top: 100px;
+	left: 270px;
+	background-color: lightsteelblue;
+	width: 480px;
+	padding: 20px;
+	text-align: center;
+	font-family: sans-serif;
+	font-size: 120%;
+	border: 2px solid black;
+	border-radius: 5px;
+}
+
+.game-over-panel button {
+	font-size: 110%;
+	border-radius: 5px;
+	margin: 20px 40px 0px;
+	padding: 8px;
+}
+
+.game-over-panel button:hover {
+	border: 2px solid black;
+}
+
 /* panel styles end. */
