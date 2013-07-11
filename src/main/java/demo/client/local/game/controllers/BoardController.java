@@ -92,11 +92,7 @@ public class BoardController {
    */
   void update() {
     if (pause) {
-      boardDisplay.pause();
       return;
-    }
-    else {
-      boardDisplay.unpause();
     }
 
     boolean moved = false;
@@ -323,11 +319,15 @@ public class BoardController {
   }
 
   public void setPaused(boolean b) {
-    pause = b;
-    if (b && !gameTimer.isRepeating())
+    if (b && !pause) {
       gameTimer.scheduleRepeating(2000);
-    else if (!b)
+      boardDisplay.pause();
+    }
+    else if (!b && pause) {
       gameTimer.cancel();
+      boardDisplay.unpause();
+    }
+    pause = b;
   }
 
   public void setFast(boolean fast) {
