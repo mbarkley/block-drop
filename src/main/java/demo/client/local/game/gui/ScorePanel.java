@@ -1,4 +1,4 @@
-package demo.client.local.game;
+package demo.client.local.game.gui;
 
 import javax.inject.Inject;
 

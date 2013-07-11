@@ -1,8 +1,8 @@
-package demo.client.local.game;
+package demo.client.local.game.gui;
 
 import com.google.gwt.canvas.client.Canvas;
 
-import demo.client.local.game.Size.SizeCategory;
+import demo.client.local.game.tools.Size.SizeCategory;
 
 public class BoardCanvas implements ControllableBoardDisplay {
 

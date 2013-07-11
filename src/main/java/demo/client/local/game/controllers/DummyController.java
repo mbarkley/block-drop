@@ -1,5 +1,6 @@
-package demo.client.local.game;
+package demo.client.local.game.controllers;
 
+import demo.client.local.game.gui.Block;
 import demo.client.shared.Player;
 import demo.client.shared.ScoreTracker;
 

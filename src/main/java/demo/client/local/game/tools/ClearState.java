@@ -1,9 +1,9 @@
-package demo.client.local.game;
+package demo.client.local.game.tools;
 
 /*
  * For tracking state while clearing rows.
  */
-enum ClearState {
+public enum ClearState {
   START, // Initial state.
   FIRST_UNDRAW, // Undrawing and redrawing used to create flashing effect.
   FIRST_REDRAW, SECOND_UNDRAW, SECOND_REDRAW, THIRD_UNDRAW, THIRD_REDRAW, LAST_UNDRAW, DROPPING; // Move
@@ -23,7 +23,7 @@ enum ClearState {
     counter = value;
   }
 
-  ClearState getNextState() {
+  public ClearState getNextState() {
     ClearState retVal = this;
     if (counter == CYCLES || this == START) {
       counter = 0;
@@ -67,7 +67,7 @@ enum ClearState {
     return retVal;
   }
 
-  int getCounter() {
+  public int getCounter() {
     return counter;
   }
 }

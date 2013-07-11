@@ -1,8 +1,14 @@
-package demo.client.local.game;
+package demo.client.local.game.controllers;
 
 import com.google.gwt.user.client.Timer;
 import com.google.gwt.user.client.Window;
 
+import demo.client.local.game.gui.Block;
+import demo.client.local.game.gui.BoardPage;
+import demo.client.local.game.gui.ControllableBoardDisplay;
+import demo.client.local.game.tools.BoardMessageBus;
+import demo.client.local.game.tools.ClearState;
+import demo.client.local.game.tools.GameHeartBeat;
 import demo.client.local.lobby.Client;
 import demo.client.shared.ScoreTracker;
 import demo.client.shared.model.BackgroundBlockModel;
@@ -22,8 +28,8 @@ public class BoardController {
   /* A block model. */
   protected Block nextBlock;
 
-  /* A lobbyTimer for running the game loop. */
-  private Timer lobbyTimer;
+  /* A updateTimer for running the game loop. */
+  private Timer updateTimer;
   /*
    * The number of iterations for a block to drop one square on the board. Must be a multiple of 4.
    */
@@ -56,8 +62,8 @@ public class BoardController {
     activeBlock = new Block(model.getActiveBlock(), boardDisplay.getSizeCategory());
     nextBlock = new Block(model.getNextBlock(), boardDisplay.getSizeCategory());
 
-    // Create a lobbyTimer to run the game loop.
-    lobbyTimer = new Timer() {
+    // Create a updateTimer to run the game loop.
+    updateTimer = new Timer() {
       @Override
       public void run() {
         update();
@@ -77,7 +83,7 @@ public class BoardController {
    * Start a game of Block Drop.
    */
   public void startGame() {
-    lobbyTimer.scheduleRepeating(loopTime);
+    updateTimer.scheduleRepeating(loopTime);
   }
 
   /*
@@ -123,7 +129,8 @@ public class BoardController {
           model.initNextBlock();
         }
       } catch (BlockOverflow e) {
-        lobbyTimer.cancel();
+        updateTimer.cancel();
+        
         long finalScore = secondaryController.getScoreTracker().getScore();
         boolean keepPlaying = Window.confirm("Game Over. Final Score: " + finalScore
                 + ". Would you like to continue playing with a " + ScoreTracker.LOSS_PENALTY + " point penalty?");
@@ -266,7 +273,7 @@ public class BoardController {
     return i == track.length || i == 1;
   }
 
-  void clearRotation() {
+  public void clearRotation() {
     clearHelper(rotate);
   }
 
@@ -280,7 +287,7 @@ public class BoardController {
     incrementHelper(moveTrack);
   }
 
-  void incrementRotate() {
+  public void incrementRotate() {
     incrementHelper(rotate);
   }
 
@@ -299,7 +306,7 @@ public class BoardController {
     clearHelper(moveTrack);
   }
 
-  void setColMove(int i) {
+  public void setColMove(int i) {
     model.setPendingColMove(i);
     if (i != 0)
       incrementMovePacer();
@@ -307,15 +314,15 @@ public class BoardController {
       clearMovePacer();
   }
 
-  boolean isPaused() {
+  public boolean isPaused() {
     return pause;
   }
 
-  void setDrop(boolean b) {
+  public void setDrop(boolean b) {
     model.setDrop(b);
   }
 
-  void setPaused(boolean b) {
+  public void setPaused(boolean b) {
     pause = b;
     if (b && !gameTimer.isRepeating())
       gameTimer.scheduleRepeating(2000);
@@ -323,7 +330,7 @@ public class BoardController {
       gameTimer.cancel();
   }
 
-  void setFast(boolean fast) {
+  public void setFast(boolean fast) {
     model.setFast(fast);
   }
 
@@ -336,6 +343,6 @@ public class BoardController {
   }
 
   public void destroy() {
-    lobbyTimer.cancel();
+    updateTimer.cancel();
   }
 }

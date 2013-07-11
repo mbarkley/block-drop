@@ -1,4 +1,4 @@
-package demo.client.local.game;
+package demo.client.local.game.tools;
 
 import demo.client.shared.Player;
 import demo.client.shared.ScoreTracker;

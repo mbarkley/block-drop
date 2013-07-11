@@ -1,4 +1,4 @@
-package demo.client.local.game;
+package demo.client.local.game.gui;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -30,7 +30,15 @@ import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.RootPanel;
 import com.google.web.bindery.event.shared.HandlerRegistration;
 
-import demo.client.local.game.Size.SizeCategory;
+import demo.client.local.game.callbacks.BoardCallback;
+import demo.client.local.game.callbacks.OppCallback;
+import demo.client.local.game.controllers.BoardController;
+import demo.client.local.game.controllers.SecondaryDisplayController;
+import demo.client.local.game.controllers.SecondaryDisplayControllerImpl;
+import demo.client.local.game.tools.BoardKeyHandler;
+import demo.client.local.game.tools.BoardMessageBusImpl;
+import demo.client.local.game.tools.Size;
+import demo.client.local.game.tools.Size.SizeCategory;
 import demo.client.local.lobby.Client;
 import demo.client.local.lobby.Lobby;
 import demo.client.shared.Command;

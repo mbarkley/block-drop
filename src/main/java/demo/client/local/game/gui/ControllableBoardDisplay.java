@@ -1,6 +1,6 @@
-package demo.client.local.game;
+package demo.client.local.game.gui;
 
-import demo.client.local.game.Size.SizeCategory;
+import demo.client.local.game.tools.Size.SizeCategory;
 
 public interface ControllableBoardDisplay {
 

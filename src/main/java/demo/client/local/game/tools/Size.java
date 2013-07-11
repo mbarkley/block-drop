@@ -1,29 +1,29 @@
-package demo.client.local.game;
+package demo.client.local.game.tools;
 
 import java.util.HashMap;
 import java.util.Map;
 
 
-class Size {
+public class Size {
   
   public enum SizeCategory {
     MAIN, NEXT, OPPONENT
   }
 
   /* The height of the board in squares. */
-  static final int HEIGHT = 15;
+  public static final int HEIGHT = 15;
   /* The width of the board in squares. */
-  static final int WIDTH = 10;
+  public static final int WIDTH = 10;
   /* Canvas coordinate-space height (in pixels). */
-  static final int MAIN_COORD_HEIGHT = 780;
+  public static final int MAIN_COORD_HEIGHT = 780;
   /* Canvas coordinate-space width (in pixels). */
-  static final int MAIN_COORD_WIDTH = 520;
+  public static final int MAIN_COORD_WIDTH = 520;
   /* The width and height of each square in this block (in pixels). */
-  static final int MAIN_BLOCK_SIZE = MAIN_COORD_HEIGHT / HEIGHT;
-  static final int OPP_COORD_HEIGHT = 390;
-  static final int OPP_COORD_WIDTH = 260;
-  static final int NEXT_COORD_HEIGHT = MAIN_BLOCK_SIZE * 5;
-  static final int NEXT_COORD_WIDTH = MAIN_BLOCK_SIZE * 5;
+  public static final int MAIN_BLOCK_SIZE = MAIN_COORD_HEIGHT / HEIGHT;
+  public static final int OPP_COORD_HEIGHT = 390;
+  public static final int OPP_COORD_WIDTH = 260;
+  public static final int NEXT_COORD_HEIGHT = MAIN_BLOCK_SIZE * 5;
+  public static final int NEXT_COORD_WIDTH = MAIN_BLOCK_SIZE * 5;
   
   private static Map<SizeCategory, Size> cachedSizes = new HashMap<SizeCategory, Size>();
   
@@ -45,9 +45,9 @@ class Size {
     return cachedSizes.get(category);
   }
   
-  final int COORD_HEIGHT;
-  final int COORD_WIDTH;
-  final int BLOCK_SIZE;
+  public final int COORD_HEIGHT;
+  public final int COORD_WIDTH;
+  public final int BLOCK_SIZE;
   
   private Size(SizeCategory category) {
     switch(category) {

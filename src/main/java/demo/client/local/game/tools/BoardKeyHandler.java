@@ -1,4 +1,4 @@
-package demo.client.local.game;
+package demo.client.local.game.tools;
 
 import com.google.gwt.event.dom.client.KeyCodes;
 import com.google.gwt.event.dom.client.KeyDownEvent;
@@ -6,13 +6,16 @@ import com.google.gwt.event.dom.client.KeyDownHandler;
 import com.google.gwt.event.dom.client.KeyUpEvent;
 import com.google.gwt.event.dom.client.KeyUpHandler;
 
+import demo.client.local.game.controllers.BoardController;
+import demo.client.local.game.controllers.SecondaryDisplayController;
+
 public class BoardKeyHandler implements KeyDownHandler, KeyUpHandler {
 
   private BoardController controller;
   private SecondaryDisplayController secondaryController;
   private static final int KEY_SPACE_BAR = 32;
 
-  BoardKeyHandler(BoardController boardController) {
+  public BoardKeyHandler(BoardController boardController) {
     controller = boardController;
     secondaryController = controller.getSecondaryController();
   }

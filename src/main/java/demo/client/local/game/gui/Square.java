@@ -1,8 +1,9 @@
-package demo.client.local.game;
+package demo.client.local.game.gui;
 
 import com.google.gwt.canvas.dom.client.Context2d;
 
-import demo.client.local.game.Size.SizeCategory;
+import demo.client.local.game.tools.Size;
+import demo.client.local.game.tools.Size.SizeCategory;
 
 /*
  * A class for drawing individual squares in a Block Drop block.

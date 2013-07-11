@@ -1,8 +1,11 @@
-package demo.client.local.game;
+package demo.client.local.game.controllers;
 
 import java.util.LinkedList;
 import java.util.Queue;
 
+import demo.client.local.game.gui.Block;
+import demo.client.local.game.gui.ControllableBoardDisplay;
+import demo.client.local.game.tools.DummyBus;
 import demo.client.shared.model.BoardModel;
 
 public class OppController extends BoardController {

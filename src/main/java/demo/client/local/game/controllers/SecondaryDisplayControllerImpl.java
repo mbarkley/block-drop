@@ -1,4 +1,4 @@
-package demo.client.local.game;
+package demo.client.local.game.controllers;
 
 import java.util.Collections;
 import java.util.List;
@@ -12,13 +12,16 @@ import org.jboss.errai.ui.client.widget.ListWidget;
 
 import com.google.gwt.canvas.client.Canvas;
 
+import demo.client.local.game.gui.Block;
+import demo.client.local.game.gui.ScorePanel;
+import demo.client.local.game.tools.Size;
 import demo.client.local.lobby.Client;
 import demo.client.shared.Command;
 import demo.client.shared.GameRoom;
 import demo.client.shared.Player;
 import demo.client.shared.ScoreTracker;
 
-class SecondaryDisplayControllerImpl implements SecondaryDisplayController {
+public class SecondaryDisplayControllerImpl implements SecondaryDisplayController {
 
   private ListWidget<ScoreTracker, ScorePanel> scoreList;
   private Canvas nextCanvas;

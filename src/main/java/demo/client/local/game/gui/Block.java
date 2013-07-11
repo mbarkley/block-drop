@@ -1,13 +1,15 @@
-package demo.client.local.game;
+package demo.client.local.game.gui;
 
 import com.google.gwt.canvas.dom.client.Context2d;
 
-import demo.client.local.game.Size.SizeCategory;
+import demo.client.local.game.tools.ColorMapper;
+import demo.client.local.game.tools.Size;
+import demo.client.local.game.tools.Size.SizeCategory;
 import demo.client.shared.model.BlockModel;
 import demo.client.shared.model.SquareModel;
 
 /* A class for drawing Block Drop blocks on an HTML5 canvas. */
-class Block {
+public class Block {
 
   /* The BlockModel associated with this instance. */
   private BlockModel model;
@@ -16,7 +18,7 @@ class Block {
   /*
    * Create a Block instance.
    */
-  Block(BlockModel blockModel, SizeCategory sizeCategory) {
+  public Block(BlockModel blockModel, SizeCategory sizeCategory) {
     model = blockModel;
     this.sizeCategory = sizeCategory;
   }
@@ -30,7 +32,7 @@ class Block {
    * 
    * @param context2d The context on which to draw this block.
    */
-  void draw(double x, double y, Context2d context2d) {
+  public void draw(double x, double y, Context2d context2d) {
     Square square = new Square(sizeCategory);
     // Get an iterator of square coordinates based around the given coordinate (x,y).
     for (SquareModel squareModel : model.getIterator()) {
@@ -47,7 +49,7 @@ class Block {
    * 
    * @return True iff the given BlockModel is the same as the model of this Block instance.
    */
-  boolean isModel(BlockModel activeBlock) {
+  public boolean isModel(BlockModel activeBlock) {
     return model.equals(activeBlock);
   }
 
@@ -72,11 +74,11 @@ class Block {
     model.rotate();
   }
 
-  double getCentreRowDiff() {
+  public double getCentreRowDiff() {
     return model.getCentreRowDiff();
   }
 
-  double getCentreColDiff() {
+  public double getCentreColDiff() {
     return model.getCentreColDiff();
   }
 
@@ -89,7 +91,7 @@ class Block {
    * @return The coordinate to pass to the Block.draw method for drawing a block in the correct
    * position.
    */
-  static int indexToCoord(Integer index, SizeCategory sizeCategory) {
+  public static int indexToCoord(Integer index, SizeCategory sizeCategory) {
     return index * Size.getSize(sizeCategory).BLOCK_SIZE;
   }
 }

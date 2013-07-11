@@ -1,4 +1,4 @@
-package demo.client.local.game;
+package demo.client.local.game.callbacks;
 
 import java.util.Map;
 import java.util.TreeMap;
@@ -6,6 +6,8 @@ import java.util.TreeMap;
 import org.jboss.errai.bus.client.api.messaging.Message;
 import org.jboss.errai.bus.client.api.messaging.MessageCallback;
 
+import demo.client.local.game.controllers.OppController;
+import demo.client.local.game.gui.ControllableBoardDisplay;
 import demo.client.local.lobby.Client;
 import demo.client.shared.Command;
 import demo.client.shared.GameRoom;

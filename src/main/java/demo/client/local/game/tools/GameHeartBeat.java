@@ -1,4 +1,4 @@
-package demo.client.local.game;
+package demo.client.local.game.tools;
 
 import org.jboss.errai.bus.client.ErraiBus;
 import org.jboss.errai.bus.client.api.base.MessageBuilder;

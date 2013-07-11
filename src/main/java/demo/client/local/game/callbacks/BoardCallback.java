@@ -1,8 +1,10 @@
-package demo.client.local.game;
+package demo.client.local.game.callbacks;
 
 import org.jboss.errai.bus.client.api.messaging.Message;
 import org.jboss.errai.bus.client.api.messaging.MessageCallback;
 
+import demo.client.local.game.controllers.BoardController;
+import demo.client.local.game.controllers.SecondaryDisplayController;
 import demo.client.local.lobby.Client;
 import demo.client.shared.Command;
 import demo.client.shared.Player;

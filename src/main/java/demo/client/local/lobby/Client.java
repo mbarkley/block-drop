@@ -3,16 +3,12 @@ package demo.client.local.lobby;
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 
-import org.jboss.errai.bus.client.api.base.MessageBuilder;
-import org.jboss.errai.bus.client.api.messaging.MessageBus;
 import org.jboss.errai.ioc.client.api.EntryPoint;
 import org.jboss.errai.ui.nav.client.local.Navigation;
 
-import com.google.gwt.user.client.Timer;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.RootPanel;
 
-import demo.client.shared.Command;
 import demo.client.shared.GameRoom;
 import demo.client.shared.Player;
 

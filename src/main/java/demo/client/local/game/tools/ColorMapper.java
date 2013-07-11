@@ -1,4 +1,4 @@
-package demo.client.local.game;
+package demo.client.local.game.tools;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -12,7 +12,7 @@ import demo.client.shared.model.SquareBlockModel;
 import demo.client.shared.model.TBlockModel;
 import demo.client.shared.model.ZBlockModel;
 
-class ColorMapper {
+public class ColorMapper {
 
   private static final String BASIC_COLOUR = "white";
 
@@ -46,7 +46,7 @@ class ColorMapper {
     colourMap.put(1337, "grey");
   }
 
-  static String codeToColour(int code) {
+  public static String codeToColour(int code) {
     return colourMap.get(code);
   }
 
