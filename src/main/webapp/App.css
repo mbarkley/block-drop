@@ -1,6 +1,10 @@
 /* BASE PAGE STYLES BEGIN */
 body {
 	background-color: white;
+	background-image: url('images/brickwall_@2X.png');
+	background-repeat: repeat;
+	min-width: 750px;
+	text-align: center;
 }
 h1 {
 	font-family: sans-serif;
@@ -33,7 +37,7 @@ h1 {
 	padding: 5px 80px 20px;
 	font-size: 110%;
 	background-color: white;
-	border: 1px solid rgb(200,200,200);
+	border: 1px solid rgb(80,80,80);
 	border-radius: 10px;
 }
 .lobby-wrapper {
@@ -48,12 +52,14 @@ h1 {
 	text-align: center;
 }
 .list-wrapper {
+	background-color: lightcyan;
     width: 350px;
     margin: 0 10px 0;
     overflow: auto;
-    border-top: 1px solid black;
     font-size: 140%;
     vertical-align: top;
+    border-radius: 5px;
+    border: 1px solid rgb(80,80,80);
 }
 .list-panel .gwt-Label {
 	display: inline;
@@ -62,88 +68,118 @@ h1 {
 	position: absolute;
 	bottom: 20px;
 	padding: 5px 10px 5px;
-	font-size: 105%;
+	font-size: 90%;
 }
 .button-panel {
 	text-align: center;
+}
+.list-wrapper tr:first-child .list-panel {
+	border-top: 1px solid rgb(80,80,80);
+}
+.list-wrapper tr:last-child .list-panel {
+	border-bottom: none;
 }
 
 /* Lobby styles end */
 
 /* BOARD.HTML STYLES BEGIN */
 .display-wrapper {
+	background-color: lightblue;
+	border: 1px solid black;
+	border-radius: 10px;
+	overflow: hidden;
+	display: inline-block;
 	position: relative;
-	min-width: 1210px;
+	min-width: 1040px;
+	margin: auto;
+	
+	-webkit-touch-callout: none;
+	-webkit-user-select: none;
+	-khtml-user-select: none;
+	-moz-user-select: moz-none;
+	-ms-user-select: none;
+	user-select: none;
+}
+
+.display-wrapper h1 {
+	font-size: 50px;
 }
 .panel {
 	height: 780px;
+	vertical-align: top;
+	border-top: 1px solid black;
 }
 .side-panel {
 	width: 260px;
-	background-color: lightgrey;
+}
+.left-panel {
+	border-right: 1px solid black;
+}
+.right-panel {
+	border-left: 1px solid black;
 }
 .centre-panel {
 	width: 520px;
 	position: relative;
+	background-color: white;
 }
 .next-piece {
 	width: 260px;
 	height: 260px;
-	position: absolute;
+	border-bottom: 1px solid black;
 }
 .opp-canvas {
 	width: 260px;
 	height: 390px;
-	position: absolute;
 }
 .score-list {
-	position: absolute;
-	top: 280px;
 	width: 260px;
+	margin-top: -5px;
 }
 .overlay {
 	position: absolute;
-	width: 1040px;
+	width: 100%;
 	height: 780px;
 	background-color: rgba(0,0,0,0.2);
 	color: white;
-	font-size: 24px;
+	font-size: 40px;
 	font-family: sans-serif;
+	font-weight: bold;
 	text-align: center;
 	visibility: hidden;
 	z-index: 1;
 }
 .overlay > * {
 	position: relative;
-	top: 100px;
+	top: 200px;
 }
 /* BOARD.HTML STYLES END */
 
 /* panel styles begin. */
 
 .list-panel {
-	background-color: grey;
+	background-color: inherit;
 	cursor: pointer;
-	width: 308px;
-	border: 1px solid black;
-	border-top: none;
+	width: 310px;
+	border-bottom: 1px solid rgb(80,80,80);
 	padding: 5px 20px 5px;
 }
 
 .list-panel.selected {
-	background-color: red;
+	background-color: lightgrey;
 }
 
 .list-panel:HOVER {
-	background-color: lightgrey;
+	background-color: white;
 }
 
 .score-panel {
 	font-family: sans-serif;
-	padding-left: 5px;
-	width: 260px;
+	padding: 5px;
 }
-
+.score-panel .gwt-Label {
+	padding: 0px;
+}
 .score-panel > .score {
 	padding: 5px;
 	display: inline;

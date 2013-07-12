@@ -1,6 +1,7 @@
 package demo.client.local.game.gui;
 
 import com.google.gwt.canvas.client.Canvas;
+import com.google.gwt.canvas.dom.client.CssColor;
 
 import demo.client.local.game.tools.Size.SizeCategory;
 

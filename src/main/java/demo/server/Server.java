@@ -45,7 +45,7 @@ import demo.client.shared.model.MoveEvent;
 @Service("Relay")
 public class Server implements MessageCallback {
 
-  private static final long LOBBY_TIMEOUT = 5000;
+  private static final long LOBBY_TIMEOUT = 10000;
   private static final long GAME_TIMEOUT = 5000;
   
   /* A map of game ids to games that are currently in progress. */

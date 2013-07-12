@@ -155,8 +155,8 @@ public class SecondaryDisplayControllerImpl implements SecondaryDisplayControlle
   @Override
   public void drawBlockToNextCanvas(Block nextBlock) {
     // Clear everything.
-    nextCanvas.getContext2d().setFillStyle("lightgrey");
-    nextCanvas.getContext2d().fillRect(0, 0, Size.NEXT_COORD_WIDTH, Size.MAIN_COORD_HEIGHT);
+//    nextCanvas.getContext2d().setFillStyle("lightgrey");
+    nextCanvas.getContext2d().clearRect(0, 0, Size.NEXT_COORD_WIDTH, Size.MAIN_COORD_HEIGHT);
 
     // Draw title.
     nextCanvas.getContext2d().setFillStyle("black");
