@@ -131,6 +131,7 @@ h1 {
 .opp-canvas {
 	width: 260px;
 	height: 390px;
+	background-color: lightgrey;
 }
 .score-list {
 	width: 260px;
@@ -142,7 +143,7 @@ h1 {
 	height: 780px;
 	background-color: rgba(0,0,0,0.2);
 	color: white;
-	font-size: 40px;
+	font-size: 60px;
 	font-family: sans-serif;
 	font-weight: bold;
 	text-align: center;
@@ -176,9 +177,14 @@ h1 {
 .score-panel {
 	font-family: sans-serif;
 	padding: 5px;
+	border-style: solid;
+	border-color: black;
+	border-width: 1px;
+	border-radius: 3px;
 }
 .score-panel .gwt-Label {
 	padding: 0px;
+	font-weight: bold;
 }
 .score-panel > .score {
 	padding: 5px;

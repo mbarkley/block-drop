@@ -3,7 +3,10 @@ package demo.client.local.game.gui;
 import com.google.gwt.canvas.client.Canvas;
 import com.google.gwt.canvas.dom.client.CssColor;
 
+import demo.client.local.game.tools.Size;
 import demo.client.local.game.tools.Size.SizeCategory;
+import demo.client.shared.model.BlockModel;
+import demo.client.shared.model.SquareModel;
 
 public class BoardCanvas implements ControllableBoardDisplay {
 
@@ -38,10 +41,13 @@ public class BoardCanvas implements ControllableBoardDisplay {
    * @param activeBlock The block to undraw.
    */
   public void undrawBlock(int x, int y, Block activeBlock) {
-    canvas.getContext2d().beginPath();
-    activeBlock.getPath(x, y, canvas.getContext2d());
-    canvas.getContext2d().closePath();
-    drawBackground();
+    BlockModel model = activeBlock.getModel();
+    for (SquareModel square : model.getIterator()) {
+      int xOffset = x + Block.indexToCoord(square.getCol(), sizeCategory);
+      int yOffset = y + Block.indexToCoord(square.getRow(), sizeCategory);
+      canvas.getContext2d().clearRect(xOffset, yOffset, Size.getSize(sizeCategory).BLOCK_SIZE,
+              Size.getSize(sizeCategory).BLOCK_SIZE);
+    }
   }
 
   /*
@@ -69,8 +75,7 @@ public class BoardCanvas implements ControllableBoardDisplay {
 
   @Override
   public void clearBoard() {
-    canvas.getContext2d().setFillStyle(BOARD_COLOUR);
-    canvas.getContext2d().fillRect(0, 0, canvas.getCoordinateSpaceWidth(), canvas.getCoordinateSpaceHeight());
+    canvas.getContext2d().clearRect(0, 0, canvas.getCoordinateSpaceWidth(), canvas.getCoordinateSpaceHeight());
   }
 
   @Override

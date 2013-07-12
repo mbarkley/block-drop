@@ -94,4 +94,8 @@ public class Block {
   public static int indexToCoord(Integer index, SizeCategory sizeCategory) {
     return index * Size.getSize(sizeCategory).BLOCK_SIZE;
   }
+
+  public BlockModel getModel() {
+    return model;
+  }
 }
