@@ -71,7 +71,7 @@ public class BoardModel {
    */
   private void initActiveBlockPosition() {
     // Start active block above board.
-    activeBlockRow = -1;
+    activeBlockRow = -2;
     activeBlockColumn = COL_NUM / 2;
   }
 
