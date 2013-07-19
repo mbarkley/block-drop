@@ -46,8 +46,10 @@ public class OppController extends BoardController {
           redraw();
         }
         else if (isPaused()) {
-          model = model == null ? new BoardModel() : model;
-          reset();
+          if (model == null) {
+            model = new BoardModel();
+            reset();
+          }
           redraw();
           boardDisplay.pause();
         }

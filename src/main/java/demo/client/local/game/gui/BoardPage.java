@@ -7,6 +7,7 @@ import javax.inject.Inject;
 
 import org.jboss.errai.bus.client.api.base.MessageBuilder;
 import org.jboss.errai.bus.client.api.messaging.MessageBus;
+import org.jboss.errai.bus.client.api.messaging.MessageCallback;
 import org.jboss.errai.bus.client.api.messaging.RequestDispatcher;
 import org.jboss.errai.common.client.api.Assert;
 import org.jboss.errai.ui.client.widget.ListWidget;
@@ -66,6 +67,7 @@ public class BoardPage extends Composite implements ControllableBoardDisplay {
   @DataField("opp-canvas")
   private Canvas oppCanvas = Canvas.createIfSupported();
   private BoardCanvas oppCanvasWrapper;
+  private MessageCallback oppCallback;
   
   @Inject
   @DataField("game-over-panel")
@@ -123,6 +125,7 @@ public class BoardPage extends Composite implements ControllableBoardDisplay {
     secondaryController = new SecondaryDisplayControllerImpl(scoreDisplay, nextPieceCanvas);
     controller = new BoardController(this, secondaryController, new BoardMessageBusImpl());
     boardCallback = new BoardCallback(controller, secondaryController);
+    oppCallback = new OppCallback(oppCanvasWrapper);
     
     gameOverPanel.setVisible(false);
 
@@ -141,7 +144,7 @@ public class BoardPage extends Composite implements ControllableBoardDisplay {
       controller.startGame();
       // Subscribe to game channel
       messageBus.subscribe("Game" + Client.getInstance().getGameRoom().getId(), boardCallback);
-      messageBus.subscribe("Game" + Client.getInstance().getGameRoom().getId(), new OppCallback(oppCanvasWrapper));
+      messageBus.subscribe("Game" + Client.getInstance().getGameRoom().getId(), oppCallback);
     }
   }
 
@@ -155,8 +158,10 @@ public class BoardPage extends Composite implements ControllableBoardDisplay {
               .sendNowWith(dispatcher);
     }
 
-    if (controller != null)
+    if (controller != null) {
       controller.destroy();
+      ((OppCallback) oppCallback).destroy();
+    }
 
     removeHandlers();
 

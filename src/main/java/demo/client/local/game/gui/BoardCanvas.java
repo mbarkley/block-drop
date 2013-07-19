@@ -63,13 +63,11 @@ public class BoardCanvas implements ControllableBoardDisplay {
     context.setFillStyle("white");
     context.setTextAlign("center");
     context.fillText("Paused", canvas.getCoordinateSpaceWidth() / 2, canvas.getCoordinateSpaceHeight() / 3);
-    System.out.println("boardCanvas paused");
   }
 
   @Override
   public void unpause() {
     canvas.getContext2d().restore();
-    System.out.println("boardCanvas unpaused");
   }
 
   @Override
