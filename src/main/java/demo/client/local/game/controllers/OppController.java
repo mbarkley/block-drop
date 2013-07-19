@@ -17,6 +17,7 @@ public class OppController extends BoardController {
     // Dummy objects do nothing, to prevent this controller from updating the displayed score or
     // sending messages through the bus.
     super(boardDisplay, new DummyController(), new DummyBus());
+    setPaused(true);
   }
 
   public void addState(BoardModel state) {
@@ -25,6 +26,9 @@ public class OppController extends BoardController {
         stateQueue.clear();
       }
       stateQueue.add(state);
+      if (isPaused()) {
+        setPaused(false);
+      }
     }
   }
 
@@ -40,6 +44,12 @@ public class OppController extends BoardController {
           model = stateQueue.poll();
           reset();
           redraw();
+        }
+        else if (isPaused()) {
+          model = model == null ? new BoardModel() : model;
+          reset();
+          redraw();
+          boardDisplay.pause();
         }
       }
     }
@@ -58,7 +68,9 @@ public class OppController extends BoardController {
   public void setActive(boolean active) {
     this.active = active;
     if (!active) {
-      stateQueue.clear();
+      while (stateQueue.size() > 1) {
+        stateQueue.poll();
+      }
     }
   }
 

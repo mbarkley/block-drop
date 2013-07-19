@@ -12,4 +12,7 @@ public class DummyBus implements BoardMessageBus {
   @Override
   public void sendMoveUpdate(BoardModel state, Player player) {}
 
+  @Override
+  public void sendPauseUpdate(Player player) {}
+
 }

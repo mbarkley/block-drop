@@ -38,13 +38,20 @@ public class OppCallback implements MessageCallback {
     switch (command) {
     case MOVE_UPDATE:
       MoveEvent moveEvent = message.getValue(MoveEvent.class);
-      oppControllers.get(moveEvent.getPlayer()).addState(moveEvent.getState());
+      OppController movedController = oppControllers.get(moveEvent.getPlayer());
+      movedController.setPaused(false);
+      movedController.addState(moveEvent.getState());
       break;
     case UPDATE_SCORE:
       ScoreEvent scoreEvent = message.getValue(ScoreEvent.class);
       if (!oppControllers.containsKey(scoreEvent.getScoreTracker().getPlayer())) {
         oppControllers.put(scoreEvent.getScoreTracker().getPlayer(), new OppController(boardDisplay));
       }
+      break;
+    case GAME_KEEP_ALIVE:
+      Player pausePlayer = message.getValue(Player.class);
+      OppController pausedController = oppControllers.get(pausePlayer);
+      pausedController.setPaused(true);
       break;
     case SWITCH_OPPONENT:
       Player player = message.getValue(Player.class);

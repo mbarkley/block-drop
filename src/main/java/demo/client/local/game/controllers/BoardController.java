@@ -43,6 +43,7 @@ public class BoardController {
   private boolean[] rotate = new boolean[3];
   /* True if the game is paused. */
   private boolean pause = false;
+  private boolean[] pauseTrack = new boolean[dropIncrement / 2];
   private boolean[] moveTrack = new boolean[3];
 
   private ClearState clearState = ClearState.START;
@@ -90,6 +91,17 @@ public class BoardController {
    */
   void update() {
     if (pause) {
+      int i;
+      for (i = 0; i < pauseTrack.length; i++)
+        if (!pauseTrack[i])
+          break;
+      if (i == pauseTrack.length) {
+        messageBus.sendPauseUpdate(Client.getInstance().getPlayer());
+        pauseTrack = new boolean[pauseTrack.length];
+      }
+      else {
+        pauseTrack[i] = true;
+      }
       return;
     }
 
@@ -127,7 +139,7 @@ public class BoardController {
 
         // Keep alive presence in game room
         heartBeatTimer.scheduleRepeating(loopTime * dropIncrement);
-        
+
         boardDisplay.gameOver();
       }
       // Reset for next loop.
@@ -319,11 +331,10 @@ public class BoardController {
 
   public void setPaused(boolean b) {
     if (b && !pause) {
-      heartBeatTimer.scheduleRepeating(2000);
       boardDisplay.pause();
+      pauseTrack = new boolean[pauseTrack.length];
     }
     else if (!b && pause) {
-      heartBeatTimer.cancel();
       boardDisplay.unpause();
     }
     pause = b;

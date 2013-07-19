@@ -13,7 +13,7 @@ public class GameHeartBeat extends Timer {
 
   private MessageBus messageBus = ErraiBus.get();
   private boolean activated = false;
-  
+
   @Override
   public void scheduleRepeating(int milliseconds) {
     activated = true;
@@ -22,8 +22,8 @@ public class GameHeartBeat extends Timer {
 
   @Override
   public void run() {
-    MessageBuilder.createMessage("Relay").command(Command.GAME_KEEP_ALIVE).withValue(Client.getInstance().getPlayer())
-            .noErrorHandling().sendNowWith(messageBus);
+    MessageBuilder.createMessage("Relay").command(Command.GAME_KEEP_ALIVE)
+            .withValue(Client.getInstance().getPlayer()).noErrorHandling().sendNowWith(messageBus);
     System.out.println("Game keep alive sent");
   }
 
@@ -32,7 +32,7 @@ public class GameHeartBeat extends Timer {
     activated = false;
     super.cancel();
   }
-  
+
   public boolean isRepeating() {
     return activated;
   }

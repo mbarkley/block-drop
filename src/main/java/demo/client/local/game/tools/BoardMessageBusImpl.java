@@ -37,4 +37,11 @@ public class BoardMessageBusImpl implements BoardMessageBus {
     System.out.println("move update sent to relay");
   }
 
+  @Override
+  public void sendPauseUpdate(Player player) {
+    MessageBuilder.createMessage("Relay").command(Command.GAME_KEEP_ALIVE).withValue(player).noErrorHandling()
+            .sendNowWith(messageBus);
+    System.out.println("pause update sent");
+  }
+
 }

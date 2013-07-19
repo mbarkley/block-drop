@@ -1,6 +1,7 @@
 package demo.client.local.game.gui;
 
 import com.google.gwt.canvas.client.Canvas;
+import com.google.gwt.canvas.dom.client.Context2d;
 
 import demo.client.local.game.tools.Size;
 import demo.client.local.game.tools.Size.SizeCategory;
@@ -56,12 +57,19 @@ public class BoardCanvas implements ControllableBoardDisplay {
 
   @Override
   public void pause() {
-    throw new UnsupportedOperationException();
+    Context2d context = canvas.getContext2d();
+    context.save();
+    context.setFont("bold 20px sans-serif");
+    context.setFillStyle("white");
+    context.setTextAlign("center");
+    context.fillText("Paused", canvas.getCoordinateSpaceWidth() / 2, canvas.getCoordinateSpaceHeight() / 3);
+    System.out.println("boardCanvas paused");
   }
 
   @Override
   public void unpause() {
-    throw new UnsupportedOperationException();
+    canvas.getContext2d().restore();
+    System.out.println("boardCanvas unpaused");
   }
 
   @Override

@@ -6,8 +6,10 @@ import demo.client.shared.model.BoardModel;
 
 public interface BoardMessageBus {
 
-  public abstract void sendScoreUpdate(ScoreTracker scoreTracker, Player target);
+  public void sendScoreUpdate(ScoreTracker scoreTracker, Player target);
 
-  public abstract void sendMoveUpdate(BoardModel state, Player player);
+  public void sendMoveUpdate(BoardModel state, Player player);
+  
+  public void sendPauseUpdate(Player player);
 
 }

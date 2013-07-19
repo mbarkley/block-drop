@@ -37,8 +37,8 @@ import demo.client.shared.model.MoveEvent;
 /*
  * A class for facilitating games between clients over a network.
  * 
- * This class responds to fires events to and catches events from clients, maintains
- * the list of games and lobbyPlayers in the lobby, and also uses a message bus to act as
+ * This class responds to, fires events to, and catches events from clients; maintains
+ * the list of games and lobbyPlayers in the lobby; and also uses a message bus to act as
  * a relay between clients.
  */
 @ApplicationScoped
@@ -47,7 +47,7 @@ public class Server implements MessageCallback {
 
   private static final long LOBBY_TIMEOUT = 10000;
   private static final long GAME_TIMEOUT = 5000;
-  
+
   /* A map of game ids to games that are currently in progress. */
   private Map<Integer, GameRoom> games = new ConcurrentHashMap<Integer, GameRoom>();
   /* A map of player ids to lobbyPlayers that are currently in the lobby. */
@@ -73,7 +73,7 @@ public class Server implements MessageCallback {
   /* Used for sending lobby updates to clients. */
   @Inject
   private Event<LobbyUpdate> lobbyUpdate;
-  
+
   private Timer lobbyTimer;
   private Timer gameTimer;
 
@@ -95,7 +95,7 @@ public class Server implements MessageCallback {
     debugId = nextDebugId();
     System.out.println("Server" + debugId + ": Server object is constructed.");
   }
-  
+
   @PostConstruct
   private void init() {
     lobbyTimer = new Timer();
@@ -105,7 +105,7 @@ public class Server implements MessageCallback {
         Server.this.cleanLobby();
       }
     }, 0, LOBBY_TIMEOUT);
-    
+
     gameTimer = new Timer();
     gameTimer.schedule(new TimerTask() {
       @Override
@@ -117,7 +117,7 @@ public class Server implements MessageCallback {
 
   protected void cleanGameRooms() {
     long curTime = System.currentTimeMillis();
-    
+
     for (Entry<Player, Long> heartBeat : gameHeartBeats.entrySet()) {
       if (curTime - heartBeat.getValue() > GAME_TIMEOUT) {
         removePlayerFromGame(heartBeat.getKey(), heartBeat.getKey().getGameId());
@@ -129,17 +129,17 @@ public class Server implements MessageCallback {
   protected void cleanLobby() {
     long curTime = System.currentTimeMillis();
     List<Integer> removed = new ArrayList<Integer>();
-    
+
     for (Entry<Integer, Long> heartBeat : lobbyHeartBeats.entrySet()) {
       if (curTime - heartBeat.getValue() > LOBBY_TIMEOUT) {
         lobbyPlayers.remove(heartBeat.getKey());
         removed.add(heartBeat.getKey());
       }
     }
-    
+
     lobbyHeartBeats.entrySet().removeAll(removed);
     System.out.println("Server: Lobby cleaned");
-    
+
     if (!removed.isEmpty()) {
       sendLobbyList();
     }
@@ -281,6 +281,7 @@ public class Server implements MessageCallback {
       break;
     case GAME_KEEP_ALIVE:
       updateGameRoomHeartBeat(message.getValue(Player.class));
+      broadcastPause(message.getValue(Player.class));
       break;
     case LOBBY_KEEP_ALIVE:
       updateLobbyHeartBeat(message.getValue(Player.class));
@@ -290,6 +291,12 @@ public class Server implements MessageCallback {
     default:
       break;
     }
+  }
+
+  private void broadcastPause(Player player) {
+    MessageBuilder.createMessage("Game" + player.getGameId()).command(Command.GAME_KEEP_ALIVE).withValue(player)
+            .noErrorHandling().sendNowWith(messageBus);
+    System.out.println("pause update broadcasted for player " + player.getName());
   }
 
   private void updateGameRoomHeartBeat(Player player) {

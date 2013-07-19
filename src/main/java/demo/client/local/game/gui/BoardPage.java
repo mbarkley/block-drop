@@ -136,6 +136,7 @@ public class BoardPage extends Composite implements ControllableBoardDisplay {
     if (Client.getInstance().getGameRoom() == null)
       lobbyTransition.go();
     else {
+      Client.getInstance().getPlayer().setGameId(Client.getInstance().getGameRoom().getId());
       setup();
       controller.startGame();
       // Subscribe to game channel
