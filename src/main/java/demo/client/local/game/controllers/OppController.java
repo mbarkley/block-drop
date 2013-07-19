@@ -21,12 +21,10 @@ public class OppController extends BoardController {
 
   public void addState(BoardModel state) {
     synchronized (stateQueue) {
-      if (active) {
-        stateQueue.add(state);
+      if (!active) {
+        stateQueue.clear();
       }
-      else {
-        model = state;
-      }
+      stateQueue.add(state);
     }
   }
 
