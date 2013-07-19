@@ -1,7 +1,6 @@
 package demo.client.local.game.gui;
 
 import com.google.gwt.canvas.client.Canvas;
-import com.google.gwt.canvas.dom.client.CssColor;
 
 import demo.client.local.game.tools.Size;
 import demo.client.local.game.tools.Size.SizeCategory;
@@ -20,14 +19,6 @@ public class BoardCanvas implements ControllableBoardDisplay {
   public BoardCanvas(Canvas canvas, SizeCategory sizeCategory) {
     this.canvas = canvas;
     this.sizeCategory = sizeCategory;
-  }
-
-  /*
-   * Fill the current path on this page's mainCanvas with the board background colour.
-   */
-  private void drawBackground() {
-    canvas.getContext2d().setFillStyle(BOARD_COLOUR);
-    canvas.getContext2d().fill();
   }
 
   /*

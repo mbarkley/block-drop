@@ -1,10 +1,8 @@
 package demo.client.local.game.controllers;
 
 import com.google.gwt.user.client.Timer;
-import com.google.gwt.user.client.Window;
 
 import demo.client.local.game.gui.Block;
-import demo.client.local.game.gui.BoardPage;
 import demo.client.local.game.gui.ControllableBoardDisplay;
 import demo.client.local.game.tools.BoardMessageBus;
 import demo.client.local.game.tools.ClearState;
