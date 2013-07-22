@@ -28,11 +28,12 @@ import com.google.gwt.event.dom.client.KeyUpEvent;
 import com.google.gwt.event.dom.client.KeyUpHandler;
 import com.google.gwt.event.dom.client.MouseDownEvent;
 import com.google.gwt.event.dom.client.MouseDownHandler;
+import com.google.gwt.event.dom.client.MouseMoveEvent;
+import com.google.gwt.event.dom.client.MouseMoveHandler;
 import com.google.gwt.event.dom.client.MouseUpEvent;
 import com.google.gwt.event.dom.client.MouseUpHandler;
 import com.google.gwt.event.shared.EventHandler;
 import com.google.gwt.user.client.ui.Composite;
-import com.google.gwt.user.client.ui.RootPanel;
 import com.google.web.bindery.event.shared.HandlerRegistration;
 
 import demo.client.local.game.callbacks.BoardCallback;
@@ -140,6 +141,7 @@ public class BoardPage extends Composite implements ControllableBoardDisplay {
 
     EventHandler mouseHandler = new BoardMouseHandler(controller);
     addHandlerToMainCanvas((MouseDownHandler) mouseHandler, MouseDownEvent.getType());
+    addHandlerToMainCanvas((MouseMoveHandler) mouseHandler, MouseMoveEvent.getType());
     addHandlerToMainCanvas((MouseUpHandler) mouseHandler, MouseUpEvent.getType());
   }
 
