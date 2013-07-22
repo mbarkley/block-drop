@@ -7,6 +7,7 @@ import demo.client.local.game.gui.ControllableBoardDisplay;
 import demo.client.local.game.tools.BoardMessageBus;
 import demo.client.local.game.tools.ClearState;
 import demo.client.local.game.tools.GameHeartBeat;
+import demo.client.local.game.tools.Pacer;
 import demo.client.local.lobby.Client;
 import demo.client.shared.ScoreTracker;
 import demo.client.shared.model.BackgroundBlockModel;
@@ -40,11 +41,14 @@ public class BoardController {
   private int loopCounter = 0;
 
   /* True if the active block should rotate this loop iteration. */
-  private boolean[] rotate = new boolean[3];
+//  private boolean[] rotate = new boolean[3];
   /* True if the game is paused. */
   private boolean pause = false;
-  private boolean[] pauseTrack = new boolean[dropIncrement / 2];
-  private boolean[] moveTrack = new boolean[3];
+//  private boolean[] pauseTrack = new boolean[dropIncrement / 2];
+//  private boolean[] moveTrack = new boolean[3];
+  private Pacer pausePacer = new Pacer(dropIncrement / 2, false);
+  private Pacer movePacer = new Pacer(3);
+  private Pacer rotatePacer = new Pacer(3);
 
   private ClearState clearState = ClearState.START;
   private Block toBeCleared;
@@ -91,16 +95,12 @@ public class BoardController {
    */
   void update() {
     if (pause) {
-      int i;
-      for (i = 0; i < pauseTrack.length; i++)
-        if (!pauseTrack[i])
-          break;
-      if (i == pauseTrack.length) {
+      if (pausePacer.isReady()) {
         messageBus.sendPauseUpdate(Client.getInstance().getPlayer());
-        pauseTrack = new boolean[pauseTrack.length];
+        pausePacer.clear();
       }
       else {
-        pauseTrack[i] = true;
+        pausePacer.increment();
       }
       return;
     }
@@ -263,54 +263,27 @@ public class BoardController {
   }
 
   private boolean horizontalMove() {
-    return pacingHelper(moveTrack);
+    return movePacer.isReady();
   }
 
   private boolean rotate() {
-    return pacingHelper(rotate);
-  }
-
-  private boolean pacingHelper(boolean[] track) {
-    int i;
-    for (i = 0; i < track.length; i++) {
-      if (!track[i]) {
-        break;
-      }
-    }
-    return i == track.length || i == 1;
+    return rotatePacer.isReady();
   }
 
   public void clearRotation() {
-    clearHelper(rotate);
-  }
-
-  private void clearHelper(boolean[] track) {
-    for (int i = 0; i < track.length; i++) {
-      track[i] = false;
-    }
+    rotatePacer.clear();
   }
 
   private void incrementMovePacer() {
-    incrementHelper(moveTrack);
+    movePacer.increment();
   }
 
   public void incrementRotate() {
-    incrementHelper(rotate);
-  }
-
-  private void incrementHelper(boolean[] tracker) {
-    int i = 0;
-    while (i < tracker.length && tracker[i]) {
-      i++;
-    }
-
-    if (i != tracker.length) {
-      tracker[i] = true;
-    }
+    rotatePacer.increment();
   }
 
   private void clearMovePacer() {
-    clearHelper(moveTrack);
+    movePacer.clear();
   }
 
   public void setColMove(int i) {
@@ -332,7 +305,7 @@ public class BoardController {
   public void setPaused(boolean b) {
     if (b && !pause) {
       boardDisplay.pause();
-      pauseTrack = new boolean[pauseTrack.length];
+      pausePacer.clear();
     }
     else if (!b && pause) {
       boardDisplay.unpause();
