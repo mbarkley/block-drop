@@ -16,6 +16,7 @@ public class BoardMouseHandler implements MouseDownHandler, MouseMoveHandler, Mo
 
   private BoardController controller;
   private int lastCol;
+  private int lastRow;
   private boolean mouseDown = false;
   private Element canvas;
 
@@ -26,17 +27,23 @@ public class BoardMouseHandler implements MouseDownHandler, MouseMoveHandler, Mo
 
   @Override
   public void onMouseDown(MouseDownEvent event) {
-    lastCol = getCol(event.getRelativeX(canvas));
+    lastCol = coordToIndex(event.getRelativeX(canvas));
+    lastRow = coordToIndex(event.getRelativeY(canvas));
     mouseDown = true;
   }
-  
+
   @Override
   public void onMouseMove(MouseMoveEvent event) {
     if (mouseDown) {
-      int newCol = getCol(event.getRelativeX(canvas));
+      int newCol = coordToIndex(event.getRelativeX(canvas));
       if (newCol - lastCol != 0) {
         controller.setColMoveOnce(newCol - lastCol);
         lastCol = newCol;
+      }
+      int newRow = coordToIndex(event.getRelativeY(canvas));
+      if (newRow - lastRow > 0) {
+        controller.setRowMoveOnce(1);
+        lastRow = newRow;
       }
     }
   }
@@ -51,7 +58,7 @@ public class BoardMouseHandler implements MouseDownHandler, MouseMoveHandler, Mo
     controller.rotateOnce();
   }
   
-  private int getCol(int x) {
+  private static int coordToIndex(int x) {
     return x / Size.MAIN_BLOCK_SIZE;
   }
 

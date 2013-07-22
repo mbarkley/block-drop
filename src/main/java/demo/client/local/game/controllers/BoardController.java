@@ -45,7 +45,8 @@ public class BoardController {
   private Pacer pausePacer = new Pacer(dropIncrement / 2, false);
   private Pacer movePacer = new Pacer(3);
   private Pacer rotatePacer = new Pacer(3);
-  private boolean singleMove = false;
+  private boolean singleColMove = false;
+  private boolean singleRowMove = false;
 
   private ClearState clearState = ClearState.START;
   private Block toBeCleared;
@@ -147,6 +148,7 @@ public class BoardController {
       if (horizontalMove())
         incrementMovePacer();
       model.setPendingRowMove(0);
+      singleRowMove = false;
       loopCounter = loopCounter == dropIncrement ? 0 : loopCounter + 1;
       if (moved)
         messageBus.sendMoveUpdate(model, Client.getInstance().getPlayer());
@@ -241,7 +243,7 @@ public class BoardController {
         model.setPendingRowMove(1);
         // Otherwise maintain the normal speed.
       }
-      else {
+      else if (!singleRowMove) {
         // Drop by one row every time counter hits dropIncrement.
         model.setPendingRowMove(loopCounter == dropIncrement ? 1 : 0);
       }
@@ -261,7 +263,7 @@ public class BoardController {
   }
 
   private boolean horizontalMove() {
-    return singleMove && model.getPendingColMove() != 0 || movePacer.isReady();
+    return singleColMove && model.getPendingColMove() != 0 || movePacer.isReady();
   }
 
   private boolean rotate() {
@@ -273,10 +275,10 @@ public class BoardController {
   }
 
   private void incrementMovePacer() {
-    if (!singleMove)
+    if (!singleColMove)
       movePacer.increment();
     else {
-      singleMove = false;
+      singleColMove = false;
       model.setPendingColMove(0);
     }
   }
@@ -302,7 +304,7 @@ public class BoardController {
   
   public void setColMoveOnce(int i) {
     model.setPendingColMove(i);
-    singleMove = true;
+    singleColMove = true;
   }
 
   public boolean isPaused() {
@@ -347,5 +349,10 @@ public class BoardController {
 
   public void rotateOnce() {
     singleRotate = true;
+  }
+
+  public void setRowMoveOnce(int i) {
+    singleRowMove = true;
+    model.setPendingRowMove(i);
   }
 }
