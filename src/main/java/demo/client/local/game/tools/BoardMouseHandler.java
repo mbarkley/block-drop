@@ -1,6 +1,7 @@
 package demo.client.local.game.tools;
 
 import com.google.gwt.dom.client.Element;
+import com.google.gwt.dom.client.NativeEvent;
 import com.google.gwt.event.dom.client.DoubleClickEvent;
 import com.google.gwt.event.dom.client.DoubleClickHandler;
 import com.google.gwt.event.dom.client.MouseDownEvent;
@@ -27,9 +28,11 @@ public class BoardMouseHandler implements MouseDownHandler, MouseMoveHandler, Mo
 
   @Override
   public void onMouseDown(MouseDownEvent event) {
-    lastCol = coordToIndex(event.getRelativeX(canvas));
-    lastRow = coordToIndex(event.getRelativeY(canvas));
-    mouseDown = true;
+    if (event.getNativeButton() == NativeEvent.BUTTON_LEFT) {
+      lastCol = coordToIndex(event.getRelativeX(canvas));
+      lastRow = coordToIndex(event.getRelativeY(canvas));
+      mouseDown = true;
+    }
   }
 
   @Override
@@ -50,14 +53,15 @@ public class BoardMouseHandler implements MouseDownHandler, MouseMoveHandler, Mo
 
   @Override
   public void onMouseUp(MouseUpEvent event) {
-    mouseDown = false;
+    if (event.getNativeButton() == NativeEvent.BUTTON_LEFT)
+      mouseDown = false;
   }
 
   @Override
   public void onDoubleClick(DoubleClickEvent event) {
     controller.rotateOnce();
   }
-  
+
   private static int coordToIndex(int x) {
     return x / Size.MAIN_BLOCK_SIZE;
   }
