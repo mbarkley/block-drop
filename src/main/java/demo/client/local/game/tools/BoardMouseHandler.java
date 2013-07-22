@@ -2,6 +2,8 @@ package demo.client.local.game.tools;
 
 import com.google.gwt.dom.client.Element;
 import com.google.gwt.dom.client.NativeEvent;
+import com.google.gwt.event.dom.client.ContextMenuEvent;
+import com.google.gwt.event.dom.client.ContextMenuHandler;
 import com.google.gwt.event.dom.client.DoubleClickEvent;
 import com.google.gwt.event.dom.client.DoubleClickHandler;
 import com.google.gwt.event.dom.client.MouseDownEvent;
@@ -10,6 +12,7 @@ import com.google.gwt.event.dom.client.MouseMoveEvent;
 import com.google.gwt.event.dom.client.MouseMoveHandler;
 import com.google.gwt.event.dom.client.MouseUpEvent;
 import com.google.gwt.event.dom.client.MouseUpHandler;
+import com.google.gwt.user.client.ui.RootPanel;
 
 import demo.client.local.game.controllers.BoardController;
 
@@ -24,6 +27,18 @@ public class BoardMouseHandler implements MouseDownHandler, MouseMoveHandler, Mo
   public BoardMouseHandler(BoardController controller, Element canvas) {
     this.controller = controller;
     this.canvas = canvas;
+
+    // Disable context menu on board.
+    RootPanel.get().addDomHandler(new ContextMenuHandler() {
+
+      @Override
+      public void onContextMenu(ContextMenuEvent event) {
+        if (event.getNativeEvent().getEventTarget().equals(BoardMouseHandler.this.canvas)) {
+          event.preventDefault();
+          event.stopPropagation();
+        }
+      }
+    }, ContextMenuEvent.getType());
   }
 
   @Override
@@ -32,6 +47,10 @@ public class BoardMouseHandler implements MouseDownHandler, MouseMoveHandler, Mo
       lastCol = coordToIndex(event.getRelativeX(canvas));
       lastRow = coordToIndex(event.getRelativeY(canvas));
       mouseDown = true;
+    }
+    else if (event.getNativeButton() == NativeEvent.BUTTON_RIGHT
+            && event.getNativeEvent().getEventTarget().equals(canvas)) {
+      controller.rotateOnce();
     }
   }
 
@@ -59,7 +78,7 @@ public class BoardMouseHandler implements MouseDownHandler, MouseMoveHandler, Mo
 
   @Override
   public void onDoubleClick(DoubleClickEvent event) {
-    controller.rotateOnce();
+    controller.setDrop(true);
   }
 
   private static int coordToIndex(int x) {
