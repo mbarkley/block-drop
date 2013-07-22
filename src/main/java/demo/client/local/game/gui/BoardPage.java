@@ -34,6 +34,7 @@ import com.google.gwt.event.dom.client.MouseUpEvent;
 import com.google.gwt.event.dom.client.MouseUpHandler;
 import com.google.gwt.event.shared.EventHandler;
 import com.google.gwt.user.client.ui.Composite;
+import com.google.gwt.user.client.ui.RootPanel;
 import com.google.web.bindery.event.shared.HandlerRegistration;
 
 import demo.client.local.game.callbacks.BoardCallback;
@@ -139,7 +140,7 @@ public class BoardPage extends Composite implements ControllableBoardDisplay {
     addHandlerToMainCanvas((KeyUpHandler) keyHandler, KeyUpEvent.getType());
     addHandlerToMainCanvas((KeyDownHandler) keyHandler, KeyDownEvent.getType());
 
-    EventHandler mouseHandler = new BoardMouseHandler(controller);
+    EventHandler mouseHandler = new BoardMouseHandler(controller, mainCanvas.getElement());
     addHandlerToMainCanvas((MouseDownHandler) mouseHandler, MouseDownEvent.getType());
     addHandlerToMainCanvas((MouseMoveHandler) mouseHandler, MouseMoveEvent.getType());
     addHandlerToMainCanvas((MouseUpHandler) mouseHandler, MouseUpEvent.getType());
@@ -237,7 +238,7 @@ public class BoardPage extends Composite implements ControllableBoardDisplay {
    * @param handler A key press handler for the mainCanvas.
    */
   <H extends EventHandler> void addHandlerToMainCanvas(H handler, Type<H> type) {
-    handlerRegs.add(Assert.notNull("Could not get game-wrapper root panel.", mainCanvas).addDomHandler(handler,
+    handlerRegs.add(Assert.notNull("Could not get game-wrapper root panel.", RootPanel.get()).addDomHandler(handler,
             type));
   }
 
