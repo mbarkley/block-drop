@@ -45,6 +45,7 @@ public class BoardController {
   private Pacer pausePacer = new Pacer(dropIncrement / 2, false);
   private Pacer movePacer = new Pacer(3);
   private Pacer rotatePacer = new Pacer(3);
+  private boolean singleMove = false;
 
   private ClearState clearState = ClearState.START;
   private Block toBeCleared;
@@ -259,7 +260,7 @@ public class BoardController {
   }
 
   private boolean horizontalMove() {
-    return movePacer.isReady();
+    return singleMove && model.getPendingColMove() != 0 || movePacer.isReady();
   }
 
   private boolean rotate() {
@@ -271,7 +272,12 @@ public class BoardController {
   }
 
   private void incrementMovePacer() {
-    movePacer.increment();
+    if (!singleMove)
+      movePacer.increment();
+    else {
+      singleMove = false;
+      model.setPendingColMove(0);
+    }
   }
 
   public void incrementRotate() {
@@ -288,6 +294,11 @@ public class BoardController {
       incrementMovePacer();
     else
       clearMovePacer();
+  }
+  
+  public void setColMoveOnce(int i) {
+    model.setPendingColMove(i);
+    singleMove = true;
   }
 
   public boolean isPaused() {
@@ -324,5 +335,9 @@ public class BoardController {
   public void destroy() {
     updateTimer.cancel();
     heartBeatTimer.cancel();
+  }
+
+  public int getColMove() {
+    return model.getPendingColMove();
   }
 }
