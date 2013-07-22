@@ -50,6 +50,7 @@ public class BoardController {
   private ClearState clearState = ClearState.START;
   private Block toBeCleared;
   private Block bgBlock;
+  private boolean singleRotate;
 
   public BoardController(ControllableBoardDisplay boardDisplay, SecondaryDisplayController secondaryController,
           BoardMessageBus messageBus) {
@@ -264,7 +265,7 @@ public class BoardController {
   }
 
   private boolean rotate() {
-    return rotatePacer.isReady();
+    return singleRotate || rotatePacer.isReady();
   }
 
   public void clearRotation() {
@@ -281,7 +282,10 @@ public class BoardController {
   }
 
   public void incrementRotate() {
-    rotatePacer.increment();
+    if (!singleRotate)
+      rotatePacer.increment();
+    else
+      singleRotate = false;
   }
 
   private void clearMovePacer() {
@@ -339,5 +343,9 @@ public class BoardController {
 
   public int getColMove() {
     return model.getPendingColMove();
+  }
+
+  public void rotateOnce() {
+    singleRotate = true;
   }
 }

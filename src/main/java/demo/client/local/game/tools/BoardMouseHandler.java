@@ -1,6 +1,8 @@
 package demo.client.local.game.tools;
 
 import com.google.gwt.dom.client.Element;
+import com.google.gwt.event.dom.client.DoubleClickEvent;
+import com.google.gwt.event.dom.client.DoubleClickHandler;
 import com.google.gwt.event.dom.client.MouseDownEvent;
 import com.google.gwt.event.dom.client.MouseDownHandler;
 import com.google.gwt.event.dom.client.MouseMoveEvent;
@@ -10,7 +12,7 @@ import com.google.gwt.event.dom.client.MouseUpHandler;
 
 import demo.client.local.game.controllers.BoardController;
 
-public class BoardMouseHandler implements MouseDownHandler, MouseMoveHandler, MouseUpHandler {
+public class BoardMouseHandler implements MouseDownHandler, MouseMoveHandler, MouseUpHandler, DoubleClickHandler {
 
   private BoardController controller;
   private int lastCol;
@@ -44,6 +46,11 @@ public class BoardMouseHandler implements MouseDownHandler, MouseMoveHandler, Mo
     mouseDown = false;
   }
 
+  @Override
+  public void onDoubleClick(DoubleClickEvent event) {
+    controller.rotateOnce();
+  }
+  
   private int getCol(int x) {
     return x / Size.MAIN_BLOCK_SIZE;
   }

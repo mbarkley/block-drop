@@ -22,6 +22,8 @@ import com.google.gwt.canvas.client.Canvas;
 import com.google.gwt.dom.client.DivElement;
 import com.google.gwt.dom.client.Document;
 import com.google.gwt.event.dom.client.DomEvent.Type;
+import com.google.gwt.event.dom.client.DoubleClickEvent;
+import com.google.gwt.event.dom.client.DoubleClickHandler;
 import com.google.gwt.event.dom.client.KeyDownEvent;
 import com.google.gwt.event.dom.client.KeyDownHandler;
 import com.google.gwt.event.dom.client.KeyUpEvent;
@@ -144,6 +146,7 @@ public class BoardPage extends Composite implements ControllableBoardDisplay {
     addHandlerToMainCanvas((MouseDownHandler) mouseHandler, MouseDownEvent.getType());
     addHandlerToMainCanvas((MouseMoveHandler) mouseHandler, MouseMoveEvent.getType());
     addHandlerToMainCanvas((MouseUpHandler) mouseHandler, MouseUpEvent.getType());
+    addHandlerToMainCanvas((DoubleClickHandler) mouseHandler, DoubleClickEvent.getType());
   }
 
   @PageShowing
