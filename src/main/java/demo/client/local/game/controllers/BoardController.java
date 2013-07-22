@@ -40,12 +40,8 @@ public class BoardController {
   /* A counter of elapsed iterations since a block last dropped. */
   private int loopCounter = 0;
 
-  /* True if the active block should rotate this loop iteration. */
-//  private boolean[] rotate = new boolean[3];
   /* True if the game is paused. */
   private boolean pause = false;
-//  private boolean[] pauseTrack = new boolean[dropIncrement / 2];
-//  private boolean[] moveTrack = new boolean[3];
   private Pacer pausePacer = new Pacer(dropIncrement / 2, false);
   private Pacer movePacer = new Pacer(3);
   private Pacer rotatePacer = new Pacer(3);
