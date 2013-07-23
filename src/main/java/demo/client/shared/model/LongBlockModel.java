@@ -28,4 +28,9 @@ public class LongBlockModel extends ToggledBlockModel {
   public static int getCode() {
     return CODE;
   }
+
+  @Override
+  public int getStartingRow() {
+    return -3;
+  }
 }

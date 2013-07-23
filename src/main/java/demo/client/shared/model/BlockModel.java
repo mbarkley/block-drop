@@ -127,4 +127,8 @@ public class BlockModel {
   public double getCentreColDiff() {
     return 0;
   }
+
+  public int getStartingRow() {
+    return -2;
+  }
 }
