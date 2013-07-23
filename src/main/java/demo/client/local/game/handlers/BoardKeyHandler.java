@@ -1,4 +1,4 @@
-package demo.client.local.game.tools;
+package demo.client.local.game.handlers;
 
 import com.google.gwt.event.dom.client.KeyCodes;
 import com.google.gwt.event.dom.client.KeyDownEvent;

@@ -1,4 +1,4 @@
-package demo.client.local.game.tools;
+package demo.client.local.game.handlers;
 
 import com.google.gwt.dom.client.Element;
 import com.google.gwt.dom.client.NativeEvent;
@@ -15,6 +15,7 @@ import com.google.gwt.event.dom.client.MouseUpHandler;
 import com.google.gwt.user.client.ui.RootPanel;
 
 import demo.client.local.game.controllers.BoardController;
+import demo.client.local.game.tools.Size;
 
 public class BoardMouseHandler implements MouseDownHandler, MouseMoveHandler, MouseUpHandler, DoubleClickHandler {
 
