@@ -6,20 +6,22 @@ import demo.client.shared.ScoreTracker;
 
 public interface SecondaryDisplayController {
 
-  public abstract void selectNextPlayer();
+  public void selectNextPlayer();
 
-  public abstract void selectLastPlayer();
+  public void selectLastPlayer();
 
-  public abstract void updateScore(int numFullRows);
+  public void updateScore(int numFullRows);
 
-  public abstract void updateAndSortScore(ScoreTracker scoreTracker);
+  public void updateAndSortScore(ScoreTracker scoreTracker);
 
-  public abstract ScoreTracker getScoreTracker();
+  public ScoreTracker getScoreTracker();
 
-  public abstract void drawBlockToNextCanvas(Block nextBlock);
+  public void drawBlockToNextCanvas(Block nextBlock);
 
-  public abstract Player getTarget();
+  public Player getTarget();
 
-  public abstract void removeTracker(Player player);
+  public void removeTracker(Player player);
+
+  public void selectPlayerByIndex(int i);
 
 }

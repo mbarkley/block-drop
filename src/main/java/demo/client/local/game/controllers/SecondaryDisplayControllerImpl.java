@@ -193,4 +193,17 @@ public class SecondaryDisplayControllerImpl implements SecondaryDisplayControlle
       }
     }
   }
+
+  @Override
+  public void selectPlayerByIndex(int i) {
+    ScoreTracker selected = getSelectedTracker();
+    selected.deselect();
+    scoreList.getWidget(selected).setSelected(false);
+    scoreList.getValue().get(i).select();
+    scoreList.getWidget(i).setSelected(true);
+    
+    MessageBuilder.createMessage("Game" + Client.getInstance().getGameRoom().getId())
+    .command(Command.SWITCH_OPPONENT).withValue(getSelectedTracker().getPlayer()).noErrorHandling()
+    .sendNowWith(messageBus);
+  }
 }

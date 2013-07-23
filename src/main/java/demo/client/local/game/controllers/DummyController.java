@@ -33,4 +33,7 @@ public class DummyController implements SecondaryDisplayController {
 
   @Override
   public void removeTracker(Player player) {}
+
+  @Override
+  public void selectPlayerByIndex(int i) {}
 }
