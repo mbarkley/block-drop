@@ -253,7 +253,7 @@ public class BoardPage extends Composite implements ControllableBoardDisplay {
   @Override
   public void pause() {
     DivElement element = ((DivElement) Document.get().getElementById("pause-overlay"));
-    element.setAttribute("style", "visibility: visible");
+    element.setAttribute("style", "display: block");
   }
 
   /*
