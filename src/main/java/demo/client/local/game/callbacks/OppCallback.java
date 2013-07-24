@@ -15,12 +15,22 @@ import demo.client.shared.Player;
 import demo.client.shared.ScoreEvent;
 import demo.client.shared.model.MoveEvent;
 
+/**
+ * A MessageCallback implementation for receiving state updates of opponents in Block Drop.
+ * 
+ * @author mbarkley <mbarkley@redhat.com>
+ * 
+ */
 public class OppCallback implements MessageCallback {
 
   private Map<Player, OppController> oppControllers;
   private ControllableBoardDisplay boardDisplay;
 
   public OppCallback(ControllableBoardDisplay boardDisplay) {
+    /*
+     * TreeMap is necessary since we may attempt to lookup an OppController with player that is
+     * considered equal but has a different hash.
+     */
     this.oppControllers = new TreeMap<Player, OppController>();
     this.boardDisplay = boardDisplay;
 
@@ -36,23 +46,27 @@ public class OppCallback implements MessageCallback {
   public void callback(Message message) {
     Command command = Command.valueOf(message.getCommandType());
     switch (command) {
+
     case MOVE_UPDATE:
       MoveEvent moveEvent = message.getValue(MoveEvent.class);
       OppController movedController = oppControllers.get(moveEvent.getPlayer());
       movedController.setPaused(false);
       movedController.addState(moveEvent.getState());
       break;
+
     case UPDATE_SCORE:
       ScoreEvent scoreEvent = message.getValue(ScoreEvent.class);
       if (!oppControllers.containsKey(scoreEvent.getScoreTracker().getPlayer())) {
         oppControllers.put(scoreEvent.getScoreTracker().getPlayer(), new OppController(boardDisplay));
       }
       break;
+
     case GAME_KEEP_ALIVE:
       Player pausePlayer = message.getValue(Player.class);
       OppController pausedController = oppControllers.get(pausePlayer);
       pausedController.setPaused(true);
       break;
+
     case SWITCH_OPPONENT:
       Player player = message.getValue(Player.class);
       for (OppController controller : oppControllers.values()) {
@@ -63,6 +77,7 @@ public class OppCallback implements MessageCallback {
       oppControllers.get(player).setActive(true);
       oppControllers.get(player).startGame();
       break;
+
     default:
       break;
     }

@@ -11,6 +11,12 @@ import demo.client.shared.Player;
 import demo.client.shared.ScoreEvent;
 import demo.client.shared.ScoreTracker;
 
+/**
+ * A MessageCallback implementation for handling remote events from the Block Drop Server.
+ * 
+ * @author Max Barkley <mbarkley@redhat.com>
+ * 
+ */
 public class BoardCallback implements MessageCallback {
 
   private BoardController controller;
@@ -38,7 +44,7 @@ public class BoardCallback implements MessageCallback {
       break;
     }
   }
-  
+
   private void removePlayer(Player player) {
     Client.getInstance().getGameRoom().removePlayer(player.getId());
     secondaryController.removeTracker(player);
