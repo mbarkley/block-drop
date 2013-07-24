@@ -8,11 +8,24 @@ import demo.client.local.game.gui.ControllableBoardDisplay;
 import demo.client.local.game.tools.DummyBus;
 import demo.client.shared.model.BoardModel;
 
+/**
+ * A controller for canvases displaying remote opponents boards.
+ * 
+ * @author mbarkley <mbarkley@redhat.com>
+ * 
+ */
 public class OppController extends BoardController {
 
   private Queue<BoardModel> stateQueue = new LinkedList<BoardModel>();
+  // True iff this board is currently controlling a display
   private boolean active;
 
+  /**
+   * Create an OppController instance.
+   * 
+   * @param boardDisplay
+   *          The display to be controlled by this instance.
+   */
   public OppController(ControllableBoardDisplay boardDisplay) {
     // Dummy objects do nothing, to prevent this controller from updating the displayed score or
     // sending messages through the bus.
@@ -20,8 +33,15 @@ public class OppController extends BoardController {
     setPaused(true);
   }
 
+  /**
+   * Add a game state to be drawn to the display.
+   * 
+   * @param state
+   *          The state being queued for drawing.
+   */
   public void addState(BoardModel state) {
     synchronized (stateQueue) {
+      // While the board is inactive, only save the single most recent state
       if (!active) {
         stateQueue.clear();
       }
@@ -32,7 +52,8 @@ public class OppController extends BoardController {
     }
   }
 
-  void update() {
+  @Override
+  protected void update() {
     if (active) {
       synchronized (stateQueue) {
         // Deal with row clearing animation before entering new state.
@@ -63,10 +84,21 @@ public class OppController extends BoardController {
     boardDisplay.drawBlock(0, 0, allSquares);
   }
 
+  /**
+   * Check if this controller is currently active.
+   * 
+   * @return True iff this controller currently has control of a display.
+   */
   public boolean isActive() {
     return active;
   }
 
+  /**
+   * Set whether or not this controller is actively controlling the display.
+   * 
+   * @param active
+   *          True if this controller should be active. False otherwise.
+   */
   public void setActive(boolean active) {
     this.active = active;
     if (!active) {

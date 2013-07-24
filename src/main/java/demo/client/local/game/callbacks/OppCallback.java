@@ -85,7 +85,7 @@ public class OppCallback implements MessageCallback {
 
   public void destroy() {
     for (OppController controller : oppControllers.values()) {
-      controller.destroy();
+      controller.stop();
     }
   }
 

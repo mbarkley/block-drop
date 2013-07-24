@@ -14,45 +14,66 @@ import demo.client.shared.model.BackgroundBlockModel;
 import demo.client.shared.model.BlockOverflow;
 import demo.client.shared.model.BoardModel;
 
+/**
+ * This class runs the main game loop for Block Drop, updating the model and view.
+ * 
+ * @author mbarkley <mbarkley@redhat.com>
+ * 
+ */
 public class BoardController {
 
+  // Must be protected so that OppController can access it
   protected ControllableBoardDisplay boardDisplay;
   private SecondaryDisplayController secondaryController;
   private BoardMessageBus messageBus;
 
-  /* A Block Drop board model. */
   protected BoardModel model;
-  /* A block model. */
   protected Block activeBlock;
-  /* A block model. */
   protected Block nextBlock;
 
-  /* A updateTimer for running the game loop. */
+  // A Timer for running the game loop
   private Timer updateTimer;
+  // A Timer for maintaining a connection with the server while not actively playing
   private GameHeartBeat heartBeatTimer = new GameHeartBeat();
 
-  /*
-   * The number of iterations for a block to drop one square on the board. Must be a multiple of 4.
-   */
+  // The number of iterations for a block to drop one square on the board. Must be a multiple of 4.
   private int dropIncrement = 16;
-  /* The time (in milliseconds) between calls to the game loop. */
+  // The time (in milliseconds) between calls to the game loop.
   private int loopTime = 25;
-  /* A counter of elapsed iterations since a block last dropped. */
+  // A counter of elapsed iterations since a block last dropped.
   private int loopCounter = 0;
 
-  /* True if the game is paused. */
+  // True if the game is paused.
   private boolean pause = false;
+  // Controls flow of keep alive messages sent to server
   private Pacer pausePacer = new Pacer(dropIncrement / 2, false);
+  // Controls flow of movement when arrow key is held down
   private Pacer movePacer = new Pacer(3);
+  // Controls flow of rotation when arrow key is held down
   private Pacer rotatePacer = new Pacer(3);
+  // True when a block should be moved horizontally without any delay
   private boolean singleColMove = false;
+  // True when a block should be moved vertically without any delay
   private boolean singleRowMove = false;
-
-  private ClearState clearState = ClearState.START;
-  private Block toBeCleared;
-  private Block bgBlock;
   private boolean singleRotate;
 
+  // Controls speed of row clearing animation
+  private ClearState clearState = ClearState.START;
+  // Store blocks to be cleared off screen between loop iterations.
+  private Block toBeCleared;
+  // Store background blocks to be moved off screen between game iterations.
+  private Block bgBlock;
+
+  /**
+   * Create a BoardController instance.
+   * 
+   * @param boardDisplay
+   *          A display for drawing the Block Drop game.
+   * @param secondaryController
+   *          A controller for the score list and the canvas displaying the next block.
+   * @param messageBus
+   *          A bus for broadcasting moves and score updates.
+   */
   public BoardController(ControllableBoardDisplay boardDisplay, SecondaryDisplayController secondaryController,
           BoardMessageBus messageBus) {
     this.boardDisplay = boardDisplay;
@@ -73,6 +94,10 @@ public class BoardController {
     };
   }
 
+  /**
+   * Reset this controller in preparation for a call to {@link BoardController#startGame()
+   * startGame}.
+   */
   protected void reset() {
     activeBlock = new Block(model.getActiveBlock(), boardDisplay.getSizeCategory());
     nextBlock = new Block(model.getNextBlock(), boardDisplay.getSizeCategory());
@@ -81,18 +106,18 @@ public class BoardController {
     bgBlock = new Block(model.getNonFullRows(), boardDisplay.getSizeCategory());
   }
 
-  /*
-   * Start a game of Block Drop.
+  /**
+   * Start the game loop for this controller.
    */
   public void startGame() {
     updateTimer.scheduleRepeating(loopTime);
   }
 
-  /*
-   * Handle user input, and update the game state and view. This method is is called every loopTime
-   * milliseconds.
+  /**
+   * Handle user input, and update the game state and view.
    */
-  void update() {
+  protected void update() {
+    // If paused, periodically send heartbeat to the server only
     if (pause) {
       if (pausePacer.isReady()) {
         messageBus.sendPauseUpdate(Client.getInstance().getPlayer());
@@ -113,11 +138,12 @@ public class BoardController {
         messageBus.sendMoveUpdate(model, Client.getInstance().getPlayer());
       clearRows(numFullRows);
     }
+    // Check if there are rows to receive
     else if (model.getRowsToAdd() > 0) {
       addRowsToBottom();
       messageBus.sendMoveUpdate(model, Client.getInstance().getPlayer());
     }
-    // Only drop a new block if we are not clearing rows currently.
+    // Only drop a new block if we are not clearing or adding rows currently.
     else {
       // Reset the active block if necessary.
       if (!activeBlock.isModel(model.getActiveBlock())) {
@@ -139,6 +165,7 @@ public class BoardController {
         // Keep alive presence in game room
         heartBeatTimer.scheduleRepeating(loopTime * dropIncrement);
 
+        // Display game over prompt to user
         boardDisplay.gameOver();
       }
       // Reset for next loop.
@@ -155,6 +182,9 @@ public class BoardController {
     }
   }
 
+  /**
+   * Reset internal state and call {@link BoardController#startGame() startGame}.
+   */
   public void restart() {
     // Reset board model and controller
     model = new BoardModel();
@@ -172,8 +202,8 @@ public class BoardController {
     heartBeatTimer.cancel();
   }
 
+  // This method should never be called when there are full rows.
   private void addRowsToBottom() {
-    // This method should always be called when there are no full rows.
     BackgroundBlockModel bgModel = model.getNonFullRows();
     Block bg = new Block(bgModel, boardDisplay.getSizeCategory());
     boardDisplay.undrawBlock(0, 0, bg);
@@ -187,6 +217,14 @@ public class BoardController {
             Block.indexToCoord(model.getActiveBlockRow(), boardDisplay.getSizeCategory()), activeBlock);
   }
 
+  /**
+   * Animate the clearing of full rows from the board. On completion, remove full rows from the game
+   * model. This method should be called once per game loop iteration until the full rows are
+   * removed.
+   * 
+   * @param numFullRows
+   *          The number of full rows on the board, used for calculating the score.
+   */
   protected void clearRows(int numFullRows) {
     if (clearState.getCounter() == 0)
       switch (clearState) {
@@ -220,8 +258,8 @@ public class BoardController {
     clearState = clearState.getNextState();
   }
 
-  /*
-   * Update the active block.
+  /**
+   * Update the position of the active block in the model and redraw it in the display.
    * 
    * @return True iff the active block moved during this call.
    */
@@ -283,6 +321,14 @@ public class BoardController {
     }
   }
 
+  /**
+   * Increment the rotation flow control. The first call to this method will cause the active block
+   * to be rotated in the next game loop iteration. Successive calls will not immediately cause a
+   * rotation.
+   * 
+   * The end result when a button is held down is that the active block will immediately rotate
+   * 90-degrees, briefly pause, and then rapidly continue rotating until the button is released.
+   */
   public void incrementRotate() {
     if (!singleRotate)
       rotatePacer.increment();
@@ -294,6 +340,12 @@ public class BoardController {
     movePacer.clear();
   }
 
+  /**
+   * Set the horizontal movement of the active block in the next game loop iteration.
+   * 
+   * @param i
+   *          The number of squares to move (right is positive).
+   */
   public void setColMove(int i) {
     model.setPendingColMove(i);
     if (i != 0)
@@ -301,20 +353,46 @@ public class BoardController {
     else
       clearMovePacer();
   }
-  
+
+  /**
+   * Set the horizontal movement of the active block in the next game loop iteration.
+   * 
+   * Unlike {@link BoardController#setColMove(int) setColMove}, this method does not use a pacer.
+   * This method should be called when only a single 90-degree rotation is required.
+   * 
+   * @param i
+   *          The number of squares to move (right is positive).
+   */
   public void setColMoveOnce(int i) {
     model.setPendingColMove(i);
     singleColMove = true;
   }
 
+  /**
+   * Check if the game is paused.
+   * 
+   * @return True iff the game is paused.
+   */
   public boolean isPaused() {
     return pause;
   }
 
+  /**
+   * Set the active block to drop vertically in the next game loop iteration.
+   * 
+   * @param b
+   *          True iff the block should drop.
+   */
   public void setDrop(boolean b) {
     model.setDrop(b);
   }
 
+  /**
+   * Pause or unpause the game.
+   * 
+   * @param b
+   *          True to pause the game. False to unpause.
+   */
   public void setPaused(boolean b) {
     if (b && !pause) {
       boardDisplay.pause();
@@ -326,31 +404,69 @@ public class BoardController {
     pause = b;
   }
 
+  /**
+   * Set the active block to drop at an increased speed.
+   * 
+   * @param fast
+   *          True to increase the block drop speed. False to set it to the normal speed.
+   */
   public void setFast(boolean fast) {
     model.setFast(fast);
   }
 
+  /**
+   * Get the SecondaryDisplayController used by this BoardController.
+   * 
+   * @return The SecondaryDisplayController used by this BoardController.
+   */
   public SecondaryDisplayController getSecondaryController() {
     return secondaryController;
   }
 
-  public void addRows(int rowsClearedLast) {
-    model.setRowsToAdd(rowsClearedLast);
+  /**
+   * Add rows to the bottom of the board. Added rows will have a single missing square in a random
+   * position.
+   * 
+   * @param rowsToAdd
+   *          The number of rows to be added.
+   */
+  public void addRows(int rowsToAdd) {
+    model.setRowsToAdd(rowsToAdd);
   }
 
-  public void destroy() {
+  /**
+   * Stop the all timers initiated by this controller.
+   */
+  public void stop() {
     updateTimer.cancel();
     heartBeatTimer.cancel();
   }
 
+  /**
+   * Get the pending horizontal movement of the active block. The active block will be moved by this
+   * many squares horizontally (if possible) in the next game loop iteration.
+   * 
+   * @return The pending horizontal movement of the active block.
+   */
   public int getColMove() {
     return model.getPendingColMove();
   }
 
+  /**
+   * Rotate the active block 90-degrees in the next game loop iteration without the use of the
+   * {@link BoardController#incrementRotate() incrementRotate} method.
+   */
   public void rotateOnce() {
     singleRotate = true;
   }
 
+  /**
+   * Set the number of squares that the active block should move horizontally (if possible) in the
+   * next game loop iteration.
+   * 
+   * @param i
+   *          The number of squares down to move in the next game loop iteration.
+   */
   public void setRowMoveOnce(int i) {
     singleRowMove = true;
     model.setPendingRowMove(i);

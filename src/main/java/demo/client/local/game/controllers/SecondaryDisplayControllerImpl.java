@@ -21,6 +21,13 @@ import demo.client.shared.GameRoom;
 import demo.client.shared.Player;
 import demo.client.shared.ScoreTracker;
 
+/**
+ * An implementation of {@link demo.client.local.game.controllers.SecondaryDisplayController
+ * SecondaryDisplayController}
+ * 
+ * @author mbarkley <mbarkley@redhat.com>
+ * 
+ */
 public class SecondaryDisplayControllerImpl implements SecondaryDisplayController {
 
   private ListWidget<ScoreTracker, ScorePanel> scoreList;
@@ -29,6 +36,14 @@ public class SecondaryDisplayControllerImpl implements SecondaryDisplayControlle
   @Inject
   private MessageBus messageBus = ErraiBus.get();
 
+  /**
+   * Create a SecondaryDisplayControllerImpl instance.
+   * 
+   * @param scoreList
+   *          The list of players and their scores.
+   * @param nextCanvas
+   *          The canvas on which to display the upcoming block.
+   */
   public SecondaryDisplayControllerImpl(ListWidget<ScoreTracker, ScorePanel> scoreList, Canvas nextCanvas) {
     this.scoreList = scoreList;
     this.nextCanvas = nextCanvas;
@@ -43,7 +58,7 @@ public class SecondaryDisplayControllerImpl implements SecondaryDisplayControlle
     scoreList.getWidget(getScoreTracker()).setSelected(true);
   }
 
-  /*
+  /**
    * (non-Javadoc)
    * 
    * @see demo.client.local.game.SecondaryDisplayController#selectNextPlayer()
@@ -64,7 +79,7 @@ public class SecondaryDisplayControllerImpl implements SecondaryDisplayControlle
     }
   }
 
-  /*
+  /**
    * (non-Javadoc)
    * 
    * @see demo.client.local.game.SecondaryDisplayController#selectLastPlayer()
@@ -80,8 +95,8 @@ public class SecondaryDisplayControllerImpl implements SecondaryDisplayControlle
       scoreList.getWidget(last).setSelected(true);
       scoreList.getValue().get(last).select();
       MessageBuilder.createMessage("Game" + Client.getInstance().getGameRoom().getId())
-      .command(Command.SWITCH_OPPONENT).withValue(getSelectedTracker().getPlayer()).noErrorHandling()
-      .sendNowWith(messageBus);
+              .command(Command.SWITCH_OPPONENT).withValue(getSelectedTracker().getPlayer()).noErrorHandling()
+              .sendNowWith(messageBus);
     }
   }
 
@@ -94,7 +109,7 @@ public class SecondaryDisplayControllerImpl implements SecondaryDisplayControlle
     return null;
   }
 
-  /*
+  /**
    * (non-Javadoc)
    * 
    * @see demo.client.local.game.SecondaryDisplayController#updateScore(int)
@@ -106,11 +121,11 @@ public class SecondaryDisplayControllerImpl implements SecondaryDisplayControlle
     updateAndSortScore(scoreTracker);
   }
 
-  /*
+  /**
    * (non-Javadoc)
    * 
    * @see demo.client.local.game.SecondaryDisplayController#updateAndSortScore(demo.client.shared.
-   * ScoreTracker)
+   *      ScoreTracker)
    */
   @Override
   public void updateAndSortScore(ScoreTracker scoreTracker) {
@@ -129,7 +144,7 @@ public class SecondaryDisplayControllerImpl implements SecondaryDisplayControlle
     }
   }
 
-  /*
+  /**
    * (non-Javadoc)
    * 
    * @see demo.client.local.game.SecondaryDisplayController#getScoreTracker()
@@ -145,12 +160,11 @@ public class SecondaryDisplayControllerImpl implements SecondaryDisplayControlle
     return null;
   }
 
-  /*
+  /**
    * (non-Javadoc)
    * 
-   * @see
-   * demo.client.local.game.SecondaryDisplayController#drawBlockToNextCanvas(demo.client.local.game
-   * .Block)
+   * @see demo.client.local.game.SecondaryDisplayController#drawBlockToNextCanvas(demo.client.local.game
+   *      .Block)
    */
   @Override
   public void drawBlockToNextCanvas(Block nextBlock) {
@@ -166,7 +180,7 @@ public class SecondaryDisplayControllerImpl implements SecondaryDisplayControlle
             * Size.MAIN_BLOCK_SIZE + nextBlock.getCentreRowDiff() * Size.MAIN_BLOCK_SIZE, nextCanvas.getContext2d());
   }
 
-  /*
+  /**
    * (non-Javadoc)
    * 
    * @see demo.client.local.game.SecondaryDisplayController#getTarget()
@@ -177,6 +191,11 @@ public class SecondaryDisplayControllerImpl implements SecondaryDisplayControlle
     return getScoreTracker().getPlayer().equals(target) ? null : target;
   }
 
+  /**
+   * (non-Javadoc)
+   * 
+   * @see demo.client.local.game.controllers.SecondaryDisplayController#removeTracker(demo.client.shared.Player)
+   */
   @Override
   public void removeTracker(Player player) {
     List<ScoreTracker> modelList = scoreList.getValue();
@@ -194,6 +213,11 @@ public class SecondaryDisplayControllerImpl implements SecondaryDisplayControlle
     }
   }
 
+  /**
+   * (non-Javadoc)
+   * 
+   * @see demo.client.local.game.controllers.SecondaryDisplayController#selectPlayerByIndex(int)
+   */
   @Override
   public void selectPlayerByIndex(int i) {
     ScoreTracker selected = getSelectedTracker();
@@ -201,9 +225,8 @@ public class SecondaryDisplayControllerImpl implements SecondaryDisplayControlle
     scoreList.getWidget(selected).setSelected(false);
     scoreList.getValue().get(i).select();
     scoreList.getWidget(i).setSelected(true);
-    
-    MessageBuilder.createMessage("Game" + Client.getInstance().getGameRoom().getId())
-    .command(Command.SWITCH_OPPONENT).withValue(getSelectedTracker().getPlayer()).noErrorHandling()
-    .sendNowWith(messageBus);
+
+    MessageBuilder.createMessage("Game" + Client.getInstance().getGameRoom().getId()).command(Command.SWITCH_OPPONENT)
+            .withValue(getSelectedTracker().getPlayer()).noErrorHandling().sendNowWith(messageBus);
   }
 }

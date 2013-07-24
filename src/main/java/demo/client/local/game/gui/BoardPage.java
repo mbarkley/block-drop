@@ -174,7 +174,7 @@ public class BoardPage extends Composite implements ControllableBoardDisplay {
     }
 
     if (controller != null) {
-      controller.destroy();
+      controller.stop();
       ((OppCallback) oppCallback).destroy();
     }
 
