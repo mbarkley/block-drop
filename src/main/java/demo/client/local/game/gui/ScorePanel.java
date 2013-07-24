@@ -15,7 +15,7 @@ import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.Label;
 
-import demo.client.local.Style;
+import demo.client.local.game.tools.Style;
 import demo.client.shared.ScoreTracker;
 
 @Templated
