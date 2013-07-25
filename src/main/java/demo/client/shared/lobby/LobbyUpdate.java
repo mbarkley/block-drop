@@ -9,88 +9,100 @@ import org.jboss.errai.common.client.api.annotations.Portable;
 import demo.client.shared.meta.GameRoom;
 import demo.client.shared.meta.Player;
 
-/*
- * A portable JavaBean for transmitting lists of playerMap in lobby and gameMap in progress.
+/**
+ * A portable bean for transmitting lists of players in lobby and games in progress.
  */
 @Portable
 public class LobbyUpdate {
 
-  /* A map player ids to Player objects (of playerMap in lobby). */
+  /** A map player ids to Player objects (of playerMap in lobby). */
   private Map<Integer, Player> playerMap = null;
-  /* A map of game ids to Game objects (of gameMap in progress). */
+  /** A map of game ids to Game objects (of gameMap in progress). */
   private Map<Integer, GameRoom> gameMap = null;
 
-  /*
-   * A default no-arg constructor for automated bean construction. Users should prefer the
-   * constructor taking Map<Integer,Player> and Map<Integer,Game> parameters.
+  /**
+   * A default no-arg constructor for automated bean construction.
    */
   public LobbyUpdate() {
   }
 
-  /*
-   * Construct a LobbyUpdate instance with the current playerMap in the lobby and current gameMap in
-   * progress.
+  /**
+   * Construct a LobbyUpdate instance.
    * 
-   * @param playerMap A map of player ids to playerMap, for all the playerMap in the lobby.
+   * @param playerMap
+   *          A map of player ids to players, for all the players in the lobby.
    * 
-   * @param gameMap A map of game ids to gameMap, for all the currently in progress gameMap.
+   * @param gameMap
+   *          A map of game ids to games, for all the currently in progress games.
    */
   public LobbyUpdate(Map<Integer, Player> players, Map<Integer, GameRoom> games) {
     this.playerMap = players;
     this.gameMap = games;
   }
 
-  /*
-   * Get a map of the current playerMap in the lobby.
+  /**
+   * Get a map of the current players in the lobby.
    * 
-   * @return Return a map of player ids to playerMap for the playerMap currently in the lobby.
+   * @return Return a map of player ids to players for the players currently in the lobby.
    */
   public Map<Integer, Player> getPlayerMap() {
     return playerMap;
   }
 
-  /*
-   * Set the map of playerMap currently in the lobby.
+  /**
+   * Set the map of players currently in the lobby.
    * 
-   * @param playerMap A map of player ids to playerMap for the playerMap currently in the lobby.
+   * @param playerMap
+   *          A map of player ids to playerMap for the playerMap currently in the lobby.
    */
   public void setPlayerMap(Map<Integer, Player> players) {
     this.playerMap = players;
   }
 
-  /*
-   * Set the map of gameMap currently in progress.
+  /**
+   * Set the map of games currently in progress.
    * 
-   * @param gameMap A map of game ids to gameMap of the gameMap currently in progress.
+   * @param gameMap
+   *          A map of game ids to games of the games currently in progress.
    */
   public void setGameMap(Map<Integer, GameRoom> games) {
     this.gameMap = games;
   }
 
-  /*
-   * Get the map of gameMap currently in progress.
+  /**
+   * Get the map of games currently in progress.
    * 
-   * @return Return a map of game ids to gameMap of the gameMap currently in progress.
+   * @return Return a map of game ids to games of the games currently in progress.
    */
   public Map<Integer, GameRoom> getGameMap() {
     return gameMap;
   }
-  
+
+  /**
+   * Get a list of players currently in the lobby.
+   * 
+   * @return A list of players currently in the lobby.
+   */
   public List<Player> getPlayers() {
     return getterHelper(playerMap);
   }
-  
+
+  /**
+   * Get a list of currently available games.
+   * 
+   * @return A list of currently available games.
+   */
   public List<GameRoom> getGames() {
     return getterHelper(gameMap);
   }
-  
+
   private <T> List<T> getterHelper(Map<Integer, T> map) {
     List<T> retVal = new ArrayList<T>();
-    
+
     for (T p : map.values()) {
       retVal.add(p);
     }
-    
+
     return retVal;
   }
 }
