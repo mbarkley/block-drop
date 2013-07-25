@@ -8,10 +8,13 @@ import demo.client.local.game.tools.Size.SizeCategory;
 import demo.client.shared.model.BlockModel;
 import demo.client.shared.model.SquareModel;
 
+/**
+ * A simple wrapper for a HTML5 canvas implementing the ControllableBoardDisplay interface.
+ * 
+ * @author mbarkley <mbarkley@redhat.com>
+ * 
+ */
 public class BoardCanvas implements ControllableBoardDisplay {
-
-  /* The background colour of the Block Drop board. */
-  public static final String BOARD_COLOUR = "rgb(255,255,255)";
 
   private Canvas canvas;
 
@@ -22,16 +25,7 @@ public class BoardCanvas implements ControllableBoardDisplay {
     this.sizeCategory = sizeCategory;
   }
 
-  /*
-   * Undraw the given block from this page's mainCanvas. Note: Any path on the mainCanvas will be
-   * lost after invoking this method.
-   * 
-   * @param x The x coordinate of the position of the block.
-   * 
-   * @param y The y coordinate of the position of the block.
-   * 
-   * @param activeBlock The block to undraw.
-   */
+  @Override
   public void undrawBlock(int x, int y, Block activeBlock) {
     BlockModel model = activeBlock.getModel();
     for (SquareModel square : model.getIterator()) {
@@ -42,15 +36,7 @@ public class BoardCanvas implements ControllableBoardDisplay {
     }
   }
 
-  /*
-   * Draw a block on this page's mainCanvas.
-   * 
-   * @param x The x coordinate of the position of the block.
-   * 
-   * @param y The y coordinate of the position of the block.
-   * 
-   * @param activeBlock The block to draw.
-   */
+  @Override
   public void drawBlock(int x, int y, Block activeBlock) {
     activeBlock.draw(x, y, canvas.getContext2d());
   }

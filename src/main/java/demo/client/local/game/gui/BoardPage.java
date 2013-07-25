@@ -55,8 +55,11 @@ import demo.client.shared.Command;
 import demo.client.shared.ExitMessage;
 import demo.client.shared.ScoreTracker;
 
-/*
+/**
  * An Errai Navigation Page providing the UI for a Block Drop game.
+ * 
+ * @author mbarkley <mbarkley@redhat.com>
+ * 
  */
 @Page
 @Templated("Board.html")
@@ -66,32 +69,42 @@ public class BoardPage extends Composite implements ControllableBoardDisplay {
 
   private static BoardPage instance;
 
-  /* A mainCanvas for drawing a Block Drop game. */
+  // A mainCanvas for drawing a Block Drop game.
   @DataField("canvas")
   private Canvas mainCanvas = Canvas.createIfSupported();
   private BoardCanvas canvasWrapper;
-  /* A mainCanvas for drawing the next piece in the Block Drop game. */
+
+  // A canvas for drawing the next piece in the Block Drop game.
   @DataField("next-piece")
   private Canvas nextPieceCanvas = Canvas.createIfSupported();
+
+  // Canvas for displaying an opponent board.
   @DataField("opp-canvas")
   private Canvas oppCanvas = Canvas.createIfSupported();
   private BoardCanvas oppCanvasWrapper;
   private MessageCallback oppCallback;
 
+  // For displaying game over prompt.
   @Inject
   @DataField("game-over-panel")
   GameOverPanel gameOverPanel;
 
+  // For displaying players scores.
   @Inject
   @DataField("score-list")
   private ListWidget<ScoreTracker, ScorePanel> scoreDisplay;
 
+  // For navigating back to the lobby.
   @Inject
   private TransitionTo<Lobby> lobbyTransition;
 
-  /* A secondaryController for this view. */
+  // For controlling the scoreList and nextPieceCanvas.
   private SecondaryDisplayController secondaryController;
+
+  // For controlling the mainCanvas and game loop.
   private BoardController controller;
+
+  // For handling updates from the server.
   private BoardCallback boardCallback;
 
   @Inject
@@ -101,8 +114,11 @@ public class BoardPage extends Composite implements ControllableBoardDisplay {
 
   private List<HandlerRegistration> handlerRegs = new ArrayList<HandlerRegistration>();
 
-  /*
+  /**
    * Create a BoardPage for displaying a Block Drop game.
+   * 
+   * This class implements {@link ControllableBoardDisplay ControllableBoardDisplay} in order to
+   * wrap a controlled canvas.
    */
   public BoardPage() {
     System.out.println("Initiating BoardModel");
@@ -120,9 +136,6 @@ public class BoardPage extends Composite implements ControllableBoardDisplay {
     oppCanvasWrapper = new BoardCanvas(oppCanvas, SizeCategory.OPPONENT);
   }
 
-  /*
-   * Perform additional setup for the Board UI after this object has been constructed.
-   */
   private void setup() {
     // Check that mainCanvas was supported.
     if (mainCanvas != null) {
@@ -194,73 +207,27 @@ public class BoardPage extends Composite implements ControllableBoardDisplay {
     handlerRegs.clear();
   }
 
-  /*
-   * Undraw the given block from this page's mainCanvas. Note: Any path on the mainCanvas will be
-   * lost after invoking this method.
-   * 
-   * @param x The x coordinate of the position of the block.
-   * 
-   * @param y The y coordinate of the position of the block.
-   * 
-   * @param activeBlock The block to undraw.
-   */
-  /*
-   * (non-Javadoc)
-   * 
-   * @see demo.client.local.game.ControllableBoardDisplay#undrawBlock(int, int,
-   * demo.client.local.game.Block)
-   */
   @Override
   public void undrawBlock(int x, int y, Block activeBlock) {
     canvasWrapper.undrawBlock(x, y, activeBlock);
   }
 
-  /*
-   * Draw a block on this page's mainCanvas.
-   * 
-   * @param x The x coordinate of the position of the block.
-   * 
-   * @param y The y coordinate of the position of the block.
-   * 
-   * @param activeBlock The block to draw.
-   */
-  /*
-   * (non-Javadoc)
-   * 
-   * @see demo.client.local.game.ControllableBoardDisplay#drawBlock(int, int,
-   * demo.client.local.game.Block)
-   */
   @Override
   public void drawBlock(int x, int y, Block activeBlock) {
     canvasWrapper.drawBlock(x, y, activeBlock);
   }
 
-  /*
-   * Add a key press handler to this page's mainCanvas.
-   * 
-   * @param handler A key press handler for the mainCanvas.
-   */
-  <H extends EventHandler> void addHandlerToMainCanvas(H handler, Type<H> type) {
+  private <H extends EventHandler> void addHandlerToMainCanvas(H handler, Type<H> type) {
     handlerRegs.add(Assert.notNull("Could not get game-wrapper root panel.", RootPanel.get()).addDomHandler(handler,
             type));
   }
 
-  /*
-   * (non-Javadoc)
-   * 
-   * @see demo.client.local.game.ControllableBoardDisplay#pause()
-   */
   @Override
   public void pause() {
     DivElement element = ((DivElement) Document.get().getElementById("pause-overlay"));
     element.setAttribute("style", "display: block");
   }
 
-  /*
-   * (non-Javadoc)
-   * 
-   * @see demo.client.local.game.ControllableBoardDisplay#unpause()
-   */
   @Override
   public void unpause() {
     DivElement element = ((DivElement) Document.get().getElementById("pause-overlay"));
@@ -277,14 +244,27 @@ public class BoardPage extends Composite implements ControllableBoardDisplay {
     return canvasWrapper.getSizeCategory();
   }
 
+  /**
+   * Get the instance of BoardPage.
+   * 
+   * @return The instance of BoardPage that is or was last displayed.
+   */
   public static BoardPage getInstance() {
     return instance;
   }
 
+  /**
+   * Transition the navigation panel to the Lobby page.
+   */
   public void goToLobby() {
     lobbyTransition.go();
   }
 
+  /**
+   * Get the BoardController instance associated with this page.
+   * 
+   * @return The BoardController instance controlling the local board on this page.
+   */
   public BoardController getController() {
     return controller;
   }
