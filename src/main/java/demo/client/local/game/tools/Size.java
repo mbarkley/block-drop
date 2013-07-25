@@ -60,6 +60,7 @@ public class Size {
   }
 
   // Perform sanity checks to make sure size values have been set reasonably.
+  @SuppressWarnings(value = { "all" })
   private static void sanityCheck() {
     // Dimensions in tiles divide dimensions in pixels.
     assert MAIN_COORD_HEIGHT % HEIGHT == 0 && MAIN_COORD_WIDTH % WIDTH == 0;
