@@ -1,4 +1,4 @@
-package demo.client.shared;
+package demo.client.shared.message;
 
 public enum Command {
   INVITATION, JOIN_GAME, LEAVE_GAME, UPDATE_SCORE, MOVE_UPDATE, SWITCH_OPPONENT, LOBBY_KEEP_ALIVE, GAME_KEEP_ALIVE

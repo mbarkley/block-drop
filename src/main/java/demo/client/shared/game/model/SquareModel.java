@@ -1,4 +1,4 @@
-package demo.client.shared.model;
+package demo.client.shared.game.model;
 
 import org.jboss.errai.common.client.api.annotations.Portable;
 import org.jboss.errai.marshalling.client.api.annotations.MapsTo;

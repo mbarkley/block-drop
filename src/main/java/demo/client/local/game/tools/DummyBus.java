@@ -1,8 +1,8 @@
 package demo.client.local.game.tools;
 
-import demo.client.shared.Player;
-import demo.client.shared.ScoreTracker;
-import demo.client.shared.model.BoardModel;
+import demo.client.shared.game.model.BoardModel;
+import demo.client.shared.meta.Player;
+import demo.client.shared.meta.ScoreTracker;
 
 /**
  * A NOOP implementation of the {@link BoardMessageBus BoardMessageBus} interface.

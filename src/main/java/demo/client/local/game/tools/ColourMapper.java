@@ -3,14 +3,14 @@ package demo.client.local.game.tools;
 import java.util.HashMap;
 import java.util.Map;
 
-import demo.client.shared.model.BlockModel;
-import demo.client.shared.model.LBlockModel;
-import demo.client.shared.model.LongBlockModel;
-import demo.client.shared.model.ReverseLBlockModel;
-import demo.client.shared.model.SBlockModel;
-import demo.client.shared.model.SquareBlockModel;
-import demo.client.shared.model.TBlockModel;
-import demo.client.shared.model.ZBlockModel;
+import demo.client.shared.game.model.BlockModel;
+import demo.client.shared.game.model.LBlockModel;
+import demo.client.shared.game.model.LongBlockModel;
+import demo.client.shared.game.model.ReverseLBlockModel;
+import demo.client.shared.game.model.SBlockModel;
+import demo.client.shared.game.model.SquareBlockModel;
+import demo.client.shared.game.model.TBlockModel;
+import demo.client.shared.game.model.ZBlockModel;
 
 /**
  * A class for mapping {@link BlockModel BlockModel} subclasses to colours.

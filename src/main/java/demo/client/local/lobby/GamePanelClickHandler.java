@@ -3,7 +3,7 @@ package demo.client.local.lobby;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 
-import demo.client.shared.GameRoom;
+import demo.client.shared.meta.GameRoom;
 
 /**
  * A ClickHandler for {@link GamePanel game panels}.

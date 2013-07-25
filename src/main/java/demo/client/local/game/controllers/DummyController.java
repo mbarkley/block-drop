@@ -1,8 +1,8 @@
 package demo.client.local.game.controllers;
 
 import demo.client.local.game.gui.Block;
-import demo.client.shared.Player;
-import demo.client.shared.ScoreTracker;
+import demo.client.shared.meta.Player;
+import demo.client.shared.meta.ScoreTracker;
 
 /**
  * A NOOP implementation of the SecondaryDisplayController interface.

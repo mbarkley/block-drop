@@ -1,4 +1,4 @@
-package demo.client.shared.model;
+package demo.client.shared.game.model;
 
 /*
  * This class overrides the rotate method of BlockModel for shapes which do not

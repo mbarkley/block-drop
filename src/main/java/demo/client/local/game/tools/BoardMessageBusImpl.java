@@ -5,12 +5,12 @@ import org.jboss.errai.bus.client.api.base.MessageBuilder;
 import org.jboss.errai.bus.client.api.messaging.MessageBus;
 
 import demo.client.local.lobby.Client;
-import demo.client.shared.Command;
-import demo.client.shared.Player;
-import demo.client.shared.ScoreEvent;
-import demo.client.shared.ScoreTracker;
-import demo.client.shared.model.BoardModel;
-import demo.client.shared.model.MoveEvent;
+import demo.client.shared.game.model.BoardModel;
+import demo.client.shared.message.Command;
+import demo.client.shared.message.MoveEvent;
+import demo.client.shared.message.ScoreEvent;
+import demo.client.shared.meta.Player;
+import demo.client.shared.meta.ScoreTracker;
 
 public class BoardMessageBusImpl implements BoardMessageBus {
 

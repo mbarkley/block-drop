@@ -5,8 +5,8 @@ import com.google.gwt.canvas.dom.client.Context2d;
 
 import demo.client.local.game.tools.Size;
 import demo.client.local.game.tools.Size.SizeCategory;
-import demo.client.shared.model.BlockModel;
-import demo.client.shared.model.SquareModel;
+import demo.client.shared.game.model.BlockModel;
+import demo.client.shared.game.model.SquareModel;
 
 /**
  * A simple wrapper for a HTML5 canvas implementing the ControllableBoardDisplay interface.

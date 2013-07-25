@@ -51,9 +51,9 @@ import demo.client.local.game.tools.Size;
 import demo.client.local.game.tools.Size.SizeCategory;
 import demo.client.local.lobby.Client;
 import demo.client.local.lobby.Lobby;
-import demo.client.shared.Command;
-import demo.client.shared.ExitMessage;
-import demo.client.shared.ScoreTracker;
+import demo.client.shared.message.Command;
+import demo.client.shared.message.ExitMessage;
+import demo.client.shared.meta.ScoreTracker;
 
 /**
  * An Errai Navigation Page providing the UI for a Block Drop game.

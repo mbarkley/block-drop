@@ -1,4 +1,4 @@
-package demo.client.shared.model;
+package demo.client.shared.game.model;
 
 import java.util.ArrayList;
 import java.util.List;

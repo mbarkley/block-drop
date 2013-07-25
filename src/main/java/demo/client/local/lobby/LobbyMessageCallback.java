@@ -9,9 +9,9 @@ import org.jboss.errai.common.client.protocols.MessageParts;
 
 import com.google.gwt.user.client.Window;
 
-import demo.client.shared.Command;
-import demo.client.shared.GameRoom;
-import demo.client.shared.Invitation;
+import demo.client.shared.lobby.Invitation;
+import demo.client.shared.message.Command;
+import demo.client.shared.meta.GameRoom;
 
 /**
  * A class for handling lobby updates and invitations from the server.

@@ -1,6 +1,9 @@
-package demo.client.shared;
+package demo.client.shared.message;
 
 import org.jboss.errai.common.client.api.annotations.Portable;
+
+import demo.client.shared.meta.Player;
+import demo.client.shared.meta.ScoreTracker;
 
 @Portable
 public class ScoreEvent {

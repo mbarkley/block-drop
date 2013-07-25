@@ -16,7 +16,7 @@ import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.Label;
 
 import demo.client.local.game.tools.Style;
-import demo.client.shared.ScoreTracker;
+import demo.client.shared.meta.ScoreTracker;
 
 /**
  * A display for a single player's name and score.

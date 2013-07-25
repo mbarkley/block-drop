@@ -28,13 +28,13 @@ import com.google.gwt.user.client.ui.HorizontalPanel;
 
 import demo.client.local.game.gui.BoardPage;
 import demo.client.local.game.tools.Style;
-import demo.client.shared.Command;
-import demo.client.shared.GameRoom;
-import demo.client.shared.Invitation;
-import demo.client.shared.LobbyUpdate;
-import demo.client.shared.LobbyUpdateRequest;
-import demo.client.shared.Player;
-import demo.client.shared.RegisterRequest;
+import demo.client.shared.lobby.Invitation;
+import demo.client.shared.lobby.LobbyUpdate;
+import demo.client.shared.lobby.LobbyUpdateRequest;
+import demo.client.shared.lobby.RegisterRequest;
+import demo.client.shared.message.Command;
+import demo.client.shared.meta.GameRoom;
+import demo.client.shared.meta.Player;
 
 /**
  * A class displaying a page for a game lobby.

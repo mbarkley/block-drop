@@ -1,4 +1,4 @@
-package demo.client.shared.model;
+package demo.client.shared.game.model;
 
 /*
  * An S-Shaped block in Block Drop.

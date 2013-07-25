@@ -6,7 +6,7 @@ import java.util.Queue;
 import demo.client.local.game.gui.Block;
 import demo.client.local.game.gui.ControllableBoardDisplay;
 import demo.client.local.game.tools.DummyBus;
-import demo.client.shared.model.BoardModel;
+import demo.client.shared.game.model.BoardModel;
 
 /**
  * A controller for canvases displaying remote opponents boards.

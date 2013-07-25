@@ -13,7 +13,7 @@ import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.Label;
 
-import demo.client.shared.Player;
+import demo.client.shared.meta.Player;
 
 /**
  * A panel for displaying and selecting a player in the {@link Lobby lobby}.

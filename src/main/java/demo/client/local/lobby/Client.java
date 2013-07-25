@@ -9,8 +9,8 @@ import org.jboss.errai.ui.nav.client.local.Navigation;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.RootPanel;
 
-import demo.client.shared.GameRoom;
-import demo.client.shared.Player;
+import demo.client.shared.meta.GameRoom;
+import demo.client.shared.meta.Player;
 
 /**
  * A top-level class containing information on the local player.

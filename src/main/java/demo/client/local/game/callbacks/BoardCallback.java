@@ -6,10 +6,10 @@ import org.jboss.errai.bus.client.api.messaging.MessageCallback;
 import demo.client.local.game.controllers.BoardController;
 import demo.client.local.game.controllers.SecondaryDisplayController;
 import demo.client.local.lobby.Client;
-import demo.client.shared.Command;
-import demo.client.shared.Player;
-import demo.client.shared.ScoreEvent;
-import demo.client.shared.ScoreTracker;
+import demo.client.shared.message.Command;
+import demo.client.shared.message.ScoreEvent;
+import demo.client.shared.meta.Player;
+import demo.client.shared.meta.ScoreTracker;
 
 /**
  * A MessageCallback implementation for handling remote events from the Block Drop Server.

@@ -1,10 +1,13 @@
-package demo.client.shared;
+package demo.client.shared.lobby;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
 import org.jboss.errai.common.client.api.annotations.Portable;
+
+import demo.client.shared.meta.GameRoom;
+import demo.client.shared.meta.Player;
 
 /*
  * A portable JavaBean for transmitting lists of playerMap in lobby and gameMap in progress.

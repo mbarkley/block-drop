@@ -9,11 +9,11 @@ import org.jboss.errai.bus.client.api.messaging.MessageCallback;
 import demo.client.local.game.controllers.OppController;
 import demo.client.local.game.gui.ControllableBoardDisplay;
 import demo.client.local.lobby.Client;
-import demo.client.shared.Command;
-import demo.client.shared.GameRoom;
-import demo.client.shared.Player;
-import demo.client.shared.ScoreEvent;
-import demo.client.shared.model.MoveEvent;
+import demo.client.shared.message.Command;
+import demo.client.shared.message.MoveEvent;
+import demo.client.shared.message.ScoreEvent;
+import demo.client.shared.meta.GameRoom;
+import demo.client.shared.meta.Player;
 
 /**
  * A MessageCallback implementation for receiving state updates of opponents in Block Drop.

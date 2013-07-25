@@ -3,10 +3,10 @@ package demo.client.local.game.tools;
 import org.jboss.errai.bus.client.api.messaging.MessageBus;
 
 import demo.client.local.game.controllers.BoardController;
-import demo.client.shared.Command;
-import demo.client.shared.Player;
-import demo.client.shared.ScoreTracker;
-import demo.client.shared.model.BoardModel;
+import demo.client.shared.game.model.BoardModel;
+import demo.client.shared.message.Command;
+import demo.client.shared.meta.Player;
+import demo.client.shared.meta.ScoreTracker;
 
 /**
  * A {@link MessageBus MessageBus} wrapper for sending game updates to the server.

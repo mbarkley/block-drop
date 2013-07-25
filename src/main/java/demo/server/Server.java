@@ -22,17 +22,17 @@ import org.jboss.errai.bus.client.api.messaging.MessageCallback;
 import org.jboss.errai.bus.client.api.messaging.RequestDispatcher;
 import org.jboss.errai.bus.server.annotations.Service;
 
-import demo.client.shared.Command;
-import demo.client.shared.ExitMessage;
-import demo.client.shared.GameRoom;
-import demo.client.shared.Invitation;
-import demo.client.shared.LobbyUpdate;
-import demo.client.shared.LobbyUpdateRequest;
-import demo.client.shared.Player;
-import demo.client.shared.RegisterRequest;
-import demo.client.shared.ScoreEvent;
-import demo.client.shared.ScoreTracker;
-import demo.client.shared.model.MoveEvent;
+import demo.client.shared.lobby.Invitation;
+import demo.client.shared.lobby.LobbyUpdate;
+import demo.client.shared.lobby.LobbyUpdateRequest;
+import demo.client.shared.lobby.RegisterRequest;
+import demo.client.shared.message.Command;
+import demo.client.shared.message.ExitMessage;
+import demo.client.shared.message.MoveEvent;
+import demo.client.shared.message.ScoreEvent;
+import demo.client.shared.meta.GameRoom;
+import demo.client.shared.meta.Player;
+import demo.client.shared.meta.ScoreTracker;
 
 /*
  * A class for facilitating games between clients over a network.

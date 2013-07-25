@@ -9,10 +9,10 @@ import demo.client.local.game.tools.ClearState;
 import demo.client.local.game.tools.GameHeartBeat;
 import demo.client.local.game.tools.Pacer;
 import demo.client.local.lobby.Client;
-import demo.client.shared.ScoreTracker;
-import demo.client.shared.model.BackgroundBlockModel;
-import demo.client.shared.model.BlockOverflow;
-import demo.client.shared.model.BoardModel;
+import demo.client.shared.game.model.BackgroundBlockModel;
+import demo.client.shared.game.model.BlockOverflow;
+import demo.client.shared.game.model.BoardModel;
+import demo.client.shared.meta.ScoreTracker;
 
 /**
  * This class runs the main game loop for Block Drop, updating the model and view.

@@ -1,4 +1,4 @@
-package demo.client.shared;
+package demo.client.shared.lobby;
 
 import org.jboss.errai.common.client.api.annotations.Portable;
 

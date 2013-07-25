@@ -1,8 +1,9 @@
-package demo.client.shared.model;
+package demo.client.shared.message;
 
 import org.jboss.errai.common.client.api.annotations.Portable;
 
-import demo.client.shared.Player;
+import demo.client.shared.game.model.BoardModel;
+import demo.client.shared.meta.Player;
 
 @Portable
 public class MoveEvent {

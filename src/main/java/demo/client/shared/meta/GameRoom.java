@@ -1,10 +1,11 @@
-package demo.client.shared;
+package demo.client.shared.meta;
 
 import java.util.HashMap;
 import java.util.Map;
 
 import org.jboss.errai.common.client.api.annotations.Portable;
 import org.jboss.errai.databinding.client.api.Bindable;
+
 
 @Bindable
 @Portable

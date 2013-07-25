@@ -16,10 +16,10 @@ import demo.client.local.game.gui.Block;
 import demo.client.local.game.gui.ScorePanel;
 import demo.client.local.game.tools.Size;
 import demo.client.local.lobby.Client;
-import demo.client.shared.Command;
-import demo.client.shared.GameRoom;
-import demo.client.shared.Player;
-import demo.client.shared.ScoreTracker;
+import demo.client.shared.message.Command;
+import demo.client.shared.meta.GameRoom;
+import demo.client.shared.meta.Player;
+import demo.client.shared.meta.ScoreTracker;
 
 /**
  * An implementation of {@link demo.client.local.game.controllers.SecondaryDisplayController
@@ -124,8 +124,7 @@ public class SecondaryDisplayControllerImpl implements SecondaryDisplayControlle
   /**
    * (non-Javadoc)
    * 
-   * @see demo.client.local.game.SecondaryDisplayController#updateAndSortScore(demo.client.shared.
-   *      ScoreTracker)
+   * @see demo.client.local.game.SecondaryDisplayController#updateAndSortScore(demo.client.shared.meta.ScoreTracker)
    */
   @Override
   public void updateAndSortScore(ScoreTracker scoreTracker) {
@@ -194,7 +193,7 @@ public class SecondaryDisplayControllerImpl implements SecondaryDisplayControlle
   /**
    * (non-Javadoc)
    * 
-   * @see demo.client.local.game.controllers.SecondaryDisplayController#removeTracker(demo.client.shared.Player)
+   * @see demo.client.local.game.controllers.SecondaryDisplayController#removeTracker(demo.client.shared.meta.Player)
    */
   @Override
   public void removeTracker(Player player) {

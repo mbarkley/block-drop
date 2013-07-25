@@ -1,9 +1,11 @@
-package demo.client.shared;
+package demo.client.shared.lobby;
 
 import java.util.HashSet;
 import java.util.Set;
 
 import org.jboss.errai.common.client.api.annotations.Portable;
+
+import demo.client.shared.meta.Player;
 
 /*
  * A portable JavaBean for transmitting invitations to games between clients.

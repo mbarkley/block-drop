@@ -13,7 +13,7 @@ import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.Label;
 
-import demo.client.shared.GameRoom;
+import demo.client.shared.meta.GameRoom;
 
 /**
  * A panel for displaying information about and selecting games in the lobby.

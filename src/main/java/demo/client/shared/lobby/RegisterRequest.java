@@ -1,6 +1,8 @@
-package demo.client.shared;
+package demo.client.shared.lobby;
 
 import org.jboss.errai.common.client.api.annotations.Portable;
+
+import demo.client.shared.meta.Player;
 
 /*
  * A portable JavaBean class for registering a user with the server and/or

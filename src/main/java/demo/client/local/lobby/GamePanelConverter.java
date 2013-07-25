@@ -4,8 +4,8 @@ import java.util.Map;
 
 import org.jboss.errai.databinding.client.api.Converter;
 
-import demo.client.shared.GameRoom;
-import demo.client.shared.Player;
+import demo.client.shared.meta.GameRoom;
+import demo.client.shared.meta.Player;
 
 /**
  * A class for setting the size of a {@link GameRoom game room} in a {@link GamePanel game panel}.

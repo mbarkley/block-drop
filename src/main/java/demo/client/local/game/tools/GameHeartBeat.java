@@ -7,7 +7,7 @@ import org.jboss.errai.bus.client.api.messaging.MessageBus;
 import com.google.gwt.user.client.Timer;
 
 import demo.client.local.lobby.Client;
-import demo.client.shared.Command;
+import demo.client.shared.message.Command;
 
 /**
  * A {@link Timer Timer} subclass for sending {@link Command#GAME_KEEP_ALIVE keep alive} messages to

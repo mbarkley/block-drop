@@ -1,7 +1,8 @@
-package demo.client.shared;
+package demo.client.shared.meta;
 
 import org.jboss.errai.common.client.api.annotations.Portable;
 import org.jboss.errai.databinding.client.api.Bindable;
+
 
 /*
  * For storing and updating the score of an individual player.
