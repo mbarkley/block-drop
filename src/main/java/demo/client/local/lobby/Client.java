@@ -12,9 +12,8 @@ import com.google.gwt.user.client.ui.RootPanel;
 import demo.client.shared.GameRoom;
 import demo.client.shared.Player;
 
-
-/*
- * A container class for a game client.
+/**
+ * A top-level class containing information on the local player.
  */
 @EntryPoint
 @ApplicationScoped
@@ -30,7 +29,7 @@ public class Client {
   /* For the Errai NavigationUI. */
   @Inject
   private Navigation nav;
-  
+
   /* For debugging only. */
   private static int curDebugId = 1;
   /* For debugging only. */
@@ -44,15 +43,17 @@ public class Client {
   /* For accessing the singleton instance of this object. */
   private static Client instance = null;
 
-  /*
-   * Get the singleton instance of this client.
+  /**
+   * Get a the singleton instance of this Client.
+   * 
+   * @return Get the singleton instance of this client.
    */
   public static Client getInstance() {
     return instance;
   }
 
-  /*
-   * Create a Client object.
+  /**
+   * Create a client instance.
    */
   public Client() {
     // For debugging.
@@ -61,14 +62,18 @@ public class Client {
 
     instance = this;
   }
-  
+
+  /**
+   * Do post constructor initialization on this object if it has not already been done. Will prompt
+   * the user for a name.
+   */
   public void maybeInit() {
     if (nickname == null) {
       init();
     }
   }
 
-  /*
+  /**
    * Prompt the user for a nickname and attach the navigation panel.
    */
   private void init() {
@@ -85,8 +90,8 @@ public class Client {
     // Add nav to root panel.
     RootPanel.get().add(nav.getContentPanel());
   }
-  
-  /*
+
+  /**
    * Check if this client has registered a player object with the server.
    * 
    * @return True iff this client has registered a player with the server.
@@ -95,25 +100,26 @@ public class Client {
     return player != null;
   }
 
-  /*
-   * Get the player object associated with this user.
+  /**
+   * Get the player object associated with this client.
    * 
-   * @return The player object associated with this user.
+   * @return The player object associated with this client.
    */
   public Player getPlayer() {
     return player;
   }
 
-  /*
-   * Set the player object associated with this user.
+  /**
+   * Set the player object associated with this client.
    * 
-   * @param player The new player object to be associated with this user.
+   * @param player
+   *          The new player object to be associated with this client.
    */
   public void setPlayer(Player player) {
     this.player = player;
   }
 
-  /*
+  /**
    * Get the nickname of this player.
    * 
    * @return The nickname of this player.
@@ -122,19 +128,20 @@ public class Client {
     return nickname;
   }
 
-  /*
+  /**
    * Get the game object representing the game this client is currently in.
    * 
-   * @return The game object representing the game this client is currently in.
+   * @return The game this client is currently in.
    */
   public GameRoom getGameRoom() {
     return game;
   }
 
-  /*
+  /**
    * Set the game object representing the game this client is currently in.
    * 
-   * @param game The game object representing the game this client is currently in.
+   * @param game
+   *          The game this client is currently in.
    */
   public void setGameRoom(GameRoom game) {
     this.game = game;

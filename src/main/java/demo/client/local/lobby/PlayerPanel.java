@@ -15,18 +15,27 @@ import com.google.gwt.user.client.ui.Label;
 
 import demo.client.shared.Player;
 
+/**
+ * A panel for displaying and selecting a player in the {@link Lobby lobby}.
+ * 
+ * @author mbarkley <mbarkley@redhat.com>
+ * 
+ */
 @Templated
 public class PlayerPanel extends Composite implements HasModel<Player> {
 
   @Inject
   @AutoBound
-  DataBinder<Player> model;
+  private DataBinder<Player> model;
 
   @DataField
   @Inject
   @Bound
   private Label name;
-  
+
+  /**
+   * Create a PlayerPanel.
+   */
   public PlayerPanel() {
     super();
     addDomHandler(new PlayerPanelClickHandler(), ClickEvent.getType());

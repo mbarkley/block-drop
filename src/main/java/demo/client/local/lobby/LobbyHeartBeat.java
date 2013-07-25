@@ -8,6 +8,13 @@ import com.google.gwt.user.client.Timer;
 
 import demo.client.shared.Command;
 
+/**
+ * A {@link Timer timer} for sending {@link Command#LOBBY_KEEP_ALIVE keep alive} messages to the
+ * server.
+ * 
+ * @author mbarkley <mbarkley@redhat.com>
+ * 
+ */
 public class LobbyHeartBeat extends Timer {
 
   private MessageBus messageBus = ErraiBus.get();

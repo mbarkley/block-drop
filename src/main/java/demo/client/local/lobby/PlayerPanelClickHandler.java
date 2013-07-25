@@ -5,6 +5,12 @@ import com.google.gwt.event.dom.client.ClickHandler;
 
 import demo.client.shared.Player;
 
+/**
+ * A ClickHandler for {@link PlayerPanel player panels}.
+ * 
+ * @author mbarkley <mbarkley@redhat.com>
+ * 
+ */
 public class PlayerPanelClickHandler implements ClickHandler {
 
   @Override

@@ -36,7 +36,7 @@ import demo.client.shared.LobbyUpdateRequest;
 import demo.client.shared.Player;
 import demo.client.shared.RegisterRequest;
 
-/*
+/**
  * A class displaying a page for a game lobby.
  */
 @Page(role = DefaultPage.class)
@@ -78,14 +78,14 @@ public class Lobby extends Composite {
 
   private LobbyHeartBeat heartBeat;
 
-  /*
-   * Create an instance of a lobby page.
+  /**
+   * Create a Lobby instance.
    */
   public Lobby() {
     instance = this;
   }
 
-  /*
+  /**
    * Construct the UI elements for the lobby.
    */
   @PostConstruct
@@ -97,7 +97,7 @@ public class Lobby extends Composite {
 
       @Override
       public void onClick(ClickEvent event) {
-        // This player should always join a new game that he starts.
+        // This player should always join a new game that he or she starts.
         Invitation invite = new Invitation();
         invite.setHost(Client.getInstance().getPlayer());
         invite.setGuests(selectedPlayers);
@@ -125,13 +125,13 @@ public class Lobby extends Composite {
     gameButtonPanel.add(joinGameButton);
     joinLobby();
   }
-  
+
   @PageHidden
   private void leaveLobby() {
     heartBeat.cancel();
   }
 
-  /*
+  /**
    * Request an update of the current clients in the lobby from the server.
    */
   public void requestLobbyUpdate() {
@@ -139,7 +139,7 @@ public class Lobby extends Composite {
     System.out.println(Client.getInstance().getNickname() + ": LobbyUpdateRequest fired.");
   }
 
-  /*
+  /**
    * Update the lobby list model and display with newest lobby update from the server.
    */
   public void updateLobby(@Observes LobbyUpdate update) {
@@ -149,7 +149,7 @@ public class Lobby extends Composite {
     gameList.setItems(update.getGames());
   }
 
-  /*
+  /**
    * Register this user with the lobby.
    */
   public void joinLobby() {
@@ -162,7 +162,7 @@ public class Lobby extends Composite {
     System.out.println(Client.getInstance().getNickname() + ": LobbyRequest fired.");
   }
 
-  /*
+  /**
    * Accept a player object from the server as the canonical representation of this user.
    */
   public void loadPlayer(@Observes Player player) {
@@ -178,21 +178,32 @@ public class Lobby extends Composite {
     }
 
     Client.getInstance().setPlayer(player);
-    
+
     // Reset or start LobbyHeartBeat
     if (heartBeat != null)
       heartBeat.cancel();
-    
+
     heartBeat = new LobbyHeartBeat();
     heartBeat.scheduleRepeating(5000);
 
     requestLobbyUpdate();
   }
 
+  /**
+   * Get the Lobby instance.
+   * 
+   * @return The singleton Lobby instance.
+   */
   public static Lobby getInstance() {
     return instance;
   }
 
+  /**
+   * Toggle whether the given player is selected in the list of available players.
+   * 
+   * @param model
+   *          The player to be toggled.
+   */
   void togglePlayerSelection(Player model) {
     if (selectedPlayers.contains(model)) {
       System.out.println("Player " + model.getName() + " deselected.");
@@ -206,10 +217,20 @@ public class Lobby extends Composite {
     }
   }
 
+  /**
+   * Transition to the {@link BoardPage board page}.
+   */
   void goToBoard() {
     boardTransition.go();
   }
 
+  /**
+   * Toggle whether the given GameRoom is selected in the list of available games. Any previously
+   * selected games will be unselected.
+   * 
+   * @param model
+   *          The GameRoom to be toggled.
+   */
   void toggleGameSelection(GameRoom model) {
     if (model.equals(selectedGame)) {
       gameList.getWidget(model).removeStyleName(Style.SELECTED);

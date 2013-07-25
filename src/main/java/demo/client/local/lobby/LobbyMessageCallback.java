@@ -13,21 +13,14 @@ import demo.client.shared.Command;
 import demo.client.shared.GameRoom;
 import demo.client.shared.Invitation;
 
-/*
- * A class for handling lobby updates and invitation from the server.
+/**
+ * A class for handling lobby updates and invitations from the server.
  */
 public class LobbyMessageCallback implements MessageCallback {
 
   /* For sending messages to the server. */
   private RequestDispatcher dispatcher = ErraiBus.getDispatcher();
 
-  /*
-   * (non-Javadoc)
-   * 
-   * @see
-   * org.jboss.errai.bus.client.api.messaging.MessageCallback#callback(org.jboss.errai.bus.client
-   * .api.messaging.Message)
-   */
   @Override
   public void callback(Message message) {
     switch (Command.valueOf(message.getCommandType())) {
@@ -41,7 +34,7 @@ public class LobbyMessageCallback implements MessageCallback {
     }
   }
 
-  /*
+  /**
    * Start a game with another player after a successfully accepted invitation.
    */
   private void startGameCallback(GameRoom room) {
@@ -53,7 +46,7 @@ public class LobbyMessageCallback implements MessageCallback {
     System.out.println(Client.getInstance().getNickname() + ": After board transition.");
   }
 
-  /*
+  /**
    * Prompt the user to respond to an invitation from another client.
    */
   private void invitationCallback(Invitation invitation) {

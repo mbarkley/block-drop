@@ -15,18 +15,27 @@ import com.google.gwt.user.client.ui.Label;
 
 import demo.client.shared.GameRoom;
 
+/**
+ * A panel for displaying information about and selecting games in the lobby.
+ * 
+ * @author mbarkley <mbarkley@redhat.com>
+ * 
+ */
 @Templated
 public class GamePanel extends Composite implements HasModel<GameRoom> {
-  
+
   @Inject
   @AutoBound
-  DataBinder<GameRoom> model;
-  
+  private DataBinder<GameRoom> model;
+
   @DataField("num-players")
   @Inject
-  @Bound(property="players",converter=GamePanelConverter.class)
+  @Bound(property = "players", converter = GamePanelConverter.class)
   private Label numPlayers;
-  
+
+  /**
+   * Create a GamePanel.
+   */
   public GamePanel() {
     super();
     addDomHandler(new GamePanelClickHandler(), ClickEvent.getType());
