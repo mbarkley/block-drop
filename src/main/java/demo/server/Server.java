@@ -34,12 +34,11 @@ import demo.client.shared.meta.GameRoom;
 import demo.client.shared.meta.Player;
 import demo.client.shared.meta.ScoreTracker;
 
-/*
+/**
  * A class for facilitating games between clients over a network.
  * 
- * This class responds to, fires events to, and catches events from clients; maintains
- * the list of games and lobbyPlayers in the lobby; and also uses a message bus to act as
- * a relay between clients.
+ * This class responds to, fires events to, and catches events from clients; maintains the list of
+ * games and players in the lobby; and also uses a message bus to act as a relay between clients.
  */
 @ApplicationScoped
 @Service("Relay")
@@ -48,47 +47,47 @@ public class Server implements MessageCallback {
   private static final long LOBBY_TIMEOUT = 10000;
   private static final long GAME_TIMEOUT = 5000;
 
-  /* A map of game ids to games that are currently in progress. */
+  /** A map of game ids to games that are currently in progress. */
   private Map<Integer, GameRoom> games = new ConcurrentHashMap<Integer, GameRoom>();
-  /* A map of player ids to lobbyPlayers that are currently in the lobby. */
+  /** A map of player ids to lobbyPlayers that are currently in the lobby. */
   private Map<Integer, Player> lobbyPlayers = new ConcurrentHashMap<Integer, Player>();
-  /* Heart beat timestamps of players in lobby. */
+  /** Heart beat timestamps of players in lobby. */
   private Map<Integer, Long> lobbyHeartBeats = new ConcurrentHashMap<Integer, Long>();
-  /* Heart beat timestamps of players in games. */
+  /** Heart beat timestamps of players in games. */
   private Map<Player, Long> gameHeartBeats = new ConcurrentSkipListMap<Player, Long>();
-  /* This value is incremented to assign unique player ids. */
+  /** This value is incremented to assign unique player ids. */
   private int curPlayerId = 1;
-  /* This value is incremented to assign unique game ids. */
+  /** This value is incremented to assign unique game ids. */
   private int curGameId = 1;
 
-  /* Used for receiving messages from clients. */
+  /** Used for receiving messages from clients. */
   @Inject
   private MessageBus messageBus;
-  /* Used for sending message to clients. */
+  /** Used for sending message to clients. */
   @Inject
   private RequestDispatcher dispatcher;
-  /* Used for sending clients their registered player information. */
+  /** Used for sending clients their registered player information. */
   @Inject
   private Event<Player> playerRegistration;
-  /* Used for sending lobby updates to clients. */
+  /** Used for sending lobby updates to clients. */
   @Inject
   private Event<LobbyUpdate> lobbyUpdate;
 
   private Timer lobbyTimer;
   private Timer gameTimer;
 
-  /* For debugging only. */
+  /** For debugging only. */
   private int debugId;
-  /* For debugging only. */
+  /** For debugging only. */
   private static int curDebugId = 1;
 
-  /* For debugging only. */
+  /** For debugging only. */
   private static synchronized int nextDebugId() {
     return curDebugId++;
   }
 
-  /*
-   * Create a Server for hosting the lobby and tic-tac-toe games. This object is meant to be used as
+  /**
+   * Create a Server for hosting the lobby and Block Drop games. This object is meant to be used as
    * a singleton.
    */
   public Server() {
@@ -115,6 +114,9 @@ public class Server implements MessageCallback {
     }, 0, GAME_TIMEOUT);
   }
 
+  /**
+   * Find and remove idle players from game rooms.
+   */
   protected void cleanGameRooms() {
     long curTime = System.currentTimeMillis();
 
@@ -126,6 +128,9 @@ public class Server implements MessageCallback {
     System.out.println("Server: GameRooms cleaned");
   }
 
+  /**
+   * Find and remove idle players from the lobby.
+   */
   protected void cleanLobby() {
     long curTime = System.currentTimeMillis();
     List<Integer> removed = new ArrayList<Integer>();
@@ -145,7 +150,7 @@ public class Server implements MessageCallback {
     }
   }
 
-  /*
+  /**
    * Get a unique id for a player.
    * 
    * @return A positive integer that is unique to a player.
@@ -154,7 +159,7 @@ public class Server implements MessageCallback {
     return curPlayerId++;
   }
 
-  /*
+  /**
    * Get a unique id for a game.
    * 
    * @return A positive integer that is unique to a game.
@@ -163,10 +168,11 @@ public class Server implements MessageCallback {
     return curGameId++;
   }
 
-  /*
+  /**
    * Register a player by assigning them an id and then fire this information back to the client.
    * 
-   * @param request The request containing the Player object to be registered.
+   * @param request
+   *          The request containing the Player object to be registered.
    */
   public void registerPlayer(@Observes RegisterRequest request) {
     Player player = request.getPlayer();
@@ -192,18 +198,18 @@ public class Server implements MessageCallback {
     playerRegistration.fire(player);
   }
 
-  /*
+  /**
    * Respond to a lobbyUpdateRequest by sending a copy of the lobby to the client. This method
-   * should only be invoked by the Errai Framework in response to a Event<LobbyUpdateRequest> fired
-   * from a client.
+   * should only be invoked by the Errai Framework in response to a
+   * {@code Event<LobbyUpdateRequest>} fired from a client.
    */
   public void handleLobbyUpdateRequest(@Observes LobbyUpdateRequest lobbyUpdateRequest) {
     sendLobbyList();
   }
 
-  /*
+  /**
    * Respond to an invitation by relaying it to the appropriate client. This method should only be
-   * invoked by the Errai Framework in response to an Event<Invitation> fired from a client.
+   * invoked by the Errai Framework in response to an {@code Event<Invitation>} fired from a client.
    */
   public void handleInvitation(@Observes Invitation invitation) {
     // For debugging.
@@ -241,9 +247,9 @@ public class Server implements MessageCallback {
     System.out.println("Server: " + player.getName() + " added to Game" + gameId);
   }
 
-  /*
-   * Fire an Event<LobbyUpdate> to connected clients. This should result in clients refreshing their
-   * lobby lists.
+  /**
+   * Fire an {@code Event<LobbyUpdate>} to connected clients. This should result in clients
+   * refreshing their lobby lists.
    */
   public void sendLobbyList() {
     lobbyUpdate.fire(new LobbyUpdate(lobbyPlayers, games));
@@ -251,11 +257,6 @@ public class Server implements MessageCallback {
     System.out.println("Server" + debugId + ": Lobby list sent.");
   }
 
-  /*
-   * @see
-   * org.jboss.errai.bus.client.api.messaging.MessageCallback#callback(org.jboss.errai.bus.client
-   * .api.messaging.Message)
-   */
   @Override
   public void callback(Message message) {
     switch (Command.valueOf(message.getCommandType())) {
