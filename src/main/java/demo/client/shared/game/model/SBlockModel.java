@@ -1,13 +1,13 @@
 package demo.client.shared.game.model;
 
-/*
- * An S-Shaped block in Block Drop.
+/**
+ * An S-Shaped block.
  */
 public class SBlockModel extends ToggledBlockModel {
 
   public static final int CODE = 4;
 
-  /*
+  /**
    * Create an SBlockModel instance.
    */
   public SBlockModel() {
@@ -21,10 +21,16 @@ public class SBlockModel extends ToggledBlockModel {
             }, getCode());
   }
 
+  @Override
   public double getCentreColDiff() {
     return 0.5;
   }
 
+  /**
+   * Get the code identifying this type of block model.
+   * 
+   * @return The code identifying this type of block model.
+   */
   public static int getCode() {
     return CODE;
   }

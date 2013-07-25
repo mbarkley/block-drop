@@ -1,13 +1,13 @@
 package demo.client.shared.game.model;
 
-/*
- * A Z-shaped block in Block Drop.
+/**
+ * A Z-shaped block.
  */
 public class ZBlockModel extends ToggledBlockModel {
 
   public static final int CODE = 7;
 
-  /*
+  /**
    * Create a ZBlockModel instance.
    */
   public ZBlockModel() {
@@ -21,10 +21,16 @@ public class ZBlockModel extends ToggledBlockModel {
             }, getCode());
   }
 
+  @Override
   public double getCentreColDiff() {
     return -0.5;
   }
 
+  /**
+   * Get the code identifying this type of block model.
+   * 
+   * @return The code identifying this type of block model.
+   */
   public static int getCode() {
     return CODE;
   }

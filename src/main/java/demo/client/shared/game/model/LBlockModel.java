@@ -1,13 +1,13 @@
 package demo.client.shared.game.model;
 
-/*
- * A model for an L-shaped block in Block Drop.
+/**
+ * A model for an L-shaped block model.
  */
 public class LBlockModel extends BlockModel {
 
   public static final int CODE = 8;
 
-  /*
+  /**
    * Create a LBlockModel instance.
    */
   public LBlockModel() {
@@ -22,10 +22,16 @@ public class LBlockModel extends BlockModel {
             }, getCode());
   }
 
+  @Override
   public double getCentreColDiff() {
     return -0.5;
   }
 
+  /**
+   * Get the code identifying this type of block model.
+   * 
+   * @return The code identifying this type of block model.
+   */
   public static int getCode() {
     return CODE;
   }

@@ -2,32 +2,48 @@ package demo.client.shared.game.model;
 
 import org.jboss.errai.common.client.api.annotations.Portable;
 
-/*
- * A single row in the Block Drop board.
+/**
+ * A single row in a {@link BoardModel board model}.
  */
 @Portable
 public class Row {
 
-  /* The spots in this row. Indices go left to right. */
+  /** The spots in this row. Indices go left to right. */
   private int[] squares;
 
-  /* The width of this row. */
+  /** The width of this row. */
   private int width;
 
+  /**
+   * Get the width of this row.
+   * 
+   * @return The width (in squares) of this row.
+   */
   public int getWidth() {
     return width;
   }
 
+  /**
+   * Set the width of this row.
+   * 
+   * @param width
+   *          The new width (in squares) of this row.
+   */
   public void setWidth(int width) {
     this.width = width;
   }
-  
-  public Row() {}
 
-  /*
+  /**
+   * Default no-arg row constructor (for proxying).
+   */
+  public Row() {
+  }
+
+  /**
    * Create a row of width size.
    * 
-   * @param size The width of this row.
+   * @param size
+   *          The width of this row.
    */
   public Row(int size) {
     width = size;
@@ -35,33 +51,38 @@ public class Row {
     squares = new int[width];
   }
 
-  /*
+  /**
    * Get the value at index in this row.
    * 
-   * @param index The index to get in this row.
+   * @param index
+   *          The index to get in this row.
    * 
    * @return The value at index in this row.
    * 
-   * @throws Exception If the index is out of range.
+   * @throws Exception
+   *           If the index is out of range.
    */
   public int getSquareValue(int index) {
     return squares[index];
   }
 
-  /*
+  /**
    * Set the value at index in this row.
    * 
-   * @param index The index of the square to set in this row.
+   * @param index
+   *          The index of the square to set in this row.
    * 
-   * @param value The value to set.
+   * @param value
+   *          The value to set.
    * 
-   * @throws Exception If the index is out of range.
+   * @throws Exception
+   *           If the index is out of range.
    */
   public void setSquare(int index, int value) {
     squares[index] = value;
   }
 
-  /*
+  /**
    * Check if this row is entirely occupied.
    * 
    * @return True iff this row is entirely occupied.

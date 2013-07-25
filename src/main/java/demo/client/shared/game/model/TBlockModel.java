@@ -1,13 +1,13 @@
 package demo.client.shared.game.model;
 
-/*
- * A T-shaped block in Block Drop.
+/**
+ * A T-shaped block.
  */
 public class TBlockModel extends BlockModel {
 
   public static final int CODE = 6;
 
-  /*
+  /**
    * Create a TBlockModel instance.
    */
   public TBlockModel() {
@@ -22,6 +22,11 @@ public class TBlockModel extends BlockModel {
             }, getCode());
   }
 
+  /**
+   * Get the code identifying this type of block model.
+   * 
+   * @return The code identifying this type of block model.
+   */
   public static int getCode() {
     return CODE;
   }

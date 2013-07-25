@@ -1,13 +1,13 @@
 package demo.client.shared.game.model;
 
-/*
- * A long straight block in Block Drop.
+/**
+ * A long straight block.
  */
 public class LongBlockModel extends ToggledBlockModel {
 
   public static final int CODE = 2;
 
-  /*
+  /**
    * Create a LongBlockModel instance.
    */
   public LongBlockModel() {
@@ -21,10 +21,16 @@ public class LongBlockModel extends ToggledBlockModel {
             }, getCode());
   }
 
+  @Override
   public double getCentreRowDiff() {
     return -0.5;
   }
-
+  
+  /**
+   * Get the code identifying this type of block model.
+   * 
+   * @return The code identifying this type of block model.
+   */
   public static int getCode() {
     return CODE;
   }

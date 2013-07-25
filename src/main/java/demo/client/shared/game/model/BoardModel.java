@@ -4,34 +4,35 @@ import java.util.Random;
 
 import org.jboss.errai.common.client.api.annotations.Portable;
 
-/*
+/**
  * A model of the Block Drop board.
  */
 @Portable
 public class BoardModel {
 
-  /* The value representing a vacant spot on the board. */
+  /** The value representing a vacant spot on the board. */
   public static final int NO_TILE = 0;
-  /* The value representing an occupied spot on the board. */
+  /** The value representing an occupied spot on the board. */
   public static final int TILE = 1;
 
-  /* The number of rows in this board. */
+  /** The number of rows in this board. */
   public final static int ROW_NUM = 15;
-  /* The number of columns in this board. */
+  /** The number of columns in this board. */
   public final static int COL_NUM = 10;
 
-  /* The rows of the board. Lower indices represent lower rows. */
+  /** The rows of the board. Lower indices represent lower rows. */
   private Row[] board;
-  /*
+
+  /**
    * The current active block. Tiles in the active block are not recorded on the board until the
    * block is no longer active.
    */
   private BlockModel activeBlock = null;
-  /* The next block to become active. */
+  /** The next block to become active. */
   private BlockModel nextBlock = null;
-  /* The row position of the active block on this board. */
+  /** The row position of the active block on this board. */
   private int activeBlockRow;
-  /* The column position of the active block on this board. */
+  /** The column position of the active block on this board. */
   private int activeBlockColumn;
   private boolean fast = false;
   private boolean drop;
@@ -39,19 +40,21 @@ public class BoardModel {
   private int pendingColMove = 0;
   private int rowsToAdd = 0;
 
-  /*
+  /**
    * Create a BoardModel.
    * 
-   * @param width The number of squares in the width of the board.
+   * @param width
+   *          The number of squares in the width of the board.
    * 
-   * @param height The number of squares in the height of the board.
+   * @param height
+   *          The number of squares in the height of the board.
    */
   public BoardModel() {
     board = new Row[ROW_NUM];
     initBoard();
   }
 
-  /*
+  /**
    * Initialize the board in preparation for a new game.
    */
   private void initBoard() {
@@ -66,7 +69,7 @@ public class BoardModel {
     initActiveBlockPosition();
   }
 
-  /*
+  /**
    * Initialize position of the active BlockModel.
    */
   private void initActiveBlockPosition() {
@@ -75,7 +78,7 @@ public class BoardModel {
     activeBlockColumn = COL_NUM / 2;
   }
 
-  /*
+  /**
    * Generate the next BlockModel to be used as the active block on this board.
    */
   private BlockModel generateNextBlock() {
@@ -113,12 +116,13 @@ public class BoardModel {
     return retVal;
   }
 
-  /*
+  /**
    * Initialize the next BlockModel to be the active block. This should be called whenever the
    * current active block has settled at the bottom of the board.
    * 
-   * @throws BlockOverflow If the BlockModel that is active (before invoking this method) is
-   * partially off the screen (i.e. the board is overflowing).
+   * @throws BlockOverflow
+   *           If the BlockModel that is active (before invoking this method) is partially off the
+   *           screen (i.e. the board is overflowing).
    */
   public void initNextBlock() throws BlockOverflow {
     if (activeBlock != null)
@@ -128,15 +132,17 @@ public class BoardModel {
     initActiveBlockPosition();
   }
 
-  /*
+  /**
    * Get value of the square at (row,col).
    * 
-   * @param row The row position of a square.
+   * @param row
+   *          The row position of a square.
    * 
-   * @param col The column position of a square.
+   * @param col
+   *          The column position of a square.
    * 
    * @return The value of the square, 0 if the square is above the board, and 1 if the square is
-   * beside or below the board.
+   *         beside or below the board.
    */
   private int getSquare(int row, int col) {
 
@@ -153,7 +159,7 @@ public class BoardModel {
     }
   }
 
-  /*
+  /**
    * Write the current active block to the board in its current position.
    */
   private void writeActiveBlock() throws BlockOverflow {
@@ -169,7 +175,7 @@ public class BoardModel {
     }
   }
 
-  /*
+  /**
    * Get the number of rows on the board which are full.
    * 
    * @return The number of rows on the board which are full.
@@ -187,20 +193,23 @@ public class BoardModel {
     return retVal;
   }
 
-  /*
+  /**
    * Set a square on the board.
    * 
-   * @param row The row index of the square.
+   * @param row
+   *          The row index of the square.
    * 
-   * @param col The column index of the square.
+   * @param col
+   *          The column index of the square.
    * 
-   * @param value The value to be assigned to the square.
+   * @param value
+   *          The value to be assigned to the square.
    */
   private void setSquare(int row, int col, int value) {
     board[row].setSquare(col, value);
   }
 
-  /*
+  /**
    * Get the active block.
    * 
    * @return The active BlockModel on this board.
@@ -209,7 +218,7 @@ public class BoardModel {
     return activeBlock;
   }
 
-  /*
+  /**
    * Get the row position of the active block.
    * 
    * @return The row index of the active block.
@@ -218,7 +227,7 @@ public class BoardModel {
     return activeBlockRow;
   }
 
-  /*
+  /**
    * Get the column index of the active block.
    * 
    * @return The column index of the active block.
@@ -227,7 +236,7 @@ public class BoardModel {
     return activeBlockColumn;
   }
 
-  /*
+  /**
    * Check if the active block is in a valid position.
    */
   private boolean isValidPosition(int row, int col) {
@@ -242,10 +251,11 @@ public class BoardModel {
     return isMovable;
   }
 
-  /*
+  /**
    * Move the active block.
    * 
-   * @param colFlag False if column movement should be ignored.
+   * @param colFlag
+   *          False if column movement should be ignored.
    * 
    * @return True iff the block was successfully moved.
    */
@@ -267,7 +277,7 @@ public class BoardModel {
     }
   }
 
-  /*
+  /**
    * Rotate the current active block if this is possible.
    */
   public void rotateActiveBlock() {
@@ -281,7 +291,7 @@ public class BoardModel {
     }
   }
 
-  /*
+  /**
    * Get the greatest distance directly downward that the active block can travel.
    */
   public int getDropDistance() {
@@ -292,7 +302,7 @@ public class BoardModel {
     return i - 1;
   }
 
-  /*
+  /**
    * Get a list of models of the blocks which have settled on this BoardModel above any full rows.
    */
   public BackgroundBlockModel getNonFullRows() {
@@ -311,7 +321,7 @@ public class BoardModel {
     return retVal;
   }
 
-  /*
+  /**
    * Clear any full rows.
    */
   public void clearFullRows() {
@@ -335,6 +345,11 @@ public class BoardModel {
     board = newBoard;
   }
 
+  /**
+   * Get a BlockModel of all the squares in currently full rows.
+   * 
+   * @return A model of squares in full rows.
+   */
   public BlockModel getFullRows() {
     BlockModel retVal = new BackgroundBlockModel();
 
@@ -349,7 +364,7 @@ public class BoardModel {
     return retVal;
   }
 
-  /*
+  /**
    * Get the next block.
    * 
    * @return The next block to come in this game.
@@ -358,47 +373,117 @@ public class BoardModel {
     return nextBlock;
   }
 
+  /**
+   * Check if the active block should be moved down the board faster than the regular speed.
+   * 
+   * @return True if the active block should be moving more quickly than the regular speed.
+   */
   public boolean isFast() {
     return fast;
   }
 
+  /**
+   * Set the active block to move at a fast or regular speed.
+   * 
+   * @param fast
+   *          True if the block should move at a faster speed.
+   */
   public void setFast(boolean fast) {
     this.fast = fast;
   }
 
+  /**
+   * Get the pending vertical movement of the active block. If possible, the next call to
+   * {@link BoardModel#moveActiveBlock(boolean) moveActiveBlock} will move the block down vertically
+   * by the returned distance.
+   * 
+   * @return The pending vertical movement (down) of the active block.
+   */
   public int getPendingRowMove() {
     return pendingRowMove;
   }
 
+  /**
+   * Set the pending row move. See {@link #getPendingRowMove() getPendingRowMove} for what this
+   * value means.
+   * 
+   * @param i
+   *          The pending row movement (down).
+   */
   public void setPendingRowMove(int i) {
     pendingRowMove = i;
   }
 
+  /**
+   * Get the pending horizontal movement of the active block. If possible, the next call to
+   * {@link #moveActiveBlock(boolean) moveActiveBlock(true)} will move this block horizontally (to
+   * the right) by the returned distance.
+   * 
+   * @return The pending column movement (right).
+   */
   public int getPendingColMove() {
     return pendingColMove;
   }
 
+  /**
+   * Set the pending column movement. See {@link #getPendingColMove() getPendingColMove} for what
+   * this value means.
+   * 
+   * @param i
+   *          The pending column movement (right).
+   */
   public void setPendingColMove(int i) {
     pendingColMove = i;
   }
 
+  /**
+   * Set whether the active block should drop to the lowest possible point on the next call to
+   * {@link #moveActiveBlock(boolean) moveActiveBlock}.
+   * 
+   * @param b
+   *          True if this block should drop on the next move.
+   */
   public void setDrop(boolean b) {
     drop = b;
   }
 
+  /**
+   * Check if the active block will drop on the next call to {@link #moveActiveBlock(boolean)
+   * moveActiveBlock}.
+   * 
+   * @return True if the active block will drop on the next move.
+   */
   public boolean isDropping() {
     return drop;
   }
 
+  /**
+   * Set the number of pending sabotage rows to be added.
+   * 
+   * Sabotage rows are added when a remote player clears lines while targeting another player.
+   * 
+   * @param rowsClearedLast
+   *          The number of sabotage rows to be added.
+   */
   public void setRowsToAdd(int rowsClearedLast) {
     rowsToAdd = rowsClearedLast;
   }
 
+  /**
+   * Get the number of pending sabotage rows to be added.
+   * 
+   * Sabotage rows are added when a remote player clears lines while targeting another player.
+   * 
+   * @return The number of sabotage rows to be added.
+   */
   public int getRowsToAdd() {
     return rowsToAdd;
   }
 
-  /* Sabotage! */
+  /**
+   * Add pending sabotage rows to bottom of the board.
+   * 
+   */
   public void addRows() {
     Row[] newBoard = new Row[ROW_NUM];
     for (int i = ROW_NUM - 1, j = i - rowsToAdd; j >= 0; i--, j--) {
@@ -427,9 +512,14 @@ public class BoardModel {
     return row;
   }
 
+  /**
+   * Get a BlockModel of all the non-empty squares on the board.
+   * 
+   * @return All the non-empty squares on the board.
+   */
   public BlockModel getAllSquares() {
     BlockModel retVal = new BlockModel();
-    
+
     for (int i = 0; i < ROW_NUM; i++) {
       for (int j = 0; j < COL_NUM; j++) {
         if (board[i].getSquareValue(j) != NO_TILE) {
@@ -443,7 +533,7 @@ public class BoardModel {
       if (rowIndex >= 0 && rowIndex < ROW_NUM && colIndex >= 0 && colIndex < COL_NUM)
         retVal.addSquare(new SquareModel(rowIndex, colIndex, squareModel.getCode()));
     }
-    
+
     return retVal;
   }
 }

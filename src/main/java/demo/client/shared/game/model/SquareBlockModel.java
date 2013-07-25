@@ -1,16 +1,16 @@
 package demo.client.shared.game.model;
 
-/*
+/**
  * A square-shaped block in Block Drop.
  * 
- * Note: This class overrides BlockModel.rotate and BlockModel.unrotate
- * with empty methods, since the square block has -- effectively -- no rotation.
+ * Note: This class overrides BlockModel.rotate and BlockModel.unrotate with empty methods, since
+ * the square block has -- effectively -- no rotation.
  */
 public class SquareBlockModel extends BlockModel {
 
   public static final int CODE = 5;
 
-  /*
+  /**
    * Create a SquareBlock instance.
    */
   public SquareBlockModel() {
@@ -24,30 +24,33 @@ public class SquareBlockModel extends BlockModel {
             }, getCode());
   }
 
+  @Override
   public double getCentreRowDiff() {
     return -0.5;
   }
 
+  @Override
   public double getCentreColDiff() {
     return -0.5;
   }
 
-  /*
-   * (non-Javadoc)
-   * 
-   * @see demo.client.shared.BlockModel#rotate()
-   */
   @Override
   public void rotate() {
     // Do nothing.
     return;
   }
 
+  @Override
   public void unrotate() {
     // Do nothing.
     return;
   }
 
+  /**
+   * Get the code identifying this type of block model.
+   * 
+   * @return The code identifying this type of block model.
+   */
   public static int getCode() {
     return CODE;
   }
