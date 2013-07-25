@@ -9,24 +9,31 @@ import com.google.gwt.event.dom.client.KeyUpHandler;
 import demo.client.local.game.controllers.BoardController;
 import demo.client.local.game.controllers.SecondaryDisplayController;
 
+/**
+ * A keyboard input handler for the local player's game. This handler asynchronously sets values in
+ * an associated {@link BoardController BoardController} which are handled by the
+ * {@link BoardController BoardController} in it's game loop.
+ * 
+ * @author mbarkley <mbarkley@redhat.com>
+ * 
+ */
 public class BoardKeyHandler implements KeyDownHandler, KeyUpHandler {
 
   private BoardController controller;
   private SecondaryDisplayController secondaryController;
   private static final int KEY_SPACE_BAR = 32;
 
+  /**
+   * Create a BoardKeyHandler instance.
+   * 
+   * @param boardController
+   *          The BoardController associated with this handler.
+   */
   public BoardKeyHandler(BoardController boardController) {
     controller = boardController;
     secondaryController = controller.getSecondaryController();
   }
 
-  /*
-   * (non-Javadoc)
-   * 
-   * @see
-   * com.google.gwt.event.dom.client.KeyPressHandler#onKeyPress(com.google.gwt.event.dom.client.
-   * KeyPressEvent)
-   */
   @Override
   public void onKeyDown(KeyDownEvent event) {
 

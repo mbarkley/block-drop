@@ -17,6 +17,14 @@ import com.google.gwt.user.client.ui.RootPanel;
 import demo.client.local.game.controllers.BoardController;
 import demo.client.local.game.tools.Size;
 
+/**
+ * A mouse input handler for the local player's game. This handler asynchronously sets values in an
+ * associated {@link BoardController BoardController} which are handled by the
+ * {@link BoardController BoardController} in it's game loop.
+ * 
+ * @author mbarkley <mbarkley@redhat.com>
+ * 
+ */
 public class BoardMouseHandler implements MouseDownHandler, MouseMoveHandler, MouseUpHandler, DoubleClickHandler {
 
   private BoardController controller;
@@ -25,6 +33,15 @@ public class BoardMouseHandler implements MouseDownHandler, MouseMoveHandler, Mo
   private boolean mouseDown = false;
   private Element canvas;
 
+  /**
+   * Create a BoardMouseHandler instance.
+   * 
+   * @param controller
+   *          The associated BoardController instance.
+   * @param canvas
+   *          An HTML5 canvas. Coordinates of mouse movements and clicks will be taken relative to
+   *          this canvas.
+   */
   public BoardMouseHandler(BoardController controller, Element canvas) {
     this.controller = controller;
     this.canvas = canvas;
