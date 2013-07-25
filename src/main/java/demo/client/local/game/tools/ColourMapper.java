@@ -12,7 +12,7 @@ import demo.client.shared.model.SquareBlockModel;
 import demo.client.shared.model.TBlockModel;
 import demo.client.shared.model.ZBlockModel;
 
-public class ColorMapper {
+public class ColourMapper {
 
   private static final String BASIC_COLOUR = "white";
 

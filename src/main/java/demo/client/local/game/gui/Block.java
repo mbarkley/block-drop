@@ -2,7 +2,7 @@ package demo.client.local.game.gui;
 
 import com.google.gwt.canvas.dom.client.Context2d;
 
-import demo.client.local.game.tools.ColorMapper;
+import demo.client.local.game.tools.ColourMapper;
 import demo.client.local.game.tools.Size;
 import demo.client.local.game.tools.Size.SizeCategory;
 import demo.client.shared.model.BlockModel;
@@ -48,7 +48,7 @@ public class Block {
     Square square = new Square(sizeCategory);
     // Get an iterator of square coordinates based around the given coordinate (x,y).
     for (SquareModel squareModel : model.getIterator()) {
-      square.setInteriorColour(ColorMapper.codeToColour(squareModel.getCode()));
+      square.setInteriorColour(ColourMapper.codeToColour(squareModel.getCode()));
       square.draw(x + indexToCoord(squareModel.getCol(), sizeCategory),
               y + indexToCoord(squareModel.getRow(), sizeCategory), context2d);
     }
