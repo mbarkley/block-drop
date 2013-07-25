@@ -1,28 +1,68 @@
 package demo.client.local.game.tools;
 
-/*
- * For tracking state while clearing rows.
+/**
+ * The state of a row clearing operation used to control animation speed. A row flashes three times
+ * before disappearing permanantly.
+ * 
+ * @author mbarkley <mbarkley@redhat.com>
+ * 
  */
 public enum ClearState {
-  START, // Initial state.
-  FIRST_UNDRAW, // Undrawing and redrawing used to create flashing effect.
-  FIRST_REDRAW, SECOND_UNDRAW, SECOND_REDRAW, THIRD_UNDRAW, THIRD_REDRAW, LAST_UNDRAW, DROPPING; // Move
-                                                                                                 // remaining
-                                                                                                 // blocks
-                                                                                                 // down
-                                                                                                 // to
-                                                                                                 // bottom
-                                                                                                 // of
-                                                                                                 // screen.
+  /**
+   * The initial state before any row clearing has been drawn.
+   */
+  START,
+  /**
+   * State before the first undrawing of full rows.
+   */
+  FIRST_UNDRAW,
+  /**
+   * State before the first redrawing of full rows.
+   */
+  FIRST_REDRAW,
+  /**
+   * State before the second undrawing of full rows.
+   */
+  SECOND_UNDRAW,
+  /**
+   * State before the second redrawing of full rows.
+   */
+  SECOND_REDRAW,
+  /**
+   * State before the third undrawing of full rows.
+   */
+  THIRD_UNDRAW,
+  /**
+   * State before the third redrawing of full rows.
+   */
+  THIRD_REDRAW,
+  /**
+   * State before the last undrawing of full rows.
+   */
+  LAST_UNDRAW,
+  /**
+   * State before remaining blocks are dropped to fill vacant rows which were just cleared.
+   */
+  DROPPING;
 
-  private static final int CYCLES = 8;
+  /**
+   * This many calls getNextState must happen before the next state is given (for pacing animation).
+   */
+  public static final int CYCLES = 8;
 
   private int counter = 0;
 
-  void setCounter(int value) {
+  private void setCounter(int value) {
     counter = value;
   }
 
+  /**
+   * Based on the current state, get the next state.
+   * 
+   * @return If {@link ClearState#getCounter() getCounter()} == {@link ClearState#CYCLES CYCLES},
+   *         this value will be the next state. Otherwise this value will be the same state
+   *         enumeration with an incremented counter.
+   */
   public ClearState getNextState() {
     ClearState retVal = this;
     if (counter == CYCLES || this == START) {
@@ -67,6 +107,12 @@ public enum ClearState {
     return retVal;
   }
 
+  /**
+   * Get value of the counter used to control the flow of state changes.
+   * 
+   * @return When this value equals {@link ClearState#CYCLES CYCLES}, the next call to
+   *         {@link ClearState#getNextState() getNextState()} will return the next state.
+   */
   public int getCounter() {
     return counter;
   }

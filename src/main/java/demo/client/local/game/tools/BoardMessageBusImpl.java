@@ -16,9 +16,6 @@ public class BoardMessageBusImpl implements BoardMessageBus {
 
   private MessageBus messageBus = ErraiBus.get();
 
-  /* (non-Javadoc)
-   * @see demo.client.local.game.BoardMessageBus#sendScoreUpdate(demo.client.shared.ScoreTracker, demo.client.shared.Player)
-   */
   @Override
   public void sendScoreUpdate(ScoreTracker scoreTracker, Player target) {
     ScoreEvent event = new ScoreEvent(scoreTracker, target);
@@ -26,9 +23,6 @@ public class BoardMessageBusImpl implements BoardMessageBus {
             .sendNowWith(messageBus);
   }
 
-  /* (non-Javadoc)
-   * @see demo.client.local.game.BoardMessageBus#sendMoveUpdate(demo.client.shared.model.BoardModel, demo.client.shared.Player)
-   */
   @Override
   public void sendMoveUpdate(BoardModel state, Player player) {
     MoveEvent event = new MoveEvent(state, player, Client.getInstance().getGameRoom().getId());

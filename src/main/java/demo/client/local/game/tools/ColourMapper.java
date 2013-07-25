@@ -12,6 +12,12 @@ import demo.client.shared.model.SquareBlockModel;
 import demo.client.shared.model.TBlockModel;
 import demo.client.shared.model.ZBlockModel;
 
+/**
+ * A class for mapping {@link BlockModel BlockModel} subclasses to colours.
+ * 
+ * @author mbarkley <mbarkley@redhat.com>
+ * 
+ */
 public class ColourMapper {
 
   private static final String BASIC_COLOUR = "white";
@@ -46,6 +52,13 @@ public class ColourMapper {
     colourMap.put(1337, "grey");
   }
 
+  /**
+   * Get the colour associated with a {@link BlockModel BlockModel} subclass.
+   * 
+   * @param code
+   *          A BlockModel code as provided by the relevant subclasses getCode() method.
+   * @return The CSS colour string.
+   */
   public static String codeToColour(int code) {
     return colourMap.get(code);
   }

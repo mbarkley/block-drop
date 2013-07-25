@@ -9,6 +9,13 @@ import com.google.gwt.user.client.Timer;
 import demo.client.local.lobby.Client;
 import demo.client.shared.Command;
 
+/**
+ * A {@link Timer Timer} subclass for sending {@link Command#GAME_KEEP_ALIVE keep alive} messages to
+ * the server.
+ * 
+ * @author mbarkley <mbarkley@redhat.com>
+ * 
+ */
 public class GameHeartBeat extends Timer {
 
   private MessageBus messageBus = ErraiBus.get();
@@ -22,8 +29,8 @@ public class GameHeartBeat extends Timer {
 
   @Override
   public void run() {
-    MessageBuilder.createMessage("Relay").command(Command.GAME_KEEP_ALIVE)
-            .withValue(Client.getInstance().getPlayer()).noErrorHandling().sendNowWith(messageBus);
+    MessageBuilder.createMessage("Relay").command(Command.GAME_KEEP_ALIVE).withValue(Client.getInstance().getPlayer())
+            .noErrorHandling().sendNowWith(messageBus);
     System.out.println("Game keep alive sent");
   }
 
@@ -33,6 +40,11 @@ public class GameHeartBeat extends Timer {
     super.cancel();
   }
 
+  /**
+   * Check if this timer is currently scheduled to repeat.
+   * 
+   * @return True iff this timer is currently scheduled to repeat.
+   */
   public boolean isRepeating() {
     return activated;
   }
