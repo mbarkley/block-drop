@@ -34,6 +34,12 @@ import com.google.gwt.event.dom.client.MouseMoveEvent;
 import com.google.gwt.event.dom.client.MouseMoveHandler;
 import com.google.gwt.event.dom.client.MouseUpEvent;
 import com.google.gwt.event.dom.client.MouseUpHandler;
+import com.google.gwt.event.dom.client.TouchEndEvent;
+import com.google.gwt.event.dom.client.TouchEndHandler;
+import com.google.gwt.event.dom.client.TouchMoveEvent;
+import com.google.gwt.event.dom.client.TouchMoveHandler;
+import com.google.gwt.event.dom.client.TouchStartEvent;
+import com.google.gwt.event.dom.client.TouchStartHandler;
 import com.google.gwt.event.shared.EventHandler;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.RootPanel;
@@ -46,6 +52,7 @@ import demo.client.local.game.controllers.SecondaryDisplayController;
 import demo.client.local.game.controllers.SecondaryDisplayControllerImpl;
 import demo.client.local.game.handlers.BoardKeyHandler;
 import demo.client.local.game.handlers.BoardMouseHandler;
+import demo.client.local.game.handlers.BoardTouchHandler;
 import demo.client.local.game.tools.BoardMessageBusImpl;
 import demo.client.local.game.tools.Size;
 import demo.client.local.game.tools.Size.SizeCategory;
@@ -160,6 +167,11 @@ public class BoardPage extends Composite implements ControllableBoardDisplay {
     addHandlerToMainCanvas((MouseMoveHandler) mouseHandler, MouseMoveEvent.getType());
     addHandlerToMainCanvas((MouseUpHandler) mouseHandler, MouseUpEvent.getType());
     addHandlerToMainCanvas((DoubleClickHandler) mouseHandler, DoubleClickEvent.getType());
+    
+    EventHandler touchHandler = new BoardTouchHandler(controller, mainCanvas.getElement());
+    addHandlerToMainCanvas((TouchStartHandler) touchHandler, TouchStartEvent.getType());
+    addHandlerToMainCanvas((TouchMoveHandler) touchHandler, TouchMoveEvent.getType());
+    addHandlerToMainCanvas((TouchEndHandler) touchHandler, TouchEndEvent.getType());
   }
 
   @PageShowing
