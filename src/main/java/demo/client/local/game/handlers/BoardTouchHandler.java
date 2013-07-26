@@ -12,9 +12,25 @@ import com.google.gwt.event.dom.client.TouchStartHandler;
 
 import demo.client.local.game.controllers.BoardController;
 
+/**
+ * A touch input handler for the local player's game. This handler asynchronously sets values in an
+ * associated {@link BoardController BoardController} which are handled by the
+ * {@link BoardController BoardController} in it's game loop.
+ * 
+ * @author mbarkley <mbarkley@redhat.com>
+ * 
+ */
 public class BoardTouchHandler extends BoardInputHandler implements TouchStartHandler, TouchMoveHandler,
         TouchEndHandler {
 
+  /**
+   * Create a BoardTouchHandler instance.
+   * 
+   * @param controller
+   *          The BoardController to be manipulated.
+   * @param canvas
+   *          An HTML5 canvas. Coordinates of events will be relative to this element.
+   */
   public BoardTouchHandler(BoardController controller, Element canvas) {
     super(controller, canvas);
   }
@@ -44,7 +60,7 @@ public class BoardTouchHandler extends BoardInputHandler implements TouchStartHa
       event.preventDefault();
     }
   }
-  
+
   private boolean isSingleFinger(TouchEvent<?> event) {
     return event.getTouches().length() == 1;
   }
