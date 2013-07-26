@@ -15,7 +15,6 @@ import com.google.gwt.event.dom.client.MouseUpHandler;
 import com.google.gwt.user.client.ui.RootPanel;
 
 import demo.client.local.game.controllers.BoardController;
-import demo.client.local.game.tools.Size;
 
 /**
  * A mouse input handler for the local player's game. This handler asynchronously sets values in an
@@ -25,13 +24,8 @@ import demo.client.local.game.tools.Size;
  * @author mbarkley <mbarkley@redhat.com>
  * 
  */
-public class BoardMouseHandler implements MouseDownHandler, MouseMoveHandler, MouseUpHandler, DoubleClickHandler {
-
-  private BoardController controller;
-  private int lastCol;
-  private int lastRow;
-  private boolean mouseDown = false;
-  private Element canvas;
+public class BoardMouseHandler extends BoardInputHandler implements MouseDownHandler, MouseMoveHandler, MouseUpHandler,
+        DoubleClickHandler {
 
   /**
    * Create a BoardMouseHandler instance.
@@ -43,9 +37,7 @@ public class BoardMouseHandler implements MouseDownHandler, MouseMoveHandler, Mo
    *          this canvas.
    */
   public BoardMouseHandler(BoardController controller, Element canvas) {
-    this.controller = controller;
-    this.canvas = canvas;
-
+    super(controller, canvas);
     // Disable context menu on board.
     RootPanel.get().addDomHandler(new ContextMenuHandler() {
 
@@ -62,9 +54,7 @@ public class BoardMouseHandler implements MouseDownHandler, MouseMoveHandler, Mo
   @Override
   public void onMouseDown(MouseDownEvent event) {
     if (event.getNativeButton() == NativeEvent.BUTTON_LEFT) {
-      lastCol = coordToIndex(event.getRelativeX(canvas));
-      lastRow = coordToIndex(event.getRelativeY(canvas));
-      mouseDown = true;
+      startMove(event.getRelativeX(canvas), event.getRelativeY(canvas));
       event.preventDefault();
     }
     else if (event.getNativeButton() == NativeEvent.BUTTON_RIGHT
@@ -76,37 +66,22 @@ public class BoardMouseHandler implements MouseDownHandler, MouseMoveHandler, Mo
 
   @Override
   public void onMouseMove(MouseMoveEvent event) {
-    if (mouseDown) {
-      int newCol = coordToIndex(event.getRelativeX(canvas));
-      if (newCol - lastCol != 0) {
-        controller.setColMoveOnce(newCol - lastCol);
-        lastCol = newCol;
-      }
-      int newRow = coordToIndex(event.getRelativeY(canvas));
-      if (newRow - lastRow > 0) {
-        controller.setRowMoveOnce(1);
-        lastRow = newRow;
-      }
-      event.preventDefault();
-    }
+    maybeContinueMove(event.getRelativeX(canvas), event.getRelativeY(canvas));
+    event.preventDefault();
   }
 
   @Override
   public void onMouseUp(MouseUpEvent event) {
     if (event.getNativeButton() == NativeEvent.BUTTON_LEFT) {
-      mouseDown = false;
+      endMove();
       event.preventDefault();
     }
   }
 
   @Override
   public void onDoubleClick(DoubleClickEvent event) {
-    controller.setDrop(true);
+    drop();
     event.preventDefault();
-  }
-
-  private static int coordToIndex(int x) {
-    return x / Size.MAIN_BLOCK_SIZE;
   }
 
 }
