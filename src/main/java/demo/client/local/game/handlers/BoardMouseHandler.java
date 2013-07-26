@@ -65,10 +65,12 @@ public class BoardMouseHandler implements MouseDownHandler, MouseMoveHandler, Mo
       lastCol = coordToIndex(event.getRelativeX(canvas));
       lastRow = coordToIndex(event.getRelativeY(canvas));
       mouseDown = true;
+      event.preventDefault();
     }
     else if (event.getNativeButton() == NativeEvent.BUTTON_RIGHT
             && event.getNativeEvent().getEventTarget().equals(canvas)) {
       controller.rotateOnce();
+      event.preventDefault();
     }
   }
 
@@ -85,18 +87,22 @@ public class BoardMouseHandler implements MouseDownHandler, MouseMoveHandler, Mo
         controller.setRowMoveOnce(1);
         lastRow = newRow;
       }
+      event.preventDefault();
     }
   }
 
   @Override
   public void onMouseUp(MouseUpEvent event) {
-    if (event.getNativeButton() == NativeEvent.BUTTON_LEFT)
+    if (event.getNativeButton() == NativeEvent.BUTTON_LEFT) {
       mouseDown = false;
+      event.preventDefault();
+    }
   }
 
   @Override
   public void onDoubleClick(DoubleClickEvent event) {
     controller.setDrop(true);
+    event.preventDefault();
   }
 
   private static int coordToIndex(int x) {
