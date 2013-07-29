@@ -12,6 +12,7 @@ import org.jboss.errai.ui.shared.api.annotations.EventHandler;
 import org.jboss.errai.ui.shared.api.annotations.Templated;
 
 import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.TouchStartEvent;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.Label;
 
@@ -49,6 +50,21 @@ public class ScorePanel extends Composite implements HasModel<ScoreTracker> {
    */
   @EventHandler
   public void onClick(ClickEvent event) {
+    clickAndTouchHelper();
+  }
+
+  /**
+   * Select this panel as the current target.
+   * 
+   * @param event
+   *          The click event that triggered this call.
+   */
+  @EventHandler
+  public void onTouch(TouchStartEvent event) {
+    clickAndTouchHelper();
+  }
+
+  private void clickAndTouchHelper() {
     @SuppressWarnings("unchecked")
     ListWidget<ScoreTracker, ScorePanel> scoreList = (ListWidget<ScoreTracker, ScorePanel>) getParent().getParent();
     ScoreTracker model = getModel();
