@@ -15,6 +15,7 @@ import com.google.gwt.canvas.client.Canvas;
 import demo.client.local.game.gui.Block;
 import demo.client.local.game.gui.ScorePanel;
 import demo.client.local.game.tools.Size;
+import demo.client.local.game.tools.Size.SizeCategory;
 import demo.client.local.lobby.Client;
 import demo.client.shared.message.Command;
 import demo.client.shared.meta.GameRoom;
@@ -167,16 +168,17 @@ public class SecondaryDisplayControllerImpl implements SecondaryDisplayControlle
    */
   @Override
   public void drawBlockToNextCanvas(Block nextBlock) {
+    Size size = Size.getSize(SizeCategory.NEXT);
     // Clear everything.
-    nextCanvas.getContext2d().clearRect(0, 0, Size.NEXT_COORD_WIDTH, Size.MAIN_COORD_HEIGHT);
+    nextCanvas.getContext2d().clearRect(0, 0, size.getCoordWidth(), size.getCoordHeight());
 
     // Draw title.
     nextCanvas.getContext2d().setFillStyle("black");
     nextCanvas.getContext2d().setFont("bold 20px sans-serif");
     nextCanvas.getContext2d().fillText("Next Block", 10, 20);
 
-    nextBlock.draw(2 * Size.MAIN_BLOCK_SIZE + nextBlock.getCentreColDiff() * Size.MAIN_BLOCK_SIZE, 2
-            * Size.MAIN_BLOCK_SIZE + nextBlock.getCentreRowDiff() * Size.MAIN_BLOCK_SIZE, nextCanvas.getContext2d());
+    nextBlock.draw(2 * size.getBlockSize() + nextBlock.getCentreColDiff() * size.getBlockSize(), 2
+            * size.getBlockSize() + nextBlock.getCentreRowDiff() * size.getBlockSize(), nextCanvas.getContext2d());
   }
 
   /**

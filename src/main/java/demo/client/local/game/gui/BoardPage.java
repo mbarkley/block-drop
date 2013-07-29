@@ -132,12 +132,12 @@ public class BoardPage extends Composite implements ControllableBoardDisplay {
     instance = this;
 
     // Initialize canvases.
-    mainCanvas.setCoordinateSpaceHeight(Size.MAIN_COORD_HEIGHT);
-    mainCanvas.setCoordinateSpaceWidth(Size.MAIN_COORD_WIDTH);
-    nextPieceCanvas.setCoordinateSpaceHeight(Size.NEXT_COORD_HEIGHT);
-    nextPieceCanvas.setCoordinateSpaceWidth(Size.NEXT_COORD_WIDTH);
-    oppCanvas.setCoordinateSpaceHeight(Size.OPP_COORD_HEIGHT);
-    oppCanvas.setCoordinateSpaceWidth(Size.OPP_COORD_WIDTH);
+    mainCanvas.setCoordinateSpaceHeight(Size.getSize(SizeCategory.MAIN).getCoordHeight());
+    mainCanvas.setCoordinateSpaceWidth(Size.getSize(SizeCategory.MAIN).getCoordWidth());
+    nextPieceCanvas.setCoordinateSpaceHeight(Size.getSize(SizeCategory.NEXT).getCoordHeight());
+    nextPieceCanvas.setCoordinateSpaceWidth(Size.getSize(SizeCategory.NEXT).getCoordWidth());
+    oppCanvas.setCoordinateSpaceHeight(Size.getSize(SizeCategory.OPPONENT).getCoordHeight());
+    oppCanvas.setCoordinateSpaceWidth(Size.getSize(SizeCategory.OPPONENT).getCoordWidth());
 
     canvasWrapper = new BoardCanvas(mainCanvas, SizeCategory.MAIN);
     oppCanvasWrapper = new BoardCanvas(oppCanvas, SizeCategory.OPPONENT);

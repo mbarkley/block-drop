@@ -38,20 +38,21 @@ public class Size {
   public static final int HEIGHT = 15;
   /** The width of the board in squares. */
   public static final int WIDTH = 10;
+
   /** Canvas coordinate-space height (in pixels). */
-  public static final int MAIN_COORD_HEIGHT = 780;
+  private static int MAIN_COORD_HEIGHT = 780;
   /** Canvas coordinate-space width (in pixels). */
-  public static final int MAIN_COORD_WIDTH = 520;
+  private static int MAIN_COORD_WIDTH = 520;
   /** The width and height of each square in this block (in pixels). */
-  public static final int MAIN_BLOCK_SIZE = MAIN_COORD_HEIGHT / HEIGHT;
+  private static int MAIN_BLOCK_SIZE = MAIN_COORD_HEIGHT / HEIGHT;
   /** The height of the opponent canvas (in pixels). */
-  public static final int OPP_COORD_HEIGHT = 390;
+  private static int OPP_COORD_HEIGHT = 390;
   /** The width of the opponent canvas (in pixels). */
-  public static final int OPP_COORD_WIDTH = 260;
+  private static int OPP_COORD_WIDTH = 260;
   /** The height of the upcoming piece canvas (in pixels). */
-  public static final int NEXT_COORD_HEIGHT = MAIN_BLOCK_SIZE * 5;
+  private static int NEXT_COORD_HEIGHT = MAIN_BLOCK_SIZE * 5;
   /** The width of the upcoming piece canvas (in pixels). */
-  public static final int NEXT_COORD_WIDTH = MAIN_BLOCK_SIZE * 5;
+  private static int NEXT_COORD_WIDTH = MAIN_BLOCK_SIZE * 5;
 
   private static Map<SizeCategory, Size> cachedSizes = new HashMap<SizeCategory, Size>();
 
@@ -122,18 +123,22 @@ public class Size {
   }
 
   /**
-   * Get the coordinate height of a canvas of this instance's {@link Size.SizeCategory size category}.
+   * Get the coordinate height of a canvas of this instance's {@link Size.SizeCategory size
+   * category}.
    * 
-   * @return The coordinate height of a canvas of this instance's {@link Size.SizeCategory size category}.
+   * @return The coordinate height of a canvas of this instance's {@link Size.SizeCategory size
+   *         category}.
    */
   public int getCoordHeight() {
     return coordHeight;
   }
 
   /**
-   * Get the coordinate width of a canvas of this instance's {@link Size.SizeCategory size category}.
+   * Get the coordinate width of a canvas of this instance's {@link Size.SizeCategory size category}
+   * .
    * 
-   * @return The coordinate width of a canvas of this instance's {@link Size.SizeCategory size category}.
+   * @return The coordinate width of a canvas of this instance's {@link Size.SizeCategory size
+   *         category}.
    */
   public int getCoordWidth() {
     return coordWidth;

@@ -4,6 +4,7 @@ import com.google.gwt.dom.client.Element;
 
 import demo.client.local.game.controllers.BoardController;
 import demo.client.local.game.tools.Size;
+import demo.client.local.game.tools.Size.SizeCategory;
 
 /**
  * A base class for handling user input on a Block Drop canvas from mouse or touch events.
@@ -103,6 +104,6 @@ public class BoardInputHandler {
    * @return The index this coordinate maps to.
    */
   protected static int coordToIndex(int x) {
-    return x / Size.MAIN_BLOCK_SIZE;
+    return x / Size.getSize(SizeCategory.MAIN).getBlockSize();
   }
 }
