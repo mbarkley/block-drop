@@ -9,6 +9,7 @@ import com.google.gwt.event.dom.client.TouchMoveEvent;
 import com.google.gwt.event.dom.client.TouchMoveHandler;
 import com.google.gwt.event.dom.client.TouchStartEvent;
 import com.google.gwt.event.dom.client.TouchStartHandler;
+import com.google.gwt.user.client.Timer;
 
 import demo.client.local.game.controllers.BoardController;
 
@@ -23,6 +24,10 @@ import demo.client.local.game.controllers.BoardController;
 public class BoardTouchHandler extends BoardInputHandler implements TouchStartHandler, TouchMoveHandler,
         TouchEndHandler {
 
+  private Timer timer;
+  private boolean tapped;
+  private static final int timeout = 500;
+
   /**
    * Create a BoardTouchHandler instance.
    * 
@@ -33,6 +38,13 @@ public class BoardTouchHandler extends BoardInputHandler implements TouchStartHa
    */
   public BoardTouchHandler(BoardController controller, Element canvas) {
     super(controller, canvas);
+    timer = new Timer() {
+
+      @Override
+      public void run() {
+        tapped = false;
+      }
+    };
   }
 
   @Override
@@ -55,14 +67,30 @@ public class BoardTouchHandler extends BoardInputHandler implements TouchStartHa
   @Override
   public void onTouchStart(TouchStartEvent event) {
     if (isSingleFinger(event)) {
-      Touch touch = event.getTouches().get(0);
-      startMove(touch.getRelativeX(canvas), touch.getRelativeY(canvas));
-      event.preventDefault();
+      if (tapped) {
+        drop();
+      }
+      else {
+        Touch touch = event.getTouches().get(0);
+        startMove(touch.getRelativeX(canvas), touch.getRelativeY(canvas));
+        event.preventDefault();
+
+        // Start timer to handle double-tap
+        tapped = true;
+        timer.schedule(timeout);
+      }
+    }
+    else if (isTwoFingers(event)) {
+      rotateOnce();
     }
   }
 
   private boolean isSingleFinger(TouchEvent<?> event) {
     return event.getTouches().length() == 1;
+  }
+
+  private boolean isTwoFingers(TouchEvent<?> event) {
+    return event.getTouches().length() == 2;
   }
 
 }
