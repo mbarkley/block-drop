@@ -31,8 +31,8 @@ public class BoardCanvas implements ControllableBoardDisplay {
     for (SquareModel square : model.getIterator()) {
       int xOffset = x + Block.indexToCoord(square.getCol(), sizeCategory);
       int yOffset = y + Block.indexToCoord(square.getRow(), sizeCategory);
-      canvas.getContext2d().clearRect(xOffset, yOffset, Size.getSize(sizeCategory).BLOCK_SIZE,
-              Size.getSize(sizeCategory).BLOCK_SIZE);
+      canvas.getContext2d().clearRect(xOffset, yOffset, Size.getSize(sizeCategory).getBlockSize(),
+              Size.getSize(sizeCategory).getBlockSize());
     }
   }
 

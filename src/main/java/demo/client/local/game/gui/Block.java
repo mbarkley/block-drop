@@ -123,7 +123,7 @@ public class Block {
    *         Block.draw()} method for drawing a block in the correct position.
    */
   public static int indexToCoord(Integer index, SizeCategory sizeCategory) {
-    return index * Size.getSize(sizeCategory).BLOCK_SIZE;
+    return index * Size.getSize(sizeCategory).getBlockSize();
   }
 
   /**

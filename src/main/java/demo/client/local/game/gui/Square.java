@@ -84,7 +84,7 @@ class Square {
    *          The context of the canvas on which this square will be added.
    */
   void addSquareToCanvasPath(double x, double y, Context2d context2d) {
-    context2d.rect(x, y, size.BLOCK_SIZE, size.BLOCK_SIZE);
+    context2d.rect(x, y, size.getBlockSize(), size.getBlockSize());
   }
 
   /**
@@ -101,7 +101,7 @@ class Square {
    */
   private void makeOuterRectPath(double x, double y, Context2d context2d) {
     context2d.beginPath();
-    context2d.rect(x, y, size.BLOCK_SIZE, size.BLOCK_SIZE);
+    context2d.rect(x, y, size.getBlockSize(), size.getBlockSize());
     context2d.closePath();
   }
 
@@ -119,7 +119,7 @@ class Square {
    */
   private void makeInnerRectPath(double x, double y, Context2d context2d) {
     context2d.beginPath();
-    context2d.rect(x + 1, y + 1, size.BLOCK_SIZE - 2, size.BLOCK_SIZE - 2);
+    context2d.rect(x + 1, y + 1, size.getBlockSize() - 2, size.getBlockSize() - 2);
     context2d.closePath();
   }
 

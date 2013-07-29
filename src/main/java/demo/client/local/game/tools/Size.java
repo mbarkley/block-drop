@@ -86,39 +86,66 @@ public class Size {
   /**
    * The height of a canvas of this instance's {@link Size.SizeCategory size category}.
    */
-  public final int COORD_HEIGHT;
+  private int coordHeight;
   /**
    * The width of a canvas of this instance's {@link Size.SizeCategory size category}.
    */
-  public final int COORD_WIDTH;
+  private int coordWidth;
   /**
    * The width of a block of this instance's {@link Size.SizeCategory size category}.
    */
-  public final int BLOCK_SIZE;
+  private int blockSize;
 
   private Size(SizeCategory category) {
     switch (category) {
     case MAIN:
-      COORD_HEIGHT = MAIN_COORD_HEIGHT;
-      COORD_WIDTH = MAIN_COORD_WIDTH;
-      BLOCK_SIZE = MAIN_BLOCK_SIZE;
+      coordHeight = MAIN_COORD_HEIGHT;
+      coordWidth = MAIN_COORD_WIDTH;
+      blockSize = MAIN_BLOCK_SIZE;
       break;
     case NEXT:
-      COORD_HEIGHT = NEXT_COORD_HEIGHT;
-      COORD_WIDTH = NEXT_COORD_WIDTH;
-      BLOCK_SIZE = MAIN_BLOCK_SIZE;
+      coordHeight = NEXT_COORD_HEIGHT;
+      coordWidth = NEXT_COORD_WIDTH;
+      blockSize = MAIN_BLOCK_SIZE;
       break;
     case OPPONENT:
-      COORD_HEIGHT = OPP_COORD_HEIGHT;
-      COORD_WIDTH = OPP_COORD_WIDTH;
-      BLOCK_SIZE = OPP_COORD_HEIGHT / HEIGHT;
+      coordHeight = OPP_COORD_HEIGHT;
+      coordWidth = OPP_COORD_WIDTH;
+      blockSize = OPP_COORD_HEIGHT / HEIGHT;
       break;
     default:
-      COORD_HEIGHT = 0;
-      COORD_WIDTH = 0;
-      BLOCK_SIZE = 0;
+      coordHeight = 0;
+      coordWidth = 0;
+      blockSize = 0;
       break;
     }
+  }
+
+  /**
+   * Get the coordinate height of a canvas of this instance's {@link Size.SizeCategory size category}.
+   * 
+   * @return The coordinate height of a canvas of this instance's {@link Size.SizeCategory size category}.
+   */
+  public int getCoordHeight() {
+    return coordHeight;
+  }
+
+  /**
+   * Get the coordinate width of a canvas of this instance's {@link Size.SizeCategory size category}.
+   * 
+   * @return The coordinate width of a canvas of this instance's {@link Size.SizeCategory size category}.
+   */
+  public int getCoordWidth() {
+    return coordWidth;
+  }
+
+  /**
+   * Get the width of a block of this instance's {@link Size.SizeCategory size category}.
+   * 
+   * @return The width of a block of this instance's {@link Size.SizeCategory size category}.
+   */
+  public int getBlockSize() {
+    return blockSize;
   }
 
 }
