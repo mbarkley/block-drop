@@ -3,8 +3,16 @@ body {
 	background-color: white;
 	background-image: url('images/brickwall_@2X.png');
 	background-repeat: repeat;
-	min-width: 1050px;
 	text-align: center;
+	padding: 0px;
+	margin: 0px;
+	border: 0px;
+}
+
+html {
+	padding: 0px;
+	margin: 0px;
+	border: 0px;
 }
 
 h1 {
@@ -139,20 +147,18 @@ h1 {
 	width: 800px;
 	height: 600px;
 	background-color: lightblue;
-	padding: 20px;
-	border: 1px solid black;
-	border-radius: 10px;
 	overflow: hidden;
-	display: inline-block;
+	display: block;
 	position: relative;
 	margin: auto;
+	padding: 0px;
+	border: 1px solid black;
 	-webkit-touch-callout: none;
 	-webkit-user-select: none;
 	-khtml-user-select: none;
 	-moz-user-select: moz-none;
 	-ms-user-select: none;
 	user-select: none;
-	border: 1px solid black;
 }
 
 .overlay {

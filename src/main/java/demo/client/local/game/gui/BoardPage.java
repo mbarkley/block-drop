@@ -25,6 +25,7 @@ import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.core.client.Scheduler.ScheduledCommand;
 import com.google.gwt.dom.client.DivElement;
 import com.google.gwt.dom.client.Document;
+import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.dom.client.DomEvent.Type;
 import com.google.gwt.event.dom.client.DoubleClickEvent;
 import com.google.gwt.event.dom.client.DoubleClickHandler;
@@ -44,7 +45,10 @@ import com.google.gwt.event.dom.client.TouchMoveEvent;
 import com.google.gwt.event.dom.client.TouchMoveHandler;
 import com.google.gwt.event.dom.client.TouchStartEvent;
 import com.google.gwt.event.dom.client.TouchStartHandler;
+import com.google.gwt.event.logical.shared.ResizeEvent;
+import com.google.gwt.event.logical.shared.ResizeHandler;
 import com.google.gwt.event.shared.EventHandler;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.RootPanel;
 import com.google.web.bindery.event.shared.HandlerRegistration;
@@ -139,7 +143,7 @@ public class BoardPage extends Composite implements ControllableBoardDisplay {
     Scheduler.get().scheduleDeferred(new ScheduledCommand() {
       @Override
       public void execute() {
-        resetCanvasSizes();
+        setWrapperSize(Window.getClientHeight(), Window.getClientWidth());
       }
     });
 
@@ -211,7 +215,34 @@ public class BoardPage extends Composite implements ControllableBoardDisplay {
       // Subscribe to game channel
       messageBus.subscribe("Game" + Client.getInstance().getGameRoom().getId(), boardCallback);
       messageBus.subscribe("Game" + Client.getInstance().getGameRoom().getId(), oppCallback);
+      
+      handlerRegs.add(Window.addResizeHandler(new ResizeHandler() {
+        @Override
+        public void onResize(ResizeEvent event) {
+          setWrapperSize(event.getHeight(), event.getWidth());
+        }
+      }));
     }
+  }
+
+  protected void setWrapperSize(int height, int width) {
+    DivElement wrapper = DivElement.as(Document.get().getElementById("game-wrapper"));
+    // 0.75 is the ideal ratio
+    double ratio = ((double) height) / ((double) width);
+
+    // viewport has extra height
+    if (ratio >= 0.75) {
+      width = width - 2;
+      wrapper.getStyle().setWidth(width, Unit.PX);
+      wrapper.getStyle().setHeight(0.75 * width, Unit.PX);
+    }
+    // viewport has extra width
+    else {
+      height = height - 2;
+      wrapper.getStyle().setHeight(height, Unit.PX);
+      wrapper.getStyle().setWidth(height / 0.75, Unit.PX);
+    }
+    resetCanvasSizes();
   }
 
   @PageHidden
