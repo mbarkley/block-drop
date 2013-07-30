@@ -2,6 +2,10 @@ package demo.client.local.game.tools;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Map.Entry;
+
+import demo.client.local.game.gui.BoardCanvas;
+import demo.client.shared.game.model.BoardModel;
 
 /**
  * An object containing dimensions of components in Block Drop, including {@link Square squares},
@@ -38,27 +42,26 @@ public class Size {
   public static final int HEIGHT = 15;
   /** The width of the board in squares. */
   public static final int WIDTH = 10;
+  // Height / Width
+  public static final double RATIO = 1.5;
 
   /** Canvas coordinate-space height (in pixels). */
   private static int MAIN_COORD_HEIGHT = 780;
   /** Canvas coordinate-space width (in pixels). */
   private static int MAIN_COORD_WIDTH = 520;
   /** The width and height of each square in this block (in pixels). */
-  private static int MAIN_BLOCK_SIZE = MAIN_COORD_HEIGHT / HEIGHT;
+  private static double MAIN_BLOCK_SIZE = MAIN_COORD_HEIGHT / HEIGHT;
   /** The height of the opponent canvas (in pixels). */
   private static int OPP_COORD_HEIGHT = 390;
   /** The width of the opponent canvas (in pixels). */
   private static int OPP_COORD_WIDTH = 260;
   /** The height of the upcoming piece canvas (in pixels). */
-  private static int NEXT_COORD_HEIGHT = MAIN_BLOCK_SIZE * 5;
+  private static int NEXT_COORD_HEIGHT = (int) (MAIN_BLOCK_SIZE * 5);
   /** The width of the upcoming piece canvas (in pixels). */
-  private static int NEXT_COORD_WIDTH = MAIN_BLOCK_SIZE * 5;
+  private static int NEXT_COORD_WIDTH = (int) (MAIN_BLOCK_SIZE * 5);
+  private static int NEXT_BLOCK_SIZE = (int) MAIN_BLOCK_SIZE;
 
   private static Map<SizeCategory, Size> cachedSizes = new HashMap<SizeCategory, Size>();
-
-  static {
-    sanityCheck();
-  }
 
   // Perform sanity checks to make sure size values have been set reasonably.
   @SuppressWarnings(value = { "all" })
@@ -84,6 +87,20 @@ public class Size {
     return cachedSizes.get(category);
   }
 
+  public static void reset(Map<SizeCategory, Integer[]> dimensionMap) {
+    for (Entry<SizeCategory, Integer[]> entry : dimensionMap.entrySet()) {
+      Size size = getSize(entry.getKey());
+      size.coordHeight = entry.getValue()[0];
+      size.coordWidth = entry.getValue()[1];
+      if (entry.getKey().equals(SizeCategory.NEXT)) {
+        size.blockSize = size.coordHeight / 5.0;
+      }
+      else {
+        size.blockSize = size.coordHeight / HEIGHT;
+      }
+    }
+  }
+
   /**
    * The height of a canvas of this instance's {@link Size.SizeCategory size category}.
    */
@@ -95,7 +112,7 @@ public class Size {
   /**
    * The width of a block of this instance's {@link Size.SizeCategory size category}.
    */
-  private int blockSize;
+  private double blockSize;
 
   private Size(SizeCategory category) {
     switch (category) {
@@ -107,7 +124,7 @@ public class Size {
     case NEXT:
       coordHeight = NEXT_COORD_HEIGHT;
       coordWidth = NEXT_COORD_WIDTH;
-      blockSize = MAIN_BLOCK_SIZE;
+      blockSize = NEXT_BLOCK_SIZE;
       break;
     case OPPONENT:
       coordHeight = OPP_COORD_HEIGHT;
@@ -149,7 +166,7 @@ public class Size {
    * 
    * @return The width of a block of this instance's {@link Size.SizeCategory size category}.
    */
-  public int getBlockSize() {
+  public double getBlockSize() {
     return blockSize;
   }
 

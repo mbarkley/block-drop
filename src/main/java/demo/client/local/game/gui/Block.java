@@ -122,7 +122,7 @@ public class Block {
    * @return The coordinate to pass to the {@link Block#draw(double, double, Context2d)
    *         Block.draw()} method for drawing a block in the correct position.
    */
-  public static int indexToCoord(Integer index, SizeCategory sizeCategory) {
+  public static double indexToCoord(Integer index, SizeCategory sizeCategory) {
     return index * Size.getSize(sizeCategory).getBlockSize();
   }
 

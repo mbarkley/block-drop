@@ -22,7 +22,7 @@ public interface ControllableBoardDisplay {
    * @param activeBlock
    *          The block to undraw.
    */
-  public void undrawBlock(int x, int y, Block activeBlock);
+  public void undrawBlock(double x, double y, Block activeBlock);
 
   /**
    * Draw the given block on this display.
@@ -36,7 +36,7 @@ public interface ControllableBoardDisplay {
    * @param activeBlock
    *          The block to draw.
    */
-  public void drawBlock(int x, int y, Block activeBlock);
+  public void drawBlock(double x, double y, Block activeBlock);
 
   /**
    * Draw a pause message on this display.

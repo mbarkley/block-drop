@@ -103,7 +103,7 @@ public class BoardInputHandler {
    *          A pixel coordinate.
    * @return The index this coordinate maps to.
    */
-  protected static int coordToIndex(int x) {
-    return x / Size.getSize(SizeCategory.MAIN).getBlockSize();
+  protected static int coordToIndex(double x) {
+    return (int) (x / Size.getSize(SizeCategory.MAIN).getBlockSize());
   }
 }

@@ -1,7 +1,9 @@
 package demo.client.local.game.gui;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.inject.Inject;
 
@@ -19,6 +21,8 @@ import org.jboss.errai.ui.shared.api.annotations.DataField;
 import org.jboss.errai.ui.shared.api.annotations.Templated;
 
 import com.google.gwt.canvas.client.Canvas;
+import com.google.gwt.core.client.Scheduler;
+import com.google.gwt.core.client.Scheduler.ScheduledCommand;
 import com.google.gwt.dom.client.DivElement;
 import com.google.gwt.dom.client.Document;
 import com.google.gwt.event.dom.client.DomEvent.Type;
@@ -132,12 +136,12 @@ public class BoardPage extends Composite implements ControllableBoardDisplay {
     instance = this;
 
     // Initialize canvases.
-    mainCanvas.setCoordinateSpaceHeight(Size.getSize(SizeCategory.MAIN).getCoordHeight());
-    mainCanvas.setCoordinateSpaceWidth(Size.getSize(SizeCategory.MAIN).getCoordWidth());
-    nextPieceCanvas.setCoordinateSpaceHeight(Size.getSize(SizeCategory.NEXT).getCoordHeight());
-    nextPieceCanvas.setCoordinateSpaceWidth(Size.getSize(SizeCategory.NEXT).getCoordWidth());
-    oppCanvas.setCoordinateSpaceHeight(Size.getSize(SizeCategory.OPPONENT).getCoordHeight());
-    oppCanvas.setCoordinateSpaceWidth(Size.getSize(SizeCategory.OPPONENT).getCoordWidth());
+    Scheduler.get().scheduleDeferred(new ScheduledCommand() {
+      @Override
+      public void execute() {
+        resetCanvasSizes();
+      }
+    });
 
     canvasWrapper = new BoardCanvas(mainCanvas, SizeCategory.MAIN);
     oppCanvasWrapper = new BoardCanvas(oppCanvas, SizeCategory.OPPONENT);
@@ -167,11 +171,33 @@ public class BoardPage extends Composite implements ControllableBoardDisplay {
     addHandlerToMainCanvas((MouseMoveHandler) mouseHandler, MouseMoveEvent.getType());
     addHandlerToMainCanvas((MouseUpHandler) mouseHandler, MouseUpEvent.getType());
     addHandlerToMainCanvas((DoubleClickHandler) mouseHandler, DoubleClickEvent.getType());
-    
+
     EventHandler touchHandler = new BoardTouchHandler(controller, mainCanvas.getElement());
     addHandlerToMainCanvas((TouchStartHandler) touchHandler, TouchStartEvent.getType());
     addHandlerToMainCanvas((TouchMoveHandler) touchHandler, TouchMoveEvent.getType());
     addHandlerToMainCanvas((TouchEndHandler) touchHandler, TouchEndEvent.getType());
+  }
+
+  private void resetCanvasSizes() {
+    Map<SizeCategory, Integer[]> dimensionMap = new HashMap<SizeCategory, Integer[]>();
+
+    dimensionMap.put(SizeCategory.MAIN, new Integer[] { mainCanvas.getCanvasElement().getClientHeight(),
+        mainCanvas.getCanvasElement().getClientWidth() });
+    dimensionMap.put(SizeCategory.NEXT, new Integer[] { nextPieceCanvas.getCanvasElement().getClientHeight(),
+        nextPieceCanvas.getCanvasElement().getClientWidth() });
+    dimensionMap.put(SizeCategory.OPPONENT, new Integer[] { oppCanvas.getCanvasElement().getClientHeight(),
+        oppCanvas.getCanvasElement().getClientWidth() });
+
+    Size.reset(dimensionMap);
+
+    mainCanvas.setCoordinateSpaceWidth(Size.getSize(SizeCategory.MAIN).getCoordWidth());
+    mainCanvas.setCoordinateSpaceHeight(Size.getSize(SizeCategory.MAIN).getCoordHeight());
+
+    nextPieceCanvas.setCoordinateSpaceWidth(Size.getSize(SizeCategory.NEXT).getCoordWidth());
+    nextPieceCanvas.setCoordinateSpaceHeight(Size.getSize(SizeCategory.NEXT).getCoordHeight());
+
+    oppCanvas.setCoordinateSpaceWidth(Size.getSize(SizeCategory.OPPONENT).getCoordWidth());
+    oppCanvas.setCoordinateSpaceHeight(Size.getSize(SizeCategory.OPPONENT).getCoordHeight());
   }
 
   @PageShowing
@@ -220,12 +246,12 @@ public class BoardPage extends Composite implements ControllableBoardDisplay {
   }
 
   @Override
-  public void undrawBlock(int x, int y, Block activeBlock) {
+  public void undrawBlock(double x, double y, Block activeBlock) {
     canvasWrapper.undrawBlock(x, y, activeBlock);
   }
 
   @Override
-  public void drawBlock(int x, int y, Block activeBlock) {
+  public void drawBlock(double x, double y, Block activeBlock) {
     canvasWrapper.drawBlock(x, y, activeBlock);
   }
 

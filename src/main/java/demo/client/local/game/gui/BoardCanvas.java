@@ -26,18 +26,18 @@ public class BoardCanvas implements ControllableBoardDisplay {
   }
 
   @Override
-  public void undrawBlock(int x, int y, Block activeBlock) {
+  public void undrawBlock(double x, double y, Block activeBlock) {
     BlockModel model = activeBlock.getModel();
     for (SquareModel square : model.getIterator()) {
-      int xOffset = x + Block.indexToCoord(square.getCol(), sizeCategory);
-      int yOffset = y + Block.indexToCoord(square.getRow(), sizeCategory);
+      double xOffset = x + Block.indexToCoord(square.getCol(), sizeCategory);
+      double yOffset = y + Block.indexToCoord(square.getRow(), sizeCategory);
       canvas.getContext2d().clearRect(xOffset, yOffset, Size.getSize(sizeCategory).getBlockSize(),
               Size.getSize(sizeCategory).getBlockSize());
     }
   }
 
   @Override
-  public void drawBlock(int x, int y, Block activeBlock) {
+  public void drawBlock(double x, double y, Block activeBlock) {
     activeBlock.draw(x, y, canvas.getContext2d());
   }
 
