@@ -223,12 +223,15 @@ h1 {
 }
 
 .game-over-panel {
+	-moz-box-sizing: border-box;
+	webkit-box-sizing: border-box;
+	box-sizing: border-box;
 	position: absolute;
 	z-index: 10;
-	top: 100px;
-	left: 270px;
+	top: 0px;
+	left: 0px;
 	background-color: lightsteelblue;
-	width: 480px;
+	width: 50%;
 	padding: 20px;
 	text-align: center;
 	font-family: sans-serif;
