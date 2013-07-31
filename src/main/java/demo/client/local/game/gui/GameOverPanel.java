@@ -6,6 +6,7 @@ import org.jboss.errai.ui.shared.api.annotations.Templated;
 
 import com.google.gwt.dom.client.Element;
 import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.TouchStartEvent;
 import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.Composite;
@@ -36,6 +37,21 @@ public class GameOverPanel extends Composite {
    */
   @EventHandler("play")
   public void playAgain(ClickEvent e) {
+    playAgainHelper();
+  }
+
+  /**
+   * Restart the local player's game.
+   * 
+   * @param e
+   *          The touch event that triggered this call.
+   */
+  @EventHandler("play")
+  public void playAgain(TouchStartEvent e) {
+    playAgainHelper();
+  }
+
+  private void playAgainHelper() {
     BoardPage.getInstance().getController().restart();
     setVisible(false);
   }
@@ -48,6 +64,17 @@ public class GameOverPanel extends Composite {
    */
   @EventHandler("lobby")
   public void goToLobby(ClickEvent e) {
+    BoardPage.getInstance().goToLobby();
+  }
+
+  /**
+   * Navigate back to the lobby page.
+   * 
+   * @param e
+   *          The touch event that triggered this call.
+   */
+  @EventHandler("lobby")
+  public void goToLobby(TouchStartEvent e) {
     BoardPage.getInstance().goToLobby();
   }
 
