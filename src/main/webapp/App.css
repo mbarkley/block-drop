@@ -44,9 +44,12 @@ h1 {
 
 /* Lobby styles begin */
 .lobby-desc {
-	width: 560px;
+	-moz-box-sizing: border-box;
+	webkit-box-sizing: border-box;
+	box-sizing: border-box;
+	width: 90%;
 	margin: 0 auto 30px;
-	padding: 5px 80px 20px;
+	padding: 5px 5% 20px;
 	font-size: 110%;
 	background-color: white;
 	border: 1px solid rgb(80, 80, 80);
@@ -54,11 +57,16 @@ h1 {
 }
 
 .lobby-wrapper {
+	-moz-box-sizing: border-box;
+	webkit-box-sizing: border-box;
+	box-sizing: border-box;
 	position: relative;
 	background-color: lightblue;
-	margin: 20px auto 0;
-	min-height: 760px;
+	margin: auto;
+	width: 100%;
 	max-width: 800px;
+	min-height: 400px;
+	min-width: 400px;
 	padding: 20px 0 0;
 	border: 1px solid black;
 	border-radius: 10px;
@@ -68,7 +76,7 @@ h1 {
 .list-wrapper {
 	background-color: lightcyan;
 	width: 350px;
-	margin: 0 10px 0;
+	margin: 0 10px 20px;
 	overflow: auto;
 	font-size: 140%;
 	vertical-align: top;
@@ -81,14 +89,19 @@ h1 {
 }
 
 .list-wrapper .gwt-Button {
-	position: absolute;
-	bottom: 20px;
+	margin: auto;
 	padding: 5px 10px 5px;
 	font-size: 90%;
 }
 
-.button-panel {
+.button-panel * {
 	text-align: center;
+}
+
+.button-panel {
+	width: 100%;
+	padding: 5px 0px 5px;
+	border-top: 1px solid black;
 }
 
 .list-wrapper tr:first-child .list-panel {
