@@ -69,6 +69,8 @@ public class BoardTouchHandler extends BoardInputHandler implements TouchStartHa
     if (isSingleFinger(event)) {
       if (tapped) {
         drop();
+        timer.cancel();
+        tapped = false;
       }
       else {
         Touch touch = event.getTouches().get(0);
@@ -82,6 +84,11 @@ public class BoardTouchHandler extends BoardInputHandler implements TouchStartHa
     }
     else if (isTwoFingers(event)) {
       rotateOnce();
+      if (tapped) {
+        // kill potential double tap
+        timer.cancel();
+        tapped = false;
+      }
     }
   }
 
