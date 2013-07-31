@@ -220,6 +220,7 @@ public class BoardPage extends Composite implements ControllableBoardDisplay {
         @Override
         public void onResize(ResizeEvent event) {
           setWrapperSize(event.getHeight(), event.getWidth());
+          controller.redraw();
         }
       }));
     }

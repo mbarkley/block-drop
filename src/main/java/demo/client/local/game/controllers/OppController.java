@@ -3,7 +3,6 @@ package demo.client.local.game.controllers;
 import java.util.LinkedList;
 import java.util.Queue;
 
-import demo.client.local.game.gui.Block;
 import demo.client.local.game.gui.ControllableBoardDisplay;
 import demo.client.local.game.tools.DummyBus;
 import demo.client.shared.game.model.BoardModel;
@@ -76,12 +75,6 @@ public class OppController extends BoardController {
         }
       }
     }
-  }
-
-  private void redraw() {
-    boardDisplay.clearBoard();
-    Block allSquares = new Block(model.getAllSquares(), boardDisplay.getSizeCategory());
-    boardDisplay.drawBlock(0, 0, allSquares);
   }
 
   /**

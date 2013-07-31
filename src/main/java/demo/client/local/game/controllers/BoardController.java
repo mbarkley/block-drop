@@ -182,6 +182,12 @@ public class BoardController {
     }
   }
 
+  public void redraw() {
+    boardDisplay.clearBoard();
+    Block allSquares = new Block(model.getAllSquares(), boardDisplay.getSizeCategory());
+    boardDisplay.drawBlock(0, 0, allSquares);
+  }
+
   /**
    * Reset internal state and call {@link BoardController#startGame() startGame}.
    */
