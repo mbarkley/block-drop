@@ -96,7 +96,7 @@ public class Size {
         size.blockSize = size.coordWidth / 4;
       }
       else {
-        size.blockSize = size.coordHeight / HEIGHT;
+        size.blockSize = ((double) size.coordHeight) / HEIGHT;
       }
     }
   }

@@ -168,6 +168,7 @@ public class BoardController {
         // Display game over prompt to user
         boardDisplay.gameOver();
       }
+      redraw();
       // Reset for next loop.
       model.setDrop(false);
       if (rotate())
@@ -270,9 +271,6 @@ public class BoardController {
    * @return True iff the active block moved during this call.
    */
   protected boolean activeBlockUpdate() {
-    boardDisplay.undrawBlock(Block.indexToCoord(model.getActiveBlockCol(), boardDisplay.getSizeCategory()),
-            Block.indexToCoord(model.getActiveBlockRow(), boardDisplay.getSizeCategory()), activeBlock);
-
     // If the user wishes to drop the block, do nothing else.
     if (model.isDropping()) {
       setColMove(0);
@@ -298,10 +296,6 @@ public class BoardController {
     // If that didn't work, ignore the colMove (so that the block may still drop).
     if (!moved && horizontalMove())
       moved = model.moveActiveBlock(false);
-
-    // Redraw block in (possibly) new position.
-    boardDisplay.drawBlock(Block.indexToCoord(model.getActiveBlockCol(), boardDisplay.getSizeCategory()),
-            Block.indexToCoord(model.getActiveBlockRow(), boardDisplay.getSizeCategory()), activeBlock);
 
     return moved;
   }
