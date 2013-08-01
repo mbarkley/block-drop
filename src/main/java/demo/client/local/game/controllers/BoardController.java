@@ -8,7 +8,6 @@ import demo.client.local.game.tools.BoardMessageBus;
 import demo.client.local.game.tools.ClearState;
 import demo.client.local.game.tools.GameHeartBeat;
 import demo.client.local.game.tools.Pacer;
-import demo.client.local.game.tools.Size.SizeCategory;
 import demo.client.local.lobby.Client;
 import demo.client.shared.game.model.BackgroundBlockModel;
 import demo.client.shared.game.model.BlockOverflow;
@@ -238,19 +237,19 @@ public class BoardController {
       case THIRD_UNDRAW:
       case LAST_UNDRAW:
         boardDisplay.clearBoard();
-        boardDisplay.drawBlock(0, 0, new Block(model.getNonFullRows(), SizeCategory.MAIN));
+        boardDisplay.drawBlock(0, 0, new Block(model.getNonFullRows(), boardDisplay.getSizeCategory()));
         break;
       case FIRST_REDRAW:
       case SECOND_REDRAW:
       case THIRD_REDRAW:
         boardDisplay.clearBoard();
-        boardDisplay.drawBlock(0, 0, new Block(model.getAllSquares(), SizeCategory.MAIN));
+        boardDisplay.drawBlock(0, 0, new Block(model.getAllSquares(), boardDisplay.getSizeCategory()));
         break;
       case DROPPING:
         boardDisplay.clearBoard();
         model.clearFullRows();
         // Redraw background blocks.
-        boardDisplay.drawBlock(0, 0, new Block(model.getAllSquares(), SizeCategory.MAIN));
+        boardDisplay.drawBlock(0, 0, new Block(model.getAllSquares(), boardDisplay.getSizeCategory()));
         // Update the score.
         secondaryController.updateScore(numFullRows);
         messageBus.sendScoreUpdate(secondaryController.getScoreTracker(), secondaryController.getTarget());
