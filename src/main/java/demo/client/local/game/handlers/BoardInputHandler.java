@@ -65,7 +65,7 @@ public class BoardInputHandler {
       }
       int newRow = coordToIndex(relativeY);
       if (newRow - lastRow > 0) {
-        controller.setRowMoveOnce(1);
+        controller.setRowMoveOnce(newRow - lastRow);
         lastRow = newRow;
       }
     }
