@@ -8,6 +8,7 @@ import demo.client.local.game.tools.BoardMessageBus;
 import demo.client.local.game.tools.ClearState;
 import demo.client.local.game.tools.GameHeartBeat;
 import demo.client.local.game.tools.Pacer;
+import demo.client.local.game.tools.Size.SizeCategory;
 import demo.client.local.lobby.Client;
 import demo.client.shared.game.model.BackgroundBlockModel;
 import demo.client.shared.game.model.BlockOverflow;
@@ -59,10 +60,6 @@ public class BoardController {
 
   // Controls speed of row clearing animation
   private ClearState clearState = ClearState.START;
-  // Store blocks to be cleared off screen between loop iterations.
-  private Block toBeCleared;
-  // Store background blocks to be moved off screen between game iterations.
-  private Block bgBlock;
 
   /**
    * Create a BoardController instance.
@@ -102,8 +99,6 @@ public class BoardController {
     activeBlock = new Block(model.getActiveBlock(), boardDisplay.getSizeCategory());
     nextBlock = new Block(model.getNextBlock(), boardDisplay.getSizeCategory());
     clearState = ClearState.START;
-    toBeCleared = new Block(model.getFullRows(), boardDisplay.getSizeCategory());
-    bgBlock = new Block(model.getNonFullRows(), boardDisplay.getSizeCategory());
   }
 
   /**
@@ -237,26 +232,25 @@ public class BoardController {
       switch (clearState) {
       case START:
         // Get blocks to be cleared.
-        toBeCleared = new Block(model.getFullRows(), boardDisplay.getSizeCategory());
-        bgBlock = new Block(model.getNonFullRows(), boardDisplay.getSizeCategory());
         break;
       case FIRST_UNDRAW:
       case SECOND_UNDRAW:
       case THIRD_UNDRAW:
       case LAST_UNDRAW:
-        boardDisplay.undrawBlock(0, 0, toBeCleared);
+        boardDisplay.clearBoard();
+        boardDisplay.drawBlock(0, 0, new Block(model.getNonFullRows(), SizeCategory.MAIN));
         break;
       case FIRST_REDRAW:
       case SECOND_REDRAW:
       case THIRD_REDRAW:
-        boardDisplay.drawBlock(0, 0, toBeCleared);
+        boardDisplay.clearBoard();
+        boardDisplay.drawBlock(0, 0, new Block(model.getAllSquares(), SizeCategory.MAIN));
         break;
       case DROPPING:
-        boardDisplay.undrawBlock(0, 0, bgBlock);
+        boardDisplay.clearBoard();
         model.clearFullRows();
-        bgBlock = new Block(model.getNonFullRows(), boardDisplay.getSizeCategory());
-        // Redraw background blocks that were above cleared rows.
-        boardDisplay.drawBlock(0, 0, bgBlock);
+        // Redraw background blocks.
+        boardDisplay.drawBlock(0, 0, new Block(model.getAllSquares(), SizeCategory.MAIN));
         // Update the score.
         secondaryController.updateScore(numFullRows);
         messageBus.sendScoreUpdate(secondaryController.getScoreTracker(), secondaryController.getTarget());
