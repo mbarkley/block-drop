@@ -25,16 +25,6 @@ public class SquareBlockModel extends BlockModel {
   }
 
   @Override
-  public double getCentreRowDiff() {
-    return -0.5;
-  }
-
-  @Override
-  public double getCentreColDiff() {
-    return -0.5;
-  }
-
-  @Override
   public void rotate() {
     // Do nothing.
     return;

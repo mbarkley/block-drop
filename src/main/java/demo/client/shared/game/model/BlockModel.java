@@ -137,32 +137,6 @@ public class BlockModel {
   }
 
   /**
-   * Get the row offset of the centre of this shape.
-   * 
-   * To centre this block vertically around a row index <em>i</em>, place a block at <em>i</em>
-   * +getCentreRowDiff().
-   * 
-   * @return The number to be added to a row index, <em>i</em> in order to vertically centre this
-   *         block around <em>i</em>.
-   */
-  public double getCentreRowDiff() {
-    return 0;
-  }
-
-  /**
-   * Get the column offset of the centre of this shape.
-   * 
-   * To centre this block horizontally around a column index <em>j</em>, place a block at <em>j</em>
-   * +getCentreColDiff().
-   * 
-   * @return The number to be added to a column index, <em>j</em> in order to horizontally centre
-   *         this block around <em>j</em>.
-   */
-  public double getCentreColDiff() {
-    return 0;
-  }
-
-  /**
    * Get the starting row of this BlockModel.
    * 
    * @return The row index of the position this block should start at in a {@link BoardModel board

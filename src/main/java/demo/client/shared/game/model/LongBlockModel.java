@@ -20,11 +20,6 @@ public class LongBlockModel extends ToggledBlockModel {
         new int[] { 2, 0 } // Bottom square.
             }, getCode());
   }
-
-  @Override
-  public double getCentreRowDiff() {
-    return -0.5;
-  }
   
   /**
    * Get the code identifying this type of block model.

@@ -87,32 +87,6 @@ public class Block {
   }
 
   /**
-   * Get the row offset of the centre of this shape.
-   * 
-   * To centre this block vertically around a row index <em>i</em>, place a block at <em>i</em>
-   * +getCentreRowDiff().
-   * 
-   * @return The number to be added to a row index, <em>i</em> in order to vertically centre this
-   *         block around <em>i</em>.
-   */
-  public double getCentreRowDiff() {
-    return model.getCentreRowDiff();
-  }
-
-  /**
-   * Get the column offset of the centre of this shape.
-   * 
-   * To centre this block horizontally around a column index <em>j</em>, place a block at <em>j</em>
-   * +getCentreColDiff().
-   * 
-   * @return The number to be added to a column index, <em>j</em> in order to horizontally centre
-   *         this block around <em>j</em>.
-   */
-  public double getCentreColDiff() {
-    return model.getCentreColDiff();
-  }
-
-  /**
    * Convert an index (used to locate BlockModels on the BoardModel) to a coordinate (used to draw
    * Blocks on the BoardPage canvas).
    * 

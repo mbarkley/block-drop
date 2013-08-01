@@ -21,11 +21,6 @@ public class SBlockModel extends ToggledBlockModel {
             }, getCode());
   }
 
-  @Override
-  public double getCentreColDiff() {
-    return 0.5;
-  }
-
   /**
    * Get the code identifying this type of block model.
    * 

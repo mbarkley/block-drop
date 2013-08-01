@@ -93,7 +93,7 @@ public class Size {
       size.coordHeight = entry.getValue()[0];
       size.coordWidth = entry.getValue()[1];
       if (entry.getKey().equals(SizeCategory.NEXT)) {
-        size.blockSize = size.coordHeight / 5.0;
+        size.blockSize = size.coordWidth / 4;
       }
       else {
         size.blockSize = size.coordHeight / HEIGHT;
