@@ -174,9 +174,13 @@ h1 {
 }
 
 .score-list {
+	margin-top: -5px;
+	width: 100%;
+}
+
+.score-list-wrapper {
 	width: 100%;
 	height: 50%;
-	margin-top: -5px;
 }
 
 .display-wrapper {
