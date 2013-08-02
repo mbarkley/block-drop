@@ -174,13 +174,15 @@ h1 {
 }
 
 .score-list {
-	margin-top: -5px;
 	width: 100%;
 }
 
 .score-list-wrapper {
 	width: 100%;
 	height: 50%;
+	margin-top: -5px;
+	overflow-y: auto;
+	overflow-x: hidden;
 }
 
 .display-wrapper {
