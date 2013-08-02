@@ -46,7 +46,7 @@ public class BoardController {
   // True if the game is paused.
   private boolean pause = false;
   // Controls flow of keep alive messages sent to server
-  private Pacer pausePacer = new Pacer(dropIncrement / 2, false);
+  private Pacer pausePacer = new Pacer(dropIncrement, false);
   // Controls flow of movement when arrow key is held down
   private Pacer movePacer = new Pacer(3);
   // Controls flow of rotation when arrow key is held down
