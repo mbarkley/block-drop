@@ -170,11 +170,6 @@ public class SecondaryDisplayControllerImpl implements SecondaryDisplayControlle
     nextBlock = new Block(nextBlock.getModel(), SizeCategory.NEXT);
     // Clear everything.
     nextCanvas.getContext2d().clearRect(0, 0, size.getCoordWidth(), size.getCoordHeight());
-
-    // Draw title.
-//    nextCanvas.getContext2d().setFillStyle("black");
-//    nextCanvas.getContext2d().setFont("bold 120% sans-serif");
-//    nextCanvas.getContext2d().fillText("Next Block", 10, 20);
     
     Positioner pos = new Positioner(nextBlock.getModel());
 
