@@ -3,8 +3,6 @@ package demo.client.local.game.controllers;
 import java.util.Collections;
 import java.util.List;
 
-import javax.inject.Inject;
-
 import org.jboss.errai.bus.client.ErraiBus;
 import org.jboss.errai.bus.client.api.base.MessageBuilder;
 import org.jboss.errai.bus.client.api.messaging.MessageBus;
@@ -35,7 +33,6 @@ public class SecondaryDisplayControllerImpl implements SecondaryDisplayControlle
   private ListWidget<ScoreTracker, ScorePanel> scoreList;
   private Canvas nextCanvas;
 
-  @Inject
   private MessageBus messageBus = ErraiBus.get();
 
   /**
