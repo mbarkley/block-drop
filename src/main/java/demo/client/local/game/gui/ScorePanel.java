@@ -12,7 +12,9 @@ import org.jboss.errai.ui.shared.api.annotations.EventHandler;
 import org.jboss.errai.ui.shared.api.annotations.Templated;
 
 import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.TouchEndEvent;
 import com.google.gwt.event.dom.client.TouchStartEvent;
+import com.google.gwt.user.client.Timer;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.Label;
 
@@ -42,11 +44,20 @@ public class ScorePanel extends Composite implements HasModel<ScoreTracker> {
   @Inject
   private Label score;
 
+  private boolean tapped;
+  private static final int timeout = 500;
+  private Timer timer = new Timer() {
+    @Override
+    public void run() {
+      tapped = false;
+    }
+  };
+
   /**
    * Select this panel as the current target.
    * 
    * @param event
-   *          The click event that triggered this call.
+   *          The touch event that triggered this call.
    */
   @EventHandler
   public void onClick(ClickEvent event) {
@@ -54,14 +65,32 @@ public class ScorePanel extends Composite implements HasModel<ScoreTracker> {
   }
 
   /**
-   * Select this panel as the current target.
+   * Begin selection event. For this element to be selected, a "finger" must touch and lift on this
+   * element.
    * 
    * @param event
-   *          The click event that triggered this call.
+   *          The touch event that triggered this call.
    */
   @EventHandler
   public void onTouch(TouchStartEvent event) {
-    clickAndTouchHelper();
+    tapped = true;
+    timer.schedule(timeout);
+  }
+
+  /**
+   * Finish selection event. For this element to be selected, a "finger" must touch and lift on this
+   * element.
+   * 
+   * @param event
+   *          The touch event that triggered this call.
+   */
+  @EventHandler
+  public void onLift(TouchEndEvent event) {
+    if (tapped) {
+      clickAndTouchHelper();
+      timer.cancel();
+      tapped = false;
+    }
   }
 
   private void clickAndTouchHelper() {
