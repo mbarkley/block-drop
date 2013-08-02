@@ -5,6 +5,7 @@ import org.jboss.errai.bus.client.api.messaging.MessageCallback;
 
 import demo.client.local.game.controllers.BoardController;
 import demo.client.local.game.controllers.SecondaryDisplayController;
+import demo.client.local.game.tools.CallOutManager;
 import demo.client.local.lobby.Client;
 import demo.client.shared.message.Command;
 import demo.client.shared.message.ScoreEvent;
@@ -55,6 +56,7 @@ public class BoardCallback implements MessageCallback {
       secondaryController.updateAndSortScore(scoreTracker);
       if (Client.getInstance().getPlayer().equals(target)) {
         controller.addRows(scoreTracker.getRowsClearedLast());
+        CallOutManager.createAttackCallout("score-panel-" + scoreTracker.getId(), scoreTracker.getName());
       }
     }
   }

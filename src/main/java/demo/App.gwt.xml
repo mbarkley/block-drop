@@ -9,4 +9,5 @@
     <inherits name="org.jboss.errai.ui.UI"/>
     <inherits name="org.jboss.errai.ui.nav.Navigation"/>
     <inherits name="org.jboss.errai.databinding.DataBinding" />
+    <inherits name='com.eemi.gwt.tour.GwtTour'/>
 </module>

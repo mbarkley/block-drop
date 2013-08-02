@@ -160,5 +160,7 @@ public class ScorePanel extends Composite implements HasModel<ScoreTracker> {
   @Override
   public void setModel(ScoreTracker model) {
     scoreBinder.setModel(model);
+    // Id used for gwt-tour
+    getElement().setId("score-panel-" + model.getPlayer().getId());
   }
 }
