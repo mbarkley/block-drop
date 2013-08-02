@@ -53,14 +53,15 @@ public class BoardMouseHandler extends BoardInputHandler implements MouseDownHan
 
   @Override
   public void onMouseDown(MouseDownEvent event) {
-    if (event.getNativeButton() == NativeEvent.BUTTON_LEFT) {
-      startMove(event.getRelativeX(canvas), event.getRelativeY(canvas));
-      event.preventDefault();
-    }
-    else if (event.getNativeButton() == NativeEvent.BUTTON_RIGHT
-            && event.getNativeEvent().getEventTarget().equals(canvas)) {
-      controller.rotateOnce();
-      event.preventDefault();
+    if (eventFromCanvas(event)) {
+      if (event.getNativeButton() == NativeEvent.BUTTON_LEFT) {
+        startMove(event.getRelativeX(canvas), event.getRelativeY(canvas));
+        event.preventDefault();
+      }
+      else if (event.getNativeButton() == NativeEvent.BUTTON_RIGHT
+              && event.getNativeEvent().getEventTarget().equals(canvas)) {
+        controller.rotateOnce();
+      }
     }
   }
 

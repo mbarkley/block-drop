@@ -60,34 +60,35 @@ public class BoardTouchHandler extends BoardInputHandler implements TouchStartHa
     if (isSingleFinger(event)) {
       Touch touch = event.getTouches().get(0);
       maybeContinueMove(touch.getRelativeX(canvas), touch.getRelativeY(canvas));
-      event.preventDefault();
     }
   }
 
   @Override
   public void onTouchStart(TouchStartEvent event) {
-    if (isSingleFinger(event)) {
-      if (tapped) {
-        drop();
-        timer.cancel();
-        tapped = false;
-      }
-      else {
-        Touch touch = event.getTouches().get(0);
-        startMove(touch.getRelativeX(canvas), touch.getRelativeY(canvas));
-        event.preventDefault();
+    if (eventFromCanvas(event)) {
+      if (isSingleFinger(event)) {
+        if (tapped) {
+          drop();
+          timer.cancel();
+          tapped = false;
+        }
+        else {
+          Touch touch = event.getTouches().get(0);
+          startMove(touch.getRelativeX(canvas), touch.getRelativeY(canvas));
+          event.preventDefault();
 
-        // Start timer to handle double-tap
-        tapped = true;
-        timer.schedule(timeout);
+          // Start timer to handle double-tap
+          tapped = true;
+          timer.schedule(timeout);
+        }
       }
-    }
-    else if (isTwoFingers(event)) {
-      rotateOnce();
-      if (tapped) {
-        // kill potential double tap
-        timer.cancel();
-        tapped = false;
+      else if (isTwoFingers(event)) {
+        rotateOnce();
+        if (tapped) {
+          // kill potential double tap
+          timer.cancel();
+          tapped = false;
+        }
       }
     }
   }

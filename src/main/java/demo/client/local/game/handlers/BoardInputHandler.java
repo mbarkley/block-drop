@@ -1,6 +1,7 @@
 package demo.client.local.game.handlers;
 
 import com.google.gwt.dom.client.Element;
+import com.google.gwt.event.dom.client.HasNativeEvent;
 
 import demo.client.local.game.controllers.BoardController;
 import demo.client.local.game.tools.Size;
@@ -105,5 +106,9 @@ public class BoardInputHandler {
    */
   protected static int coordToIndex(double x) {
     return (int) (x / Size.getSize(SizeCategory.MAIN).getBlockSize());
+  }
+  
+  protected boolean eventFromCanvas(HasNativeEvent event) {
+    return event.getNativeEvent().getEventTarget().equals(canvas);
   }
 }
