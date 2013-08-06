@@ -18,6 +18,7 @@ public class CallOutManager {
     step.setShowNextButton(false);
     step.setShowPrevButton(false);
     step.setZIndex(1);
+    step.setWidth(100);
     
     final Tour tour = new Tour(elementId);
     tour.setNextOnTargetClick(true);

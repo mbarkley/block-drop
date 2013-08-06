@@ -42,6 +42,22 @@ h1 {
 }
 /* GENERIC STYLES END */
 
+/* Hopscotch styles begin */
+
+body div.hopscotch-bubble {
+	z-index: 1;
+}
+
+body div.hopscotch-bubble .hopscotch-bubble-number {
+	display: none;
+}
+
+body div.hopscotch-bubble div.hopscotch-bubble-content {
+	margin: 0px;
+}
+
+/* Hopscotch styles end */
+
 /* Lobby styles begin */
 .lobby-desc {
 	-moz-box-sizing: border-box;
