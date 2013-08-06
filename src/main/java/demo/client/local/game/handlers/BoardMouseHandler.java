@@ -45,7 +45,6 @@ public class BoardMouseHandler extends BoardInputHandler implements MouseDownHan
       public void onContextMenu(ContextMenuEvent event) {
         if (event.getNativeEvent().getEventTarget().equals(BoardMouseHandler.this.canvas)) {
           event.preventDefault();
-          event.stopPropagation();
         }
       }
     }, ContextMenuEvent.getType());

@@ -61,6 +61,7 @@ import demo.client.local.game.controllers.SecondaryDisplayControllerImpl;
 import demo.client.local.game.handlers.BoardKeyHandler;
 import demo.client.local.game.handlers.BoardMouseHandler;
 import demo.client.local.game.handlers.BoardTouchHandler;
+import demo.client.local.game.handlers.PauseInputHandler;
 import demo.client.local.game.tools.BoardMessageBusImpl;
 import demo.client.local.game.tools.CallOutManager;
 import demo.client.local.game.tools.Size;
@@ -103,7 +104,11 @@ public class BoardPage extends Composite implements ControllableBoardDisplay {
   // For displaying game over prompt.
   @Inject
   @DataField("game-over-panel")
-  GameOverPanel gameOverPanel;
+  private GameOverPanel gameOverPanel;
+  
+  @Inject
+  @DataField("pause-overlay")
+  private PauseOverlay pauseOverlay;
 
   // For displaying players scores.
   @Inject
@@ -166,6 +171,13 @@ public class BoardPage extends Composite implements ControllableBoardDisplay {
     oppCallback = new OppCallback(oppCanvasWrapper);
 
     gameOverPanel.setVisible(false);
+    
+    EventHandler pauseHandler = new PauseInputHandler(controller);
+    addHandlerToMainCanvas((TouchStartHandler) pauseHandler, TouchStartEvent.getType());
+    addHandlerToMainCanvas((TouchMoveHandler) pauseHandler, TouchMoveEvent.getType());
+    addHandlerToMainCanvas((TouchEndHandler) pauseHandler, TouchEndEvent.getType());
+    addHandlerToMainCanvas((MouseDownHandler) pauseHandler, MouseDownEvent.getType());
+    addHandlerToMainCanvas((MouseUpHandler) pauseHandler, MouseUpEvent.getType());
 
     EventHandler keyHandler = new BoardKeyHandler(controller);
     addHandlerToMainCanvas((KeyUpHandler) keyHandler, KeyUpEvent.getType());

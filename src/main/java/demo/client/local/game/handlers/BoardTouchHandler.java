@@ -93,11 +93,11 @@ public class BoardTouchHandler extends BoardInputHandler implements TouchStartHa
     }
   }
 
-  private boolean isSingleFinger(TouchEvent<?> event) {
+  public static boolean isSingleFinger(TouchEvent<?> event) {
     return event.getTouches().length() == 1;
   }
 
-  private boolean isTwoFingers(TouchEvent<?> event) {
+  public static boolean isTwoFingers(TouchEvent<?> event) {
     return event.getTouches().length() == 2;
   }
 

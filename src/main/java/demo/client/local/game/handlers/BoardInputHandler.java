@@ -104,7 +104,7 @@ public class BoardInputHandler {
    *          A pixel coordinate.
    * @return The index this coordinate maps to.
    */
-  protected static int coordToIndex(double x) {
+  public static int coordToIndex(double x) {
     return (int) (x / Size.getSize(SizeCategory.MAIN).getBlockSize());
   }
   
