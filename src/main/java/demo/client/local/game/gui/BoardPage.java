@@ -62,6 +62,7 @@ import demo.client.local.game.handlers.BoardKeyHandler;
 import demo.client.local.game.handlers.BoardMouseHandler;
 import demo.client.local.game.handlers.BoardTouchHandler;
 import demo.client.local.game.tools.BoardMessageBusImpl;
+import demo.client.local.game.tools.CallOutManager;
 import demo.client.local.game.tools.Size;
 import demo.client.local.game.tools.Size.SizeCategory;
 import demo.client.local.lobby.Client;
@@ -248,6 +249,8 @@ public class BoardPage extends Composite implements ControllableBoardDisplay {
 
   @PageHidden
   private void leaveGame() {
+    CallOutManager.closeOpenCallout();
+    
     if (Client.getInstance().getGameRoom() != null) {
       ExitMessage exitMessage = new ExitMessage();
       exitMessage.setPlayer(Client.getInstance().getPlayer());

@@ -35,5 +35,9 @@ public class CallOutManager {
     GwtTour.startTour(tour);
     timer.schedule(timeout);
   }
+
+  public static void closeOpenCallout() {
+    GwtTour.endTour();
+  }
   
 }
