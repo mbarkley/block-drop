@@ -39,7 +39,7 @@ public class PauseInputHandler implements TouchStartHandler, TouchMoveHandler, T
   }
 
   private void onUp(int newY) {
-    if (down && BoardInputHandler.coordToIndex(newY + 1) < BoardInputHandler.coordToIndex(this.initialY)) {
+    if (down && BoardInputHandler.coordToIndex(newY) + 3 < BoardInputHandler.coordToIndex(this.initialY)) {
       down = false;
       controller.setPaused(!controller.isPaused());
     }
