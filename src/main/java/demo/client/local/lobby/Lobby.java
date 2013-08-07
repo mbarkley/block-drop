@@ -20,6 +20,8 @@ import org.jboss.errai.ui.nav.client.local.TransitionTo;
 import org.jboss.errai.ui.shared.api.annotations.DataField;
 import org.jboss.errai.ui.shared.api.annotations.Templated;
 
+import com.google.gwt.dom.client.Document;
+import com.google.gwt.dom.client.Style.Display;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.ui.Button;
@@ -141,6 +143,20 @@ public class Lobby extends Composite {
     players.remove(Client.getInstance().getPlayer());
     playerList.setItems(players);
     gameList.setItems(update.getGames());
+    
+    if (players.isEmpty()) {
+      Document.get().getElementById("empty-player-list").getStyle().clearDisplay();
+    }
+    else {
+      Document.get().getElementById("empty-player-list").getStyle().setDisplay(Display.NONE);
+    }
+    
+    if (update.getGames().isEmpty()) {
+      Document.get().getElementById("empty-game-list").getStyle().clearDisplay();
+    }
+    else {
+      Document.get().getElementById("empty-game-list").getStyle().setDisplay(Display.NONE);
+    }
   }
 
   /**
