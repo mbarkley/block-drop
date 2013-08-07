@@ -48,9 +48,11 @@ h1 {
 	-moz-box-sizing: border-box;
 	webkit-box-sizing: border-box;
 	box-sizing: border-box;
-	overflow-y: auto;
 	width: 50%;
 	height: 50%;
+	overflow-y: auto;
+	overflow-x: hidden;
+	-webkit-overflow-scrolling: touch;
 	z-index: 100;
 	background: white;
 	color: black;
@@ -60,8 +62,22 @@ h1 {
 	padding: 0 5px 0;
 }
 
+.instructions-inner-wrapper {
+	width: 100%;
+	height: auto;
+}
+
 #instructions h1, #instructions h2 {
 	font-family: sans-serif;
+}
+
+#instructions h1 {
+	margin: 0 auto 0;
+}
+
+#instructions h2 {
+	margin: 5px auto 5px;
+	font-size: 120%;
 }
 
 #instructions section {
@@ -70,8 +86,12 @@ h1 {
 
 .control {
 	width: 100%;
-	overflow: hidden;
 	margin: 0 auto 5px;
+}
+
+.border-bottom {
+	padding-bottom: 5px;
+	border-bottom: 1px solid black;
 }
 
 .control img {
