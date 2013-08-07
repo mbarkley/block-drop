@@ -42,8 +42,58 @@ h1 {
 }
 /* GENERIC STYLES END */
 
-/* Hopscotch styles begin */
+/* Instructions styles begin */
+#instructions {
+	position: absolute;
+	-moz-box-sizing: border-box;
+	webkit-box-sizing: border-box;
+	box-sizing: border-box;
+	overflow-y: auto;
+	width: 50%;
+	height: 50%;
+	z-index: 1;
+	background: white;
+	color: black;
+	border-left: 1px solid black;
+	border-bottom: 1px solid black;
+	font-family: sans-serif;
+	padding: 0 5px 0;
+}
 
+#instructions h1, #instructions h2 {
+	font-family: sans-serif;
+}
+
+#instructions section {
+	width: 100%;
+}
+
+.control {
+	width: 100%;
+	overflow: hidden;
+	margin: 0 auto 5px;
+}
+
+.control img {
+	padding: 0 1% 0;
+	float: left;
+}
+
+.control img.small {
+	max-width: 7%;
+}
+
+.control img.large {
+	max-width: 20%;
+}
+
+.control-description {
+	padding-top: 5px;
+}
+
+/* Instructions styles end */
+
+/* Hopscotch styles begin */
 body div.hopscotch-bubble {
 	z-index: 1;
 }
@@ -133,7 +183,8 @@ body div.hopscotch-bubble div.hopscotch-bubble-content {
 /* BOARD.HTML STYLES BEGIN */
 .main-panel {
 	position: relative;
-	z-index: 1; background-color : white;
+	z-index: 1;
+	background-color: white;
 	height: 100%;
 	width: 50%;
 	display: inline-block;
@@ -143,12 +194,13 @@ body div.hopscotch-bubble div.hopscotch-bubble-content {
 }
 
 .secondary-panel {
-	display: inline-block;
+	position: relative; display : inline-block;
 	height: 100%;
 	width: 50%;
 	vertical-align: top;
 	border: 1px solid black;
 	margin: -1px;
+	display: inline-block;
 }
 
 .opp-canvas {
@@ -167,7 +219,7 @@ body div.hopscotch-bubble div.hopscotch-bubble-content {
 	text-align: center;
 	padding: 0px;
 	margin: 0px;
-	border:0px;
+	border: 0px;
 	display: inline-block;
 	position: relative;
 }
@@ -222,7 +274,8 @@ body div.hopscotch-bubble div.hopscotch-bubble-content {
 .overlay {
 	position: absolute;
 	top: 0px;
-	left: 0px; width : 100%;
+	left: 0px;
+	width: 100%;
 	height: 100%;
 	background-color: rgba(0, 0, 0, 0.2);
 	color: white;

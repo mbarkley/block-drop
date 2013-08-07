@@ -109,6 +109,10 @@ public class BoardPage extends Composite implements ControllableBoardDisplay {
   @Inject
   @DataField("pause-overlay")
   private PauseOverlay pauseOverlay;
+  
+  @Inject
+  @DataField("instructions")
+  private Instructions instructions;
 
   // For displaying players scores.
   @Inject
