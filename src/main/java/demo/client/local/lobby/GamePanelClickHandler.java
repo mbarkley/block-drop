@@ -19,6 +19,7 @@ public class GamePanelClickHandler implements ClickHandler {
     GameRoom model = ((GamePanel) event.getSource()).getModel();
 
     Lobby.getInstance().toggleGameSelection(model);
+    Lobby.getInstance().joinSelectedGame();
   }
 
 }

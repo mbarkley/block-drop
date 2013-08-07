@@ -32,6 +32,11 @@ public class GamePanel extends Composite implements HasModel<GameRoom> {
   @Inject
   @Bound(property = "players", converter = GamePanelConverter.class)
   private Label numPlayers;
+  
+  @DataField("game-id")
+  @Inject
+  @Bound(property = "id")
+  private Label gameId;
 
   /**
    * Create a GamePanel.

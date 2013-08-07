@@ -64,9 +64,6 @@ public class Lobby extends Composite {
   @DataField("player-button-panel")
   private HorizontalPanel playerButtonPanel;
   @Inject
-  @DataField("game-button-panel")
-  private HorizontalPanel gameButtonPanel;
-  @Inject
   @DataField("player-list")
   private ListWidget<Player, PlayerPanel> playerList;
   @Inject
@@ -104,25 +101,8 @@ public class Lobby extends Composite {
         gameInvitation.fire(invite);
       }
     });
-    Button joinGameButton = new Button("Join Game");
-    joinGameButton.addClickHandler(new ClickHandler() {
-
-      @Override
-      public void onClick(ClickEvent event) {
-        if (selectedGame != null && gameList.getValue().contains(selectedGame)) {
-          Invitation invite = new Invitation();
-          // The target and gameId are the only information that the server will need.
-          invite.setGameId(selectedGame.getId());
-          invite.setTarget(Client.getInstance().getPlayer());
-          MessageBuilder.createMessage("Relay").command(Command.JOIN_GAME).withValue(invite).noErrorHandling()
-                  .sendNowWith(messageBus);
-        }
-      }
-
-    });
 
     playerButtonPanel.add(newGameButton);
-    gameButtonPanel.add(joinGameButton);
     joinLobby();
   }
 
@@ -137,6 +117,20 @@ public class Lobby extends Composite {
   public void requestLobbyUpdate() {
     lobbyUpdateRequest.fire(new LobbyUpdateRequest());
     System.out.println(Client.getInstance().getNickname() + ": LobbyUpdateRequest fired.");
+  }
+  
+  /**
+   * Join a game if one has been selected by the user.
+   */
+  public void joinSelectedGame() {
+    if (selectedGame != null && gameList.getValue().contains(selectedGame)) {
+      Invitation invite = new Invitation();
+      // The target and gameId are the only information that the server will need.
+      invite.setGameId(selectedGame.getId());
+      invite.setTarget(Client.getInstance().getPlayer());
+      MessageBuilder.createMessage("Relay").command(Command.JOIN_GAME).withValue(invite).noErrorHandling()
+              .sendNowWith(messageBus);
+    }
   }
 
   /**
