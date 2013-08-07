@@ -26,6 +26,7 @@ import com.google.gwt.core.client.Scheduler.ScheduledCommand;
 import com.google.gwt.dom.client.DivElement;
 import com.google.gwt.dom.client.Document;
 import com.google.gwt.dom.client.Element;
+import com.google.gwt.dom.client.Style.Display;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.dom.client.DomEvent.Type;
 import com.google.gwt.event.dom.client.DoubleClickEvent;
@@ -366,5 +367,15 @@ public class BoardPage extends Composite implements ControllableBoardDisplay {
   @Override
   public void gameOver() {
     gameOverPanel.setVisible(true);
+  }
+
+  public void setInstructionsVisible(boolean b) {
+    if (b) {
+      // Instructions display properly by default
+      instructions.getElement().getStyle().clearDisplay();
+    }
+    else {
+      instructions.getElement().getStyle().setDisplay(Display.NONE);
+    }
   }
 }

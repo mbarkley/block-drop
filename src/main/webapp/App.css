@@ -87,6 +87,7 @@ h1 {
 .control {
 	width: 100%;
 	margin: 0 auto 5px;
+	overflow: hidden;
 }
 
 .border-bottom {

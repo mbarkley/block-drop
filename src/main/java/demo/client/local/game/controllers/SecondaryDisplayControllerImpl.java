@@ -11,6 +11,7 @@ import org.jboss.errai.ui.client.widget.ListWidget;
 import com.google.gwt.canvas.client.Canvas;
 
 import demo.client.local.game.gui.Block;
+import demo.client.local.game.gui.BoardPage;
 import demo.client.local.game.gui.ScorePanel;
 import demo.client.local.game.tools.Positioner;
 import demo.client.local.game.tools.Size;
@@ -68,13 +69,7 @@ public class SecondaryDisplayControllerImpl implements SecondaryDisplayControlle
     if (current != null) {
       int index = scoreList.getValue().indexOf(current);
       int next = (index + 1) % scoreList.getValue().size();
-      scoreList.getValue().get(index).deselect();
-      scoreList.getWidget(index).setSelected(false);
-      scoreList.getValue().get(next).select();
-      scoreList.getWidget(next).setSelected(true);
-      MessageBuilder.createMessage("Game" + Client.getInstance().getGameRoom().getId())
-              .command(Command.SWITCH_OPPONENT).withValue(getSelectedTracker().getPlayer()).noErrorHandling()
-              .sendNowWith(messageBus);
+      selectPlayerByIndex(next);
     }
   }
 
@@ -89,13 +84,7 @@ public class SecondaryDisplayControllerImpl implements SecondaryDisplayControlle
     if (current != null) {
       int index = scoreList.getValue().indexOf(current);
       int last = (index - 1 + scoreList.getValue().size()) % scoreList.getValue().size();
-      scoreList.getValue().get(index).deselect();
-      scoreList.getWidget(index).setSelected(false);
-      scoreList.getWidget(last).setSelected(true);
-      scoreList.getValue().get(last).select();
-      MessageBuilder.createMessage("Game" + Client.getInstance().getGameRoom().getId())
-              .command(Command.SWITCH_OPPONENT).withValue(getSelectedTracker().getPlayer()).noErrorHandling()
-              .sendNowWith(messageBus);
+      selectPlayerByIndex(last);
     }
   }
 
@@ -223,6 +212,9 @@ public class SecondaryDisplayControllerImpl implements SecondaryDisplayControlle
     scoreList.getWidget(selected).setSelected(false);
     scoreList.getValue().get(i).select();
     scoreList.getWidget(i).setSelected(true);
+    
+    // If my tracker is selected, make instructions visible instead.
+    BoardPage.getInstance().setInstructionsVisible(scoreList.getValue().get(i).equals(getScoreTracker()));
 
     MessageBuilder.createMessage("Game" + Client.getInstance().getGameRoom().getId()).command(Command.SWITCH_OPPONENT)
             .withValue(getSelectedTracker().getPlayer()).noErrorHandling().sendNowWith(messageBus);
