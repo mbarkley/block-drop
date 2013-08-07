@@ -325,15 +325,19 @@ public class Server implements MessageCallback {
   }
 
   private void removePlayerFromGame(Player player, int gameId) {
-    games.get(gameId).removePlayer(player.getId());
-    if (games.get(gameId).isEmpty()) {
-      games.remove(gameId);
-      sendLobbyList();
+    if (games.containsKey(gameId)) {
+      games.get(gameId).removePlayer(player.getId());
+      if (games.get(gameId).isEmpty()) {
+        games.remove(gameId);
+        sendLobbyList();
+      }
     }
     gameHeartBeats.remove(player);
     player.setGameId(0);
-    MessageBuilder.createMessage("Game" + gameId).command(Command.LEAVE_GAME).withValue(player).noErrorHandling()
-            .sendNowWith(messageBus);
-    System.out.println("Server: " + player.getName() + " kicked for being idle");
+    if (games.containsKey(gameId)) {
+      MessageBuilder.createMessage("Game" + gameId).command(Command.LEAVE_GAME).withValue(player).noErrorHandling()
+              .sendNowWith(messageBus);
+      System.out.println("Server: " + player.getName() + " kicked for being idle");
+    }
   }
 }
