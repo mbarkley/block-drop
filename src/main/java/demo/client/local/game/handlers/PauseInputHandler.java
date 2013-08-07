@@ -1,5 +1,10 @@
 package demo.client.local.game.handlers;
 
+import java.util.List;
+
+import com.google.gwt.dom.client.Element;
+import com.google.gwt.dom.client.EventTarget;
+import com.google.gwt.dom.client.NativeEvent;
 import com.google.gwt.event.dom.client.MouseDownEvent;
 import com.google.gwt.event.dom.client.MouseDownHandler;
 import com.google.gwt.event.dom.client.MouseUpEvent;
@@ -17,12 +22,15 @@ public class PauseInputHandler implements TouchStartHandler, TouchMoveHandler, T
         MouseUpHandler {
 
   private BoardController controller;
+  private List<Element> elements;
+  
   private boolean down;
   private int initialY;
   private int lastY;
 
-  public PauseInputHandler(BoardController controller) {
+  public PauseInputHandler(BoardController controller, List<Element> elements) {
     this.controller = controller;
+    this.elements = elements;
   }
 
   private void onDown(int initialY) {
@@ -36,6 +44,15 @@ public class PauseInputHandler implements TouchStartHandler, TouchMoveHandler, T
       controller.setPaused(!controller.isPaused());
     }
   }
+  
+  private boolean fromValidTarget(NativeEvent event) {
+    EventTarget target = event.getEventTarget();
+    for (Element e : elements) {
+      if (target.equals(e))
+        return true;
+    }
+    return false;
+  }
 
   @Override
   public void onMouseUp(MouseUpEvent event) {
@@ -45,7 +62,8 @@ public class PauseInputHandler implements TouchStartHandler, TouchMoveHandler, T
 
   @Override
   public void onMouseDown(MouseDownEvent event) {
-    onDown(event.getClientY());
+    if (fromValidTarget(event.getNativeEvent()))
+      onDown(event.getClientY());
   }
 
   @Override
@@ -55,7 +73,7 @@ public class PauseInputHandler implements TouchStartHandler, TouchMoveHandler, T
 
   @Override
   public void onTouchStart(TouchStartEvent event) {
-    if (BoardTouchHandler.isSingleFinger(event)) {
+    if (BoardTouchHandler.isSingleFinger(event) && fromValidTarget(event.getNativeEvent())) {
       onDown(event.getTouches().get(0).getClientY());
       lastY = initialY;
     }

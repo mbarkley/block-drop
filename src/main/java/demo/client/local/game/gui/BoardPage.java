@@ -25,6 +25,7 @@ import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.core.client.Scheduler.ScheduledCommand;
 import com.google.gwt.dom.client.DivElement;
 import com.google.gwt.dom.client.Document;
+import com.google.gwt.dom.client.Element;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.dom.client.DomEvent.Type;
 import com.google.gwt.event.dom.client.DoubleClickEvent;
@@ -176,7 +177,11 @@ public class BoardPage extends Composite implements ControllableBoardDisplay {
 
     gameOverPanel.setVisible(false);
     
-    EventHandler pauseHandler = new PauseInputHandler(controller);
+    List<Element> elements = new ArrayList<Element>();
+    elements.add(mainCanvas.getElement());
+    elements.add(pauseOverlay.getElement());
+    
+    EventHandler pauseHandler = new PauseInputHandler(controller, elements);
     addHandlerToMainCanvas((TouchStartHandler) pauseHandler, TouchStartEvent.getType());
     addHandlerToMainCanvas((TouchMoveHandler) pauseHandler, TouchMoveEvent.getType());
     addHandlerToMainCanvas((TouchEndHandler) pauseHandler, TouchEndEvent.getType());
