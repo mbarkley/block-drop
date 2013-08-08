@@ -13,9 +13,13 @@ import demo.client.shared.meta.Player;
 @Portable
 public class Invitation {
 
+  /** The player who initially created this invitation */
   private Player host;
+  /** All the players invited by the host player */
   private Set<Player> guests;
+  /** The unique id of this game */
   private int gameId;
+  /** A target used for relaying a specific invitation to a particular guest */
   private Player target;
 
   /**
