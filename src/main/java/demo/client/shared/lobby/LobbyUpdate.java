@@ -15,13 +15,13 @@ import demo.client.shared.meta.Player;
 @Portable
 public class LobbyUpdate {
 
-  /** A map player ids to Player objects (of playerMap in lobby). */
+  /** A map player ids to Player objects (of players in lobby). */
   private Map<Integer, Player> playerMap = null;
-  /** A map of game ids to Game objects (of gameMap in progress). */
+  /** A map of game ids to Game objects (of games in progress). */
   private Map<Integer, GameRoom> gameMap = null;
 
   /**
-   * A default no-arg constructor for automated bean construction.
+   * A default no-arg constructor for proxying.
    */
   public LobbyUpdate() {
   }
