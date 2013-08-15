@@ -120,9 +120,14 @@ public class Server implements MessageCallback {
   protected void cleanGameRooms() {
     long curTime = System.currentTimeMillis();
 
-    for (Entry<Player, Long> heartBeat : gameHeartBeats.entrySet()) {
-      if (curTime - heartBeat.getValue() > GAME_TIMEOUT) {
-        removePlayerFromGame(heartBeat.getKey(), heartBeat.getKey().getGameId());
+    for (GameRoom game : games.values()) {
+      for (Player player : game.getPlayers().values()) {
+        // If player has not sent heart beat, give them a heart beat in case their is a sync issue
+        // They will be removed next cycle if they do not update this
+        long heartBeat = gameHeartBeats.containsKey(player) ? gameHeartBeats.get(player) : System.currentTimeMillis();
+        if (curTime - heartBeat > GAME_TIMEOUT) {
+          removePlayerFromGame(player, game.getId());
+        }
       }
     }
     System.out.println("Server: GameRooms cleaned");
