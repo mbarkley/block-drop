@@ -191,11 +191,11 @@ body div.hopscotch-bubble div.hopscotch-bubble-content {
 	border-top: 1px solid black;
 }
 
-.list-wrapper tr:first-child .list-panel {
+.list-wrapper .list-panel:first-child {
 	border-top: 1px solid rgb(80, 80, 80);
 }
 
-.list-wrapper tr:last-child .list-panel {
+.list-wrapper .list-panel:last-child {
 	border-bottom: none;
 }
 
