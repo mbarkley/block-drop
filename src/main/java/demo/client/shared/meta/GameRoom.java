@@ -1,7 +1,7 @@
 package demo.client.shared.meta;
 
-import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 import org.jboss.errai.common.client.api.annotations.Portable;
 import org.jboss.errai.databinding.client.api.Bindable;
@@ -25,8 +25,8 @@ public class GameRoom {
    * Create an empty game room.
    */
   public GameRoom() {
-    players = new HashMap<Integer, Player>();
-    scoreTrackers = new HashMap<Integer, ScoreTracker>();
+    players = new ConcurrentHashMap<Integer, Player>();
+    scoreTrackers = new ConcurrentHashMap<Integer, ScoreTracker>();
   }
 
   /**
