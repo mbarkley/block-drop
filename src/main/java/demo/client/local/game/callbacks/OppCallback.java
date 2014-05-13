@@ -1,7 +1,7 @@
 package demo.client.local.game.callbacks;
 
+import java.util.HashMap;
 import java.util.Map;
-import java.util.TreeMap;
 
 import org.jboss.errai.bus.client.api.messaging.Message;
 import org.jboss.errai.bus.client.api.messaging.MessageCallback;
@@ -28,8 +28,7 @@ public class OppCallback implements MessageCallback {
   private Client client;
   public OppCallback(ControllableBoardDisplay boardDisplay, Client client) {
     this.client = client;
-    // TODO change this to hash map and fix hashcode on player
-    this.oppControllers = new TreeMap<Player, OppController>();
+    this.oppControllers = new HashMap<Player, OppController>();
     this.boardDisplay = boardDisplay;
 
     GameRoom game = client.getGameRoom();

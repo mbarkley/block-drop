@@ -163,6 +163,11 @@ public class Player implements Comparable<Player> {
   public boolean equals(Object other) {
     return other != null && other instanceof Player && this.getId() == ((Player) other).getId();
   }
+  
+  @Override
+  public int hashCode() {
+    return Integer.valueOf(getId()).hashCode();
+  }
 
   @Override
   public int compareTo(Player o) {
