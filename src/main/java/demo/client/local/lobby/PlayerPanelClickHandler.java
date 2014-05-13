@@ -12,13 +12,18 @@ import demo.client.shared.meta.Player;
  * 
  */
 public class PlayerPanelClickHandler implements ClickHandler {
+  
+  private Lobby lobby;
+
+  public PlayerPanelClickHandler(Lobby lobby) {
+    this.lobby = lobby;
+  }
 
   @Override
   public void onClick(ClickEvent event) {
     Player model = ((PlayerPanel) event.getSource()).getModel();
 
-    Lobby page = Lobby.getInstance();
-    page.togglePlayerSelection(model);
+    lobby.togglePlayerSelection(model);
   }
 
 }

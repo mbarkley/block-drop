@@ -1,5 +1,6 @@
 package demo.client.local.lobby;
 
+import javax.annotation.PostConstruct;
 import javax.inject.Inject;
 
 import org.jboss.errai.databinding.client.api.DataBinder;
@@ -32,13 +33,13 @@ public class PlayerPanel extends Composite implements HasModel<Player> {
   @Inject
   @Bound
   private Label name;
+  
+  @Inject
+  private Lobby lobby;
 
-  /**
-   * Create a PlayerPanel.
-   */
-  public PlayerPanel() {
-    super();
-    addDomHandler(new PlayerPanelClickHandler(), ClickEvent.getType());
+  @PostConstruct
+  private void init() {
+    addDomHandler(new PlayerPanelClickHandler(lobby), ClickEvent.getType());
   }
 
   @Override

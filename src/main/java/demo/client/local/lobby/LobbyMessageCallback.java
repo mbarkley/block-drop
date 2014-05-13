@@ -19,9 +19,11 @@ import demo.client.shared.meta.GameRoom;
 public class LobbyMessageCallback implements MessageCallback {
   
   private Client client;
+  private Lobby lobby;
 
-  public LobbyMessageCallback(Client client) {
+  public LobbyMessageCallback(Client client, Lobby lobby) {
     this.client = client;
+    this.lobby = lobby;
   }
 
   @Override
@@ -42,7 +44,7 @@ public class LobbyMessageCallback implements MessageCallback {
    */
   private void startGameCallback(GameRoom room) {
     client.setGameRoom(room);
-    Lobby.getInstance().goToBoard();
+    lobby.goToBoard();
   }
 
   /**

@@ -12,13 +12,19 @@ import demo.client.shared.meta.GameRoom;
  * 
  */
 public class GamePanelClickHandler implements ClickHandler {
+  
+  private Lobby lobby;
+
+  public GamePanelClickHandler(Lobby lobby) {
+    this.lobby = lobby;
+  }
 
   @Override
   public void onClick(ClickEvent event) {
     GameRoom model = ((GamePanel) event.getSource()).getModel();
 
-    Lobby.getInstance().toggleGameSelection(model);
-    Lobby.getInstance().joinSelectedGame();
+    lobby.toggleGameSelection(model);
+    lobby.joinSelectedGame();
   }
 
 }

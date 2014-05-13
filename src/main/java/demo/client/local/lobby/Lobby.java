@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Set;
 
 import javax.annotation.PostConstruct;
+import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.event.Event;
 import javax.enterprise.event.Observes;
 import javax.inject.Inject;
@@ -16,6 +17,7 @@ import org.jboss.errai.ui.client.widget.ListWidget;
 import org.jboss.errai.ui.nav.client.local.DefaultPage;
 import org.jboss.errai.ui.nav.client.local.Page;
 import org.jboss.errai.ui.nav.client.local.PageHidden;
+import org.jboss.errai.ui.nav.client.local.PageShowing;
 import org.jboss.errai.ui.nav.client.local.TransitionTo;
 import org.jboss.errai.ui.shared.api.annotations.DataField;
 import org.jboss.errai.ui.shared.api.annotations.Templated;
@@ -44,9 +46,8 @@ import demo.client.shared.meta.Player;
  */
 @Page(role = DefaultPage.class)
 @Templated
+@ApplicationScoped
 public class Lobby extends Composite {
-
-  private static Lobby instance;
 
   /* For the Errai NavigationUI. */
   @Inject
@@ -82,13 +83,6 @@ public class Lobby extends Composite {
   private LobbyHeartBeat heartBeat;
 
   /**
-   * Create a Lobby instance.
-   */
-  public Lobby() {
-    instance = this;
-  }
-
-  /**
    * Construct the UI elements for the lobby.
    */
   @PostConstruct
@@ -107,7 +101,14 @@ public class Lobby extends Composite {
     });
 
     playerButtonPanel.add(newGameButton);
-    joinLobby();
+  }
+
+  private void resetHeartBeat() {
+    if (heartBeat != null)
+      heartBeat.cancel();
+
+    heartBeat = new LobbyHeartBeat(client);
+    heartBeat.scheduleRepeating(5000);
   }
 
   @PageHidden
@@ -163,6 +164,7 @@ public class Lobby extends Composite {
   /**
    * Register this user with the lobby.
    */
+  @PageShowing
   public void joinLobby() {
     // If the user is joining for the first time, make a new player object.
     Player player = client.getPlayer() != null ? client.getPlayer() : new Player(client.getNickname());
@@ -178,28 +180,15 @@ public class Lobby extends Composite {
     // If this user has not yet been registered, subscribe to server relay
     if (!client.hasRegisteredPlayer()) {
 
-      messageBus.subscribe("Client" + player.getId(), new LobbyMessageCallback(client));
+      messageBus.subscribe("Client" + player.getId(), new LobbyMessageCallback(client, this));
     }
 
     client.setPlayer(player);
 
     // Reset or start LobbyHeartBeat
-    if (heartBeat != null)
-      heartBeat.cancel();
-
-    heartBeat = new LobbyHeartBeat(client);
-    heartBeat.scheduleRepeating(5000);
+    resetHeartBeat();
 
     requestLobbyUpdate();
-  }
-
-  /**
-   * Get the Lobby instance.
-   * 
-   * @return The singleton Lobby instance.
-   */
-  public static Lobby getInstance() {
-    return instance;
   }
 
   /**
