@@ -98,27 +98,21 @@ public class BoardKeyHandler implements KeyDownHandler, KeyUpHandler {
     if (!controller.isPaused()) {
       switch (keyCode) {
       case KeyCodes.KEY_LEFT:
-        System.out.println("Left key pressed.");
         controller.setColMove(-1);
         break;
       case KeyCodes.KEY_RIGHT:
-        System.out.println("Right key pressed.");
         controller.setColMove(1);
         break;
       case KeyCodes.KEY_UP:
-        System.out.println("Up key pressed.");
         controller.incrementRotate();
         break;
       case KeyCodes.KEY_DOWN:
-        System.out.println("Down key pressed.");
         controller.setFast(true);
         break;
       case KEY_SPACE_BAR:
-        System.out.println("Space bar pressed.");
         controller.setDrop(true);
         break;
       case 80: // Ordinal of lower case p
-        System.out.println("Pause pressed.");
         controller.setPaused(true);
         break;
       case 78: // Ordinal of lower case n
@@ -128,7 +122,6 @@ public class BoardKeyHandler implements KeyDownHandler, KeyUpHandler {
         secondaryController.selectLastPlayer();
         break;
       default:
-        System.out.println("Key code pressed: " + keyCode);
         relevantKey = false;
         break;
       }
@@ -149,7 +142,6 @@ public class BoardKeyHandler implements KeyDownHandler, KeyUpHandler {
         secondaryController.selectLastPlayer();
         break;
       case 80: // Ordinal of lower case p
-        System.out.println("Pause pressed.");
         controller.setPaused(false);
         break;
       default:

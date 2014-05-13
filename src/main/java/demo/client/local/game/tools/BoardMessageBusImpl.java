@@ -28,14 +28,12 @@ public class BoardMessageBusImpl implements BoardMessageBus {
     MoveEvent event = new MoveEvent(state, player, Client.getInstance().getGameRoom().getId());
     MessageBuilder.createMessage("Relay").command(Command.MOVE_UPDATE).withValue(event).noErrorHandling()
             .sendNowWith(messageBus);
-    System.out.println("move update sent to relay");
   }
 
   @Override
   public void sendPauseUpdate(Player player) {
     MessageBuilder.createMessage("Relay").command(Command.GAME_KEEP_ALIVE).withValue(player).noErrorHandling()
             .sendNowWith(messageBus);
-    System.out.println("pause update sent");
   }
 
 }

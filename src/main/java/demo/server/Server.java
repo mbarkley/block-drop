@@ -76,25 +76,6 @@ public class Server implements MessageCallback {
   private Timer lobbyTimer;
   private Timer gameTimer;
 
-  /** For debugging only. */
-  private int debugId;
-  /** For debugging only. */
-  private static int curDebugId = 1;
-
-  /** For debugging only. */
-  private static synchronized int nextDebugId() {
-    return curDebugId++;
-  }
-
-  /**
-   * Create a Server for hosting the lobby and Block Drop games. This object is meant to be used as
-   * a singleton.
-   */
-  public Server() {
-    debugId = nextDebugId();
-    System.out.println("Server" + debugId + ": Server object is constructed.");
-  }
-
   @PostConstruct
   private void init() {
     lobbyTimer = new Timer();
@@ -130,7 +111,6 @@ public class Server implements MessageCallback {
         }
       }
     }
-    System.out.println("Server: GameRooms cleaned");
   }
 
   /**
@@ -148,7 +128,6 @@ public class Server implements MessageCallback {
     }
 
     lobbyHeartBeats.entrySet().removeAll(removed);
-    System.out.println("Server: Lobby cleaned");
 
     if (!removed.isEmpty()) {
       sendLobbyList();
@@ -196,9 +175,6 @@ public class Server implements MessageCallback {
       lobbyHeartBeats.put(player.getId(), System.currentTimeMillis());
     }
 
-    // For debugging.
-    System.out.println("Server" + debugId + ": Player registered.");
-
     // Send the registered player back to the client.
     playerRegistration.fire(player);
   }
@@ -217,9 +193,6 @@ public class Server implements MessageCallback {
    * invoked by the Errai Framework in response to an {@code Event<Invitation>} fired from a client.
    */
   public void handleInvitation(@Observes Invitation invitation) {
-    // For debugging.
-    System.out.println("Server" + debugId + ": Invitation received from " + invitation.getHost().getName());
-
     // Make game room
     GameRoom room = new GameRoom();
     room.setId(nextGameId());
@@ -228,7 +201,6 @@ public class Server implements MessageCallback {
     addPlayerToGame(invitation.getHost(), room.getId());
 
     for (Player guest : invitation.getGuests()) {
-      System.out.println("Server" + debugId + ": Attempting to relay invitation to " + "Client" + guest.getId());
       // Relay invitation to appropriate client.
       Invitation targetedInvite = new Invitation(invitation, guest);
       MessageBuilder.createMessage().toSubject("Client" + guest.getId()).command(Command.INVITATION)
@@ -249,7 +221,6 @@ public class Server implements MessageCallback {
     ScoreTracker scoreTracker = games.get(gameId).getScoreTracker(player);
     updateScoreLocal(scoreTracker);
     updateScoreRemote(new ScoreEvent(scoreTracker));
-    System.out.println("Server: " + player.getName() + " added to Game" + gameId);
   }
 
   /**
@@ -258,8 +229,6 @@ public class Server implements MessageCallback {
    */
   public void sendLobbyList() {
     lobbyUpdate.fire(new LobbyUpdate(lobbyPlayers, games));
-    // For debugging.
-    System.out.println("Server" + debugId + ": Lobby list sent.");
   }
 
   @Override
@@ -302,12 +271,10 @@ public class Server implements MessageCallback {
   private void broadcastPause(Player player) {
     MessageBuilder.createMessage("Game" + player.getGameId()).command(Command.GAME_KEEP_ALIVE).withValue(player)
             .noErrorHandling().sendNowWith(messageBus);
-    System.out.println("pause update broadcasted for player " + player.getName());
   }
 
   private void updateGameRoomHeartBeat(Player player) {
     gameHeartBeats.put(player, System.currentTimeMillis());
-    System.out.println("Server: " + player.getName() + " sent heartbeat");
   }
 
   private void updateLobbyHeartBeat(Player player) {
@@ -342,7 +309,6 @@ public class Server implements MessageCallback {
     if (games.containsKey(gameId)) {
       MessageBuilder.createMessage("Game" + gameId).command(Command.LEAVE_GAME).withValue(player).noErrorHandling()
               .sendNowWith(messageBus);
-      System.out.println("Server: " + player.getName() + " kicked for being idle");
     }
   }
 }

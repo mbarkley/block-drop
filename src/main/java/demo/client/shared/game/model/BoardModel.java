@@ -287,7 +287,6 @@ public class BoardModel {
     // If this position is invalid, undo it.
     if (!isValidPosition(activeBlockRow, activeBlockColumn)) {
       activeBlock.unrotate();
-      System.out.println("Rotation failed.");
     }
   }
 

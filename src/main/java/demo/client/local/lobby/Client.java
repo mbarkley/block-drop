@@ -30,16 +30,6 @@ public class Client {
   @Inject
   private Navigation nav;
 
-  /* For debugging only. */
-  private static int curDebugId = 1;
-  /* For debugging only. */
-  private int debugId;
-
-  /* For debugging only. */
-  private static synchronized int nextDebugId() {
-    return curDebugId++;
-  }
-
   /* For accessing the singleton instance of this object. */
   private static Client instance = null;
 
@@ -50,17 +40,6 @@ public class Client {
    */
   public static Client getInstance() {
     return instance;
-  }
-
-  /**
-   * Create a client instance.
-   */
-  public Client() {
-    // For debugging.
-    debugId = nextDebugId();
-    System.out.println("Client" + debugId + ": TTTClient constructor called.");
-
-    instance = this;
   }
 
   /**
@@ -83,9 +62,6 @@ public class Client {
 
     if (nickname == null)
       nickname = "default";
-
-    // For debugging.
-    System.out.println(nickname + ": User selected " + nickname + " as their nickname.");
 
     // Add nav to root panel.
     RootPanel.get().add(nav.getContentPanel());

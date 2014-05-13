@@ -15,7 +15,6 @@ public class PlayerPanelClickHandler implements ClickHandler {
 
   @Override
   public void onClick(ClickEvent event) {
-    System.out.println("PlayerPanel called with source: " + event.getSource().getClass());
     Player model = ((PlayerPanel) event.getSource()).getModel();
 
     Lobby page = Lobby.getInstance();

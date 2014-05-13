@@ -39,11 +39,7 @@ public class LobbyMessageCallback implements MessageCallback {
    */
   private void startGameCallback(GameRoom room) {
     Client.getInstance().setGameRoom(room);
-    // For debugging.
-    System.out.println(Client.getInstance().getNickname() + ": Before board transition.");
     Lobby.getInstance().goToBoard();
-    // For debugging.
-    System.out.println(Client.getInstance().getNickname() + ": After board transition.");
   }
 
   /**

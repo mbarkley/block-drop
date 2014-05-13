@@ -118,7 +118,6 @@ public class Lobby extends Composite {
    */
   public void requestLobbyUpdate() {
     lobbyUpdateRequest.fire(new LobbyUpdateRequest());
-    System.out.println(Client.getInstance().getNickname() + ": LobbyUpdateRequest fired.");
   }
   
   /**
@@ -168,21 +167,15 @@ public class Lobby extends Composite {
             .getInstance().getNickname());
     RegisterRequest request = new RegisterRequest(player);
     registerRequest.fire(request);
-    // For debugging.
-    System.out.println(Client.getInstance().getNickname() + ": LobbyRequest fired.");
   }
 
   /**
    * Accept a player object from the server as the canonical representation of this user.
    */
   public void loadPlayer(@Observes Player player) {
-    // For debugging.
-    System.out.println(Client.getInstance().getNickname() + ": Player object received.");
 
     // If this user has not yet been registered, subscribe to server relay
     if (!Client.getInstance().hasRegisteredPlayer()) {
-      // For debugging.
-      System.out.println(Client.getInstance().getNickname() + ": Subscribing to subject Client" + player.getId());
 
       messageBus.subscribe("Client" + player.getId(), new LobbyMessageCallback());
     }
@@ -216,12 +209,10 @@ public class Lobby extends Composite {
    */
   void togglePlayerSelection(Player model) {
     if (selectedPlayers.contains(model)) {
-      System.out.println("Player " + model.getName() + " deselected.");
       selectedPlayers.remove(model);
       playerList.getWidget(model).removeStyleName(Style.SELECTED);
     }
     else {
-      System.out.println("Player " + model.getName() + " selectedPlayers.");
       selectedPlayers.add(model);
       playerList.getWidget(model).addStyleName(Style.SELECTED);
     }

@@ -148,7 +148,6 @@ public class BoardPage extends Composite implements ControllableBoardDisplay {
    * wrap a controlled canvas.
    */
   public BoardPage() {
-    System.out.println("Initiating BoardModel");
     instance = this;
 
     // Initialize canvases.
@@ -165,10 +164,7 @@ public class BoardPage extends Composite implements ControllableBoardDisplay {
 
   private void setup() {
     // Check that mainCanvas was supported.
-    if (mainCanvas != null) {
-      System.out.println("Canvas successfully created.");
-    }
-    else {
+    if (mainCanvas == null) {
       // TODO: Display message to user that HTML5 Canvas is required.
     }
     secondaryController = new SecondaryDisplayControllerImpl(scoreDisplay, nextPieceCanvas);

@@ -31,7 +31,6 @@ public class GameHeartBeat extends Timer {
   public void run() {
     MessageBuilder.createMessage("Relay").command(Command.GAME_KEEP_ALIVE).withValue(Client.getInstance().getPlayer())
             .noErrorHandling().sendNowWith(messageBus);
-    System.out.println("Game keep alive sent");
   }
 
   @Override

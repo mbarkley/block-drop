@@ -15,7 +15,6 @@ public class GamePanelClickHandler implements ClickHandler {
 
   @Override
   public void onClick(ClickEvent event) {
-    System.out.println("GamePanel click event called.");
     GameRoom model = ((GamePanel) event.getSource()).getModel();
 
     Lobby.getInstance().toggleGameSelection(model);
