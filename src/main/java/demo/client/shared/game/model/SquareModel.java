@@ -1,7 +1,7 @@
 package demo.client.shared.game.model;
 
+import org.jboss.errai.common.client.api.annotations.MapsTo;
 import org.jboss.errai.common.client.api.annotations.Portable;
-import org.jboss.errai.marshalling.client.api.annotations.MapsTo;
 
 /**
  * A model of a single square in a {@link BlockModel block model}.

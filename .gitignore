@@ -4,3 +4,7 @@ classes
 .project
 .settings
 .errai
+gwt-unitCache
+src/main/webapp/WEB-INF/deploy
+src/main/webapp/WEB-INF/lib
+src/main/webapp/app
