@@ -2,13 +2,13 @@ package demo.client.local.game.controllers;
 
 import com.google.gwt.user.client.Timer;
 
+import demo.client.local.Client;
 import demo.client.local.game.gui.Block;
 import demo.client.local.game.gui.ControllableBoardDisplay;
 import demo.client.local.game.tools.BoardMessageBus;
 import demo.client.local.game.tools.ClearState;
 import demo.client.local.game.tools.GameHeartBeat;
 import demo.client.local.game.tools.Pacer;
-import demo.client.local.lobby.Client;
 import demo.client.shared.game.model.BackgroundBlockModel;
 import demo.client.shared.game.model.BlockOverflow;
 import demo.client.shared.game.model.BoardModel;

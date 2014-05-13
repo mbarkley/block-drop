@@ -6,7 +6,7 @@ import org.jboss.errai.bus.client.api.messaging.MessageBus;
 
 import com.google.gwt.user.client.Timer;
 
-import demo.client.local.lobby.Client;
+import demo.client.local.Client;
 import demo.client.shared.message.Command;
 
 /**

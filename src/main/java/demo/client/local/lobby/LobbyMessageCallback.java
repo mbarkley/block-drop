@@ -9,6 +9,7 @@ import org.jboss.errai.common.client.protocols.MessageParts;
 
 import com.google.gwt.user.client.Window;
 
+import demo.client.local.Client;
 import demo.client.shared.lobby.Invitation;
 import demo.client.shared.message.Command;
 import demo.client.shared.meta.GameRoom;

@@ -4,7 +4,7 @@ import org.jboss.errai.bus.client.ErraiBus;
 import org.jboss.errai.bus.client.api.base.MessageBuilder;
 import org.jboss.errai.bus.client.api.messaging.MessageBus;
 
-import demo.client.local.lobby.Client;
+import demo.client.local.Client;
 import demo.client.shared.game.model.BoardModel;
 import demo.client.shared.message.Command;
 import demo.client.shared.message.MoveEvent;

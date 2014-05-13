@@ -10,13 +10,13 @@ import org.jboss.errai.ui.client.widget.ListWidget;
 
 import com.google.gwt.canvas.client.Canvas;
 
+import demo.client.local.Client;
 import demo.client.local.game.gui.Block;
 import demo.client.local.game.gui.BoardPage;
 import demo.client.local.game.gui.ScorePanel;
 import demo.client.local.game.tools.Positioner;
 import demo.client.local.game.tools.Size;
 import demo.client.local.game.tools.Size.SizeCategory;
-import demo.client.local.lobby.Client;
 import demo.client.shared.message.Command;
 import demo.client.shared.meta.GameRoom;
 import demo.client.shared.meta.Player;
