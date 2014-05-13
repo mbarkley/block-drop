@@ -3,6 +3,7 @@ package demo.client.local.game.controllers;
 import java.util.LinkedList;
 import java.util.Queue;
 
+import demo.client.local.Client;
 import demo.client.local.game.gui.ControllableBoardDisplay;
 import demo.client.local.game.tools.DummyBus;
 import demo.client.shared.game.model.BoardModel;
@@ -25,10 +26,10 @@ public class OppController extends BoardController {
    * @param boardDisplay
    *          The display to be controlled by this instance.
    */
-  public OppController(ControllableBoardDisplay boardDisplay) {
+  public OppController(ControllableBoardDisplay boardDisplay, Client client) {
     // Dummy objects do nothing, to prevent this controller from updating the displayed score or
     // sending messages through the bus.
-    super(boardDisplay, new DummyController(), new DummyBus());
+    super(boardDisplay, new DummyController(), new DummyBus(), client);
     setPaused(true);
   }
 

@@ -25,21 +25,19 @@ public class OppCallback implements MessageCallback {
 
   private Map<Player, OppController> oppControllers;
   private ControllableBoardDisplay boardDisplay;
-
-  public OppCallback(ControllableBoardDisplay boardDisplay) {
-    /*
-     * TreeMap is necessary since we may attempt to lookup an OppController with player that is
-     * considered equal but has a different hash.
-     */
+  private Client client;
+  public OppCallback(ControllableBoardDisplay boardDisplay, Client client) {
+    this.client = client;
+    // TODO change this to hash map and fix hashcode on player
     this.oppControllers = new TreeMap<Player, OppController>();
     this.boardDisplay = boardDisplay;
 
-    GameRoom game = Client.getInstance().getGameRoom();
+    GameRoom game = client.getGameRoom();
     for (Player player : game.getPlayers().values()) {
-      this.oppControllers.put(player, new OppController(boardDisplay));
+      this.oppControllers.put(player, new OppController(boardDisplay, client));
     }
-    this.oppControllers.get(Client.getInstance().getPlayer()).setActive(true);
-    this.oppControllers.get(Client.getInstance().getPlayer()).startGame();
+    this.oppControllers.get(client.getPlayer()).setActive(true);
+    this.oppControllers.get(client.getPlayer()).startGame();
   }
 
   @Override
@@ -57,7 +55,7 @@ public class OppCallback implements MessageCallback {
     case UPDATE_SCORE:
       ScoreEvent scoreEvent = message.getValue(ScoreEvent.class);
       if (!oppControllers.containsKey(scoreEvent.getScoreTracker().getPlayer())) {
-        oppControllers.put(scoreEvent.getScoreTracker().getPlayer(), new OppController(boardDisplay));
+        oppControllers.put(scoreEvent.getScoreTracker().getPlayer(), new OppController(boardDisplay, client));
       }
       break;
 

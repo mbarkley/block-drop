@@ -72,6 +72,9 @@ public class Lobby extends Composite {
   @Inject
   @DataField("game-list")
   private ListWidget<GameRoom, GamePanel> gameList;
+  
+  @Inject
+  private Client client;
 
   private Set<Player> selectedPlayers = new HashSet<Player>();
   private GameRoom selectedGame = null;
@@ -90,8 +93,6 @@ public class Lobby extends Composite {
    */
   @PostConstruct
   private void postConstruct() {
-    Client.getInstance().maybeInit();
-
     Button newGameButton = new Button("New Game");
     newGameButton.addClickHandler(new ClickHandler() {
 
@@ -99,7 +100,7 @@ public class Lobby extends Composite {
       public void onClick(ClickEvent event) {
         // This player should always join a new game that he or she starts.
         Invitation invite = new Invitation();
-        invite.setHost(Client.getInstance().getPlayer());
+        invite.setHost(client.getPlayer());
         invite.setGuests(selectedPlayers);
         gameInvitation.fire(invite);
       }
@@ -129,7 +130,7 @@ public class Lobby extends Composite {
       Invitation invite = new Invitation();
       // The target and gameId are the only information that the server will need.
       invite.setGameId(selectedGame.getId());
-      invite.setTarget(Client.getInstance().getPlayer());
+      invite.setTarget(client.getPlayer());
       MessageBuilder.createMessage("Relay").command(Command.JOIN_GAME).withValue(invite).noErrorHandling()
               .sendNowWith(messageBus);
     }
@@ -140,7 +141,7 @@ public class Lobby extends Composite {
    */
   public void updateLobby(@Observes LobbyUpdate update) {
     List<Player> players = update.getPlayers();
-    players.remove(Client.getInstance().getPlayer());
+    players.remove(client.getPlayer());
     playerList.setItems(players);
     gameList.setItems(update.getGames());
     
@@ -164,8 +165,7 @@ public class Lobby extends Composite {
    */
   public void joinLobby() {
     // If the user is joining for the first time, make a new player object.
-    Player player = Client.getInstance().getPlayer() != null ? Client.getInstance().getPlayer() : new Player(Client
-            .getInstance().getNickname());
+    Player player = client.getPlayer() != null ? client.getPlayer() : new Player(client.getNickname());
     RegisterRequest request = new RegisterRequest(player);
     registerRequest.fire(request);
   }
@@ -176,18 +176,18 @@ public class Lobby extends Composite {
   public void loadPlayer(@Observes Player player) {
 
     // If this user has not yet been registered, subscribe to server relay
-    if (!Client.getInstance().hasRegisteredPlayer()) {
+    if (!client.hasRegisteredPlayer()) {
 
-      messageBus.subscribe("Client" + player.getId(), new LobbyMessageCallback());
+      messageBus.subscribe("Client" + player.getId(), new LobbyMessageCallback(client));
     }
 
-    Client.getInstance().setPlayer(player);
+    client.setPlayer(player);
 
     // Reset or start LobbyHeartBeat
     if (heartBeat != null)
       heartBeat.cancel();
 
-    heartBeat = new LobbyHeartBeat();
+    heartBeat = new LobbyHeartBeat(client);
     heartBeat.scheduleRepeating(5000);
 
     requestLobbyUpdate();

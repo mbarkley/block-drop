@@ -35,6 +35,7 @@ public class SecondaryDisplayControllerImpl implements SecondaryDisplayControlle
   private Canvas nextCanvas;
 
   private MessageBus messageBus = ErraiBus.get();
+  private Client client;
 
   /**
    * Create a SecondaryDisplayControllerImpl instance.
@@ -44,12 +45,13 @@ public class SecondaryDisplayControllerImpl implements SecondaryDisplayControlle
    * @param nextCanvas
    *          The canvas on which to display the upcoming block.
    */
-  public SecondaryDisplayControllerImpl(ListWidget<ScoreTracker, ScorePanel> scoreList, Canvas nextCanvas) {
+  public SecondaryDisplayControllerImpl(ListWidget<ScoreTracker, ScorePanel> scoreList, Canvas nextCanvas, Client client) {
     this.scoreList = scoreList;
     this.nextCanvas = nextCanvas;
+    this.client = client;
 
     // Initiate score tracker.
-    GameRoom room = Client.getInstance().getGameRoom();
+    GameRoom room = client.getGameRoom();
     List<ScoreTracker> scoreTrackers = scoreList.getValue();
     scoreTrackers.addAll(room.getScoreTrackers().values());
     Collections.sort(scoreTrackers);
@@ -140,7 +142,7 @@ public class SecondaryDisplayControllerImpl implements SecondaryDisplayControlle
   public ScoreTracker getScoreTracker() {
     List<ScoreTracker> trackers = scoreList.getValue();
     for (ScoreTracker t : trackers) {
-      if (t.getPlayer().equals(Client.getInstance().getPlayer())) {
+      if (t.getPlayer().equals(client.getPlayer())) {
         return t;
       }
     }
@@ -216,7 +218,7 @@ public class SecondaryDisplayControllerImpl implements SecondaryDisplayControlle
     // If my tracker is selected, make instructions visible instead.
     BoardPage.getInstance().setInstructionsVisible(scoreList.getValue().get(i).equals(getScoreTracker()));
 
-    MessageBuilder.createMessage("Game" + Client.getInstance().getGameRoom().getId()).command(Command.SWITCH_OPPONENT)
+    MessageBuilder.createMessage("Game" + client.getGameRoom().getId()).command(Command.SWITCH_OPPONENT)
             .withValue(getSelectedTracker().getPlayer()).noErrorHandling().sendNowWith(messageBus);
   }
 }

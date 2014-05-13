@@ -2,7 +2,6 @@ package demo.client.local.lobby;
 
 import org.jboss.errai.bus.client.ErraiBus;
 import org.jboss.errai.bus.client.api.base.MessageBuilder;
-import org.jboss.errai.bus.client.api.messaging.MessageBus;
 
 import com.google.gwt.user.client.Timer;
 
@@ -17,13 +16,17 @@ import demo.client.shared.message.Command;
  * 
  */
 public class LobbyHeartBeat extends Timer {
-
-  private MessageBus messageBus = ErraiBus.get();
+  
+  private Client client;
+  
+  public LobbyHeartBeat(Client client) {
+    this.client = client;
+  }
 
   @Override
   public void run() {
-    MessageBuilder.createMessage("Relay").command(Command.LOBBY_KEEP_ALIVE).withValue(Client.getInstance().getPlayer())
-            .noErrorHandling().sendNowWith(messageBus);
+    MessageBuilder.createMessage("Relay").command(Command.LOBBY_KEEP_ALIVE).withValue(client.getPlayer())
+            .noErrorHandling().sendNowWith(ErraiBus.get());
   }
 
 }

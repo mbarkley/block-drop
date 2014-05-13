@@ -138,6 +138,9 @@ public class BoardPage extends Composite implements ControllableBoardDisplay {
   private RequestDispatcher dispatcher;
   @Inject
   private MessageBus messageBus;
+  
+  @Inject
+  private Client client;
 
   private List<HandlerRegistration> handlerRegs = new ArrayList<HandlerRegistration>();
 
@@ -167,10 +170,10 @@ public class BoardPage extends Composite implements ControllableBoardDisplay {
     if (mainCanvas == null) {
       // TODO: Display message to user that HTML5 Canvas is required.
     }
-    secondaryController = new SecondaryDisplayControllerImpl(scoreDisplay, nextPieceCanvas);
-    controller = new BoardController(this, secondaryController, new BoardMessageBusImpl());
-    boardCallback = new BoardCallback(controller, secondaryController);
-    oppCallback = new OppCallback(oppCanvasWrapper);
+    secondaryController = new SecondaryDisplayControllerImpl(scoreDisplay, nextPieceCanvas, client);
+    controller = new BoardController(this, secondaryController, new BoardMessageBusImpl(client), client);
+    boardCallback = new BoardCallback(controller, secondaryController, client);
+    oppCallback = new OppCallback(oppCanvasWrapper, client);
 
     gameOverPanel.setVisible(false);
     
@@ -225,15 +228,15 @@ public class BoardPage extends Composite implements ControllableBoardDisplay {
 
   @PageShowing
   private void start() {
-    if (Client.getInstance().getGameRoom() == null)
+    if (client.getGameRoom() == null)
       lobbyTransition.go();
     else {
-      Client.getInstance().getPlayer().setGameId(Client.getInstance().getGameRoom().getId());
+      client.getPlayer().setGameId(client.getGameRoom().getId());
       setup();
       controller.startGame();
       // Subscribe to game channel
-      messageBus.subscribe("Game" + Client.getInstance().getGameRoom().getId(), boardCallback);
-      messageBus.subscribe("Game" + Client.getInstance().getGameRoom().getId(), oppCallback);
+      messageBus.subscribe("Game" + client.getGameRoom().getId(), boardCallback);
+      messageBus.subscribe("Game" + client.getGameRoom().getId(), oppCallback);
       
       handlerRegs.add(Window.addResizeHandler(new ResizeHandler() {
         @Override
@@ -269,10 +272,10 @@ public class BoardPage extends Composite implements ControllableBoardDisplay {
   private void leaveGame() {
     CallOutManager.closeOpenCallout();
     
-    if (Client.getInstance().getGameRoom() != null) {
+    if (client.getGameRoom() != null) {
       ExitMessage exitMessage = new ExitMessage();
-      exitMessage.setPlayer(Client.getInstance().getPlayer());
-      exitMessage.setGame(Client.getInstance().getGameRoom());
+      exitMessage.setPlayer(client.getPlayer());
+      exitMessage.setGame(client.getGameRoom());
       MessageBuilder.createMessage("Relay").command(Command.LEAVE_GAME).withValue(exitMessage).noErrorHandling()
               .sendNowWith(dispatcher);
     }
@@ -284,10 +287,10 @@ public class BoardPage extends Composite implements ControllableBoardDisplay {
 
     removeHandlers();
 
-    if (Client.getInstance() != null) {
-      if (Client.getInstance().getGameRoom() != null)
-        messageBus.unsubscribeAll("Game" + Client.getInstance().getGameRoom().getId());
-      Client.getInstance().setGameRoom(null);
+    if (client != null) {
+      if (client.getGameRoom() != null)
+        messageBus.unsubscribeAll("Game" + client.getGameRoom().getId());
+      client.setGameRoom(null);
     }
   }
 

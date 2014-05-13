@@ -22,10 +22,12 @@ public class BoardCallback implements MessageCallback {
 
   private BoardController controller;
   private SecondaryDisplayController secondaryController;
+  private Client client;
 
-  public BoardCallback(BoardController controller, SecondaryDisplayController secondaryController) {
+  public BoardCallback(BoardController controller, SecondaryDisplayController secondaryController, Client client) {
     this.controller = controller;
     this.secondaryController = secondaryController;
+    this.client = client;
   }
 
   @Override
@@ -38,7 +40,7 @@ public class BoardCallback implements MessageCallback {
       break;
     case LEAVE_GAME:
       Player player = message.getValue(Player.class);
-      if (!player.equals(Client.getInstance().getPlayer()))
+      if (!player.equals(client.getPlayer()))
         removePlayer(player);
       break;
     default:
@@ -47,14 +49,14 @@ public class BoardCallback implements MessageCallback {
   }
 
   private void removePlayer(Player player) {
-    Client.getInstance().getGameRoom().removePlayer(player.getId());
+    client.getGameRoom().removePlayer(player.getId());
     secondaryController.removeTracker(player);
   }
 
   private void updateScore(ScoreTracker scoreTracker, Player target) {
-    if (scoreTracker.getId() != Client.getInstance().getPlayer().getId()) {
+    if (scoreTracker.getId() != client.getPlayer().getId()) {
       secondaryController.updateAndSortScore(scoreTracker);
-      if (Client.getInstance().getPlayer().equals(target)) {
+      if (client.getPlayer().equals(target)) {
         controller.addRows(scoreTracker.getRowsClearedLast());
         CallOutManager.createAttackCallout("score-panel-" + scoreTracker.getId(), scoreTracker.getName());
       }

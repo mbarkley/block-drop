@@ -4,7 +4,6 @@ import org.jboss.errai.bus.client.ErraiBus;
 import org.jboss.errai.bus.client.api.base.MessageBuilder;
 import org.jboss.errai.bus.client.api.messaging.Message;
 import org.jboss.errai.bus.client.api.messaging.MessageCallback;
-import org.jboss.errai.bus.client.api.messaging.RequestDispatcher;
 import org.jboss.errai.common.client.protocols.MessageParts;
 
 import com.google.gwt.user.client.Window;
@@ -18,9 +17,12 @@ import demo.client.shared.meta.GameRoom;
  * A class for handling lobby updates and invitations from the server.
  */
 public class LobbyMessageCallback implements MessageCallback {
+  
+  private Client client;
 
-  /* For sending messages to the server. */
-  private RequestDispatcher dispatcher = ErraiBus.getDispatcher();
+  public LobbyMessageCallback(Client client) {
+    this.client = client;
+  }
 
   @Override
   public void callback(Message message) {
@@ -39,7 +41,7 @@ public class LobbyMessageCallback implements MessageCallback {
    * Start a game with another player after a successfully accepted invitation.
    */
   private void startGameCallback(GameRoom room) {
-    Client.getInstance().setGameRoom(room);
+    client.setGameRoom(room);
     Lobby.getInstance().goToBoard();
   }
 
@@ -53,7 +55,7 @@ public class LobbyMessageCallback implements MessageCallback {
     if (accepted) {
       // The server handles the invitation, whether or not it was accepted.
       MessageBuilder.createMessage().toSubject("Relay").command(Command.JOIN_GAME).withValue(invitation)
-              .noErrorHandling().sendNowWith(dispatcher);
+              .noErrorHandling().sendNowWith(ErraiBus.get());
     }
   }
 }

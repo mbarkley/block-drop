@@ -34,7 +34,7 @@ public class BoardController {
   // A Timer for running the game loop
   private Timer updateTimer;
   // A Timer for maintaining a connection with the server while not actively playing
-  private GameHeartBeat heartBeatTimer = new GameHeartBeat();
+  private GameHeartBeat heartBeatTimer;
 
   // The number of iterations for a block to drop one square on the board. Must be a multiple of 4.
   private int dropIncrement = 16;
@@ -60,6 +60,8 @@ public class BoardController {
   // Controls speed of row clearing animation
   private ClearState clearState = ClearState.START;
 
+  private Client client;
+
   /**
    * Create a BoardController instance.
    * 
@@ -71,10 +73,13 @@ public class BoardController {
    *          A bus for broadcasting moves and score updates.
    */
   public BoardController(ControllableBoardDisplay boardDisplay, SecondaryDisplayController secondaryController,
-          BoardMessageBus messageBus) {
+          BoardMessageBus messageBus, Client client) {
     this.boardDisplay = boardDisplay;
     this.secondaryController = secondaryController;
     this.messageBus = messageBus;
+    this.client = client;
+    
+    this.heartBeatTimer = new GameHeartBeat(client);
 
     // Initiate BoardModel.
     model = new BoardModel();
@@ -114,7 +119,7 @@ public class BoardController {
     // If paused, periodically send heartbeat to the server only
     if (pause) {
       if (pausePacer.isReady()) {
-        messageBus.sendPauseUpdate(Client.getInstance().getPlayer());
+        messageBus.sendPauseUpdate(client.getPlayer());
         pausePacer.clear();
       }
       else {
@@ -129,13 +134,13 @@ public class BoardController {
     int numFullRows = model.numFullRows();
     if (numFullRows > 0) {
       if (clearState.equals(ClearState.START))
-        messageBus.sendMoveUpdate(model, Client.getInstance().getPlayer());
+        messageBus.sendMoveUpdate(model, client.getPlayer());
       clearRows(numFullRows);
     }
     // Check if there are rows to receive
     else if (model.getRowsToAdd() > 0) {
       addRowsToBottom();
-      messageBus.sendMoveUpdate(model, Client.getInstance().getPlayer());
+      messageBus.sendMoveUpdate(model, client.getPlayer());
     }
     // Only drop a new block if we are not clearing or adding rows currently.
     else {
@@ -173,7 +178,7 @@ public class BoardController {
       singleRowMove = false;
       loopCounter = loopCounter == dropIncrement ? 0 : loopCounter + 1;
       if (moved)
-        messageBus.sendMoveUpdate(model, Client.getInstance().getPlayer());
+        messageBus.sendMoveUpdate(model, client.getPlayer());
     }
   }
 

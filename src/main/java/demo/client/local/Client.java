@@ -1,9 +1,9 @@
 package demo.client.local;
 
+import javax.annotation.PostConstruct;
 import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Inject;
 
-import org.jboss.errai.ioc.client.api.EntryPoint;
 import org.jboss.errai.ui.nav.client.local.Navigation;
 
 import com.google.gwt.user.client.Window;
@@ -15,7 +15,6 @@ import demo.client.shared.meta.Player;
 /**
  * A top-level class containing information on the local player.
  */
-@EntryPoint
 @ApplicationScoped
 public class Client {
 
@@ -30,31 +29,10 @@ public class Client {
   @Inject
   private Navigation nav;
 
-  /* For accessing the singleton instance of this object. */
-  private static Client instance = null;
-
-  /**
-   * Get a the singleton instance of this Client.
-   * 
-   * @return Get the singleton instance of this client.
-   */
-  public static Client getInstance() {
-    return instance;
-  }
-
-  /**
-   * Do post constructor initialization on this object if it has not already been done. Will prompt
-   * the user for a name.
-   */
-  public void maybeInit() {
-    if (nickname == null) {
-      init();
-    }
-  }
-
   /**
    * Prompt the user for a nickname and attach the navigation panel.
    */
+  @PostConstruct
   private void init() {
     String initialValue = "Foobar";
     String msg = "Please select a username.";
