@@ -118,67 +118,86 @@ public class BoardController {
   protected void update() {
     // If paused, periodically send heartbeat to the server only
     if (pause) {
-      if (pausePacer.isReady()) {
-        messageBus.sendPauseUpdate(client.getPlayer());
-        pausePacer.clear();
-      }
-      else {
-        pausePacer.increment();
-      }
-      return;
+      maybeSendPauseHeartBeat();
+    } else {
+      performMovementUpdate();
     }
+  }
 
-    boolean moved = false;
-
-    // Check for rows to clear. Rows will stay in model until fully dealt with.
+  private void performMovementUpdate() {
     int numFullRows = model.numFullRows();
     if (numFullRows > 0) {
       if (clearState.equals(ClearState.START))
         messageBus.sendMoveUpdate(model, client.getPlayer());
       clearRows(numFullRows);
     }
-    // Check if there are rows to receive
     else if (model.getRowsToAdd() > 0) {
       addRowsToBottom();
       messageBus.sendMoveUpdate(model, client.getPlayer());
     }
-    // Only drop a new block if we are not clearing or adding rows currently.
     else {
-      // Reset the active block if necessary.
-      if (!activeBlock.isModel(model.getActiveBlock())) {
-        activeBlock = new Block(model.getActiveBlock(), boardDisplay.getSizeCategory());
-        nextBlock = new Block(model.getNextBlock(), boardDisplay.getSizeCategory());
-        secondaryController.drawBlockToNextCanvas(nextBlock);
-      }
-      // Update the position of the active block and record movement.
-      moved = activeBlockUpdate();
-
-      try {
-        // If the block could not drop, start a new block.
-        if (!moved && model.getPendingRowMove() > 0) {
-          model.initNextBlock();
-        }
-      } catch (BlockOverflow e) {
-        updateTimer.cancel();
-
-        // Keep alive presence in game room
-        heartBeatTimer.scheduleRepeating(loopTime * dropIncrement);
-
-        // Display game over prompt to user
-        boardDisplay.gameOver();
-      }
-      redraw();
-      // Reset for next loop.
-      model.setDrop(false);
-      if (rotate())
-        incrementRotate();
-      if (horizontalMove())
-        incrementMovePacer();
-      model.setPendingRowMove(0);
-      singleRowMove = false;
-      loopCounter = loopCounter == dropIncrement ? 0 : loopCounter + 1;
+      final boolean moved = moveActiveBlock();
       if (moved)
         messageBus.sendMoveUpdate(model, client.getPlayer());
+    }
+  }
+
+  private boolean moveActiveBlock() {
+    maybeResetActiveBlock();
+    final boolean moved = activeBlockUpdate();
+
+    try {
+      // If the block could not drop, start a new block.
+      if (blockIsStuck(moved)) {
+        model.initNextBlock();
+      }
+    } catch (BlockOverflow e) {
+      handleLossOfGame();
+    }
+    redraw();
+    resetAndUpdateModel();
+
+    return moved;
+  }
+
+  private void maybeSendPauseHeartBeat() {
+    if (pausePacer.isReady()) {
+      messageBus.sendPauseUpdate(client.getPlayer());
+      pausePacer.clear();
+    }
+    else {
+      pausePacer.increment();
+    }
+  }
+
+  private void resetAndUpdateModel() {
+    model.setDrop(false);
+    if (rotate())
+      incrementRotate();
+    if (horizontalMove())
+      incrementMovePacer();
+    model.setPendingRowMove(0);
+    singleRowMove = false;
+    loopCounter = loopCounter == dropIncrement ? 0 : loopCounter + 1;
+  }
+
+  private void handleLossOfGame() {
+    updateTimer.cancel();
+    // Keep alive presence in game room
+    heartBeatTimer.scheduleRepeating(loopTime * dropIncrement);
+    // Display game over prompt to user
+    boardDisplay.gameOver();
+  }
+
+  private boolean blockIsStuck(boolean moved) {
+    return !moved && model.getPendingRowMove() > 0;
+  }
+
+  private void maybeResetActiveBlock() {
+    if (!activeBlock.isModel(model.getActiveBlock())) {
+      activeBlock = new Block(model.getActiveBlock(), boardDisplay.getSizeCategory());
+      nextBlock = new Block(model.getNextBlock(), boardDisplay.getSizeCategory());
+      secondaryController.drawBlockToNextCanvas(nextBlock);
     }
   }
 
@@ -281,7 +300,6 @@ public class BoardController {
       // Check if the user wants to increase the speed at which the block drops
       if (model.isFast()) {
         model.setPendingRowMove(1);
-        // Otherwise maintain the normal speed.
       }
       else if (!singleRowMove) {
         // Drop by one row every time counter hits dropIncrement.
