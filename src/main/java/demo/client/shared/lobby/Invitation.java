@@ -97,7 +97,7 @@ public class Invitation {
 
   /**
    * Set the id of the game created by this invitation. This should be assigned by the
-   * {@link demo.server.Server server}.
+   * {@link demo.server.LobbyServer server}.
    * 
    * @param gameId
    *          The id of the game room created for this invitation.
